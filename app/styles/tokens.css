@@ -1,0 +1,19 @@
+:root {
+  /* Brand */
+  --color-primary: #002D97;
+  --color-primary-dark: #001F6B;
+  --color-primary-light: #EAF0FB;
+
+  --color-accent: #FD7901;
+  --color-accent-light: #FFF1E2;
+
+  --color-verified: #16A34A;
+  --color-verified-light: #E7F8EC;
+
+  /* Neutrals */
+  --color-background: #F7F8FA;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+}
