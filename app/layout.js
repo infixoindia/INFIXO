@@ -1,3 +1,5 @@
+import { plusJakartaSans } from './styles/fonts';
+
 export const metadata = {
   title: 'Infixo',
   description: 'Apno Se Judne Ka Naya Tarika',
@@ -6,7 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={plusJakartaSans.className}>{children}</body>
     </html>
   );
 }
