@@ -1,7 +1,9 @@
 export default function Header() {
+  console.log("HEADER RENDERED");
+
   return (
-    <header style={{ display: "flex", justifyContent: "center", padding: "16px" }}>
-      <img src="/images/logo.png" alt="logo" width="160" />
+    <header>
+      <img src="/images/logo.png" width="160" />
     </header>
   );
 }
