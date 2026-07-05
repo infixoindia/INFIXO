@@ -1,5 +1,5 @@
 import Header from "./components/Header/Header";
-import WorkerIdentityCard from "./components/WorkerIdentityCard";
+import WorkerIdentityCard from "./components/Header/WorkerIdentityCard";
 
 export default function HomePage() {
   return (
