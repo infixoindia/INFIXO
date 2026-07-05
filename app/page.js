@@ -10,8 +10,9 @@ export default function HomePage() {
 
       {/* Profile Section Wrapper */}
       <div style={{
-        paddingTop: "20px",
-        paddingBottom: "40px"
+        display: "flex",
+        justifyContent: "center",
+        padding: "24px 16px"
       }}>
         <WorkerIdentityCard />
       </div>
