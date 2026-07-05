@@ -1,5 +1,5 @@
 const dummyWorker = {
-  photoUrl: '/images/worker-placeholder.png',
+ photoUrl: '/images/test-photo.png',
   fullName: 'Rahul Sharma',
   isVerified: true,
   profession: 'Electrician',
