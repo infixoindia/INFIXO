@@ -2,24 +2,75 @@
   background-color: var(--color-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  border: 1px solid var(--color-border);
-  padding: var(--space-10) var(--space-6);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  overflow: hidden;
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
 }
 
+.photoSection {
+  position: relative;
+  height: clamp(260px, 68vw, 320px);
+  background: linear-gradient(160deg, #D6E4F8 0%, #A9C4EF 55%, #8FB3EA 100%);
+  overflow: hidden;
+}
+
+.photoSection::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 64px;
+  height: 80px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 1.6px, transparent 1.6px);
+  background-size: 12px 12px;
+  z-index: 1;
+}
+
+.photoSection::after {
+  content: '';
+  position: absolute;
+  bottom: 15%;
+  right: -50px;
+  width: 170px;
+  height: 170px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.20) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 46px;
+  z-index: 2;
+}
+
+.wavePath {
+  fill: var(--color-card);
+}
+
 .photo {
-  width: 124px;
-  height: 124px;
-  border-radius: var(--radius-full);
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 90%;
   object-fit: cover;
-  border: 2px solid var(--color-primary-light);
-  margin-bottom: var(--space-6);
+  object-position: top center;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  z-index: 3;
+}
+
+.content {
+  padding: var(--space-6) var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .name {
@@ -36,18 +87,90 @@
   margin-top: var(--space-2);
 }
 
-.experience {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-primary);
-  margin-top: var(--space-4);
+.divider {
+  position: relative;
+  width: 60px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-border);
+  margin: var(--space-4) 0 var(--space-5);
 }
 
-.serviceArea {
+.divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-primary);
+}
+
+.infoBox {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4);
+  gap: var(--space-3);
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.infoIconWrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.infoIconWrap svg {
+  width: 18px;
+  height: 18px;
+}
+
+.infoText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.infoValue {
   font-size: var(--font-size-sm);
-  font-weight: 400;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.infoLabel {
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  margin-top: var(--space-1);
+}
+
+.infoDivider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-border);
+  flex-shrink: 0;
 }
 
 .badgeWrap {
