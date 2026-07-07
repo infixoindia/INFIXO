@@ -15,11 +15,11 @@ export default function WorkerIdentityCard({ worker }) {
       <div className={styles.photoSection}>
         <svg
   className={styles.wave}
-  viewBox="0 0 400 80"
+  viewBox="0 0 400 60"
   preserveAspectRatio="none"
   aria-hidden="true"
 >
-  <path className={styles.wavePath} d="M0,40 C50,10 100,10 150,40 C200,70 250,70 300,40 C350,10 380,15 400,25 L400,80 L0,80 Z" />
+  <path className={styles.wavePath} d="M0,18 C100,58 300,58 400,18 L400,60 L0,60 Z" />
 </svg>
         <img
           src={imgSrc}
