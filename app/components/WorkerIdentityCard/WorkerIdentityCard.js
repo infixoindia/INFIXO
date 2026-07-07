@@ -23,6 +23,8 @@ export default function WorkerIdentityCard({ worker }) {
   className={styles.wavePath}
   d="M0,28 C80,58 160,62 220,46 C290,28 350,12 400,24 L400,60 L0,60 Z"
 />
+    </svg>
+    
         <img
           src={imgSrc}
           alt={fullName}
