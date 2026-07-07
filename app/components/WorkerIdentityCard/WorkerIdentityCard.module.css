@@ -4,13 +4,13 @@
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   width: 100%;
-  max-width: 380px;
+  max-width: 340px;
   margin: 0 auto;
 }
 
 .photoSection {
   position: relative;
-  height: clamp(230px, 58vw, 290px);
+  height: clamp(200px, 52vw, 250px);
   background: linear-gradient(160deg, #D6E4F8 0%, #A9C4EF 55%, #8FB3EA 100%);
   overflow: hidden;
 }
