@@ -1,16 +1,17 @@
 .card {
   background-color: var(--color-card);
-  border-radius: var(--radius-lg);
+  border-radius: 28px;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   width: 100%;
-  max-width: 420px;
+  max-width: 390px;
   margin: 0 auto;
 }
 
+
 .photoSection {
   position: relative;
-  height: clamp(260px, 68vw, 320px);
+  height: 360px;
   background: linear-gradient(160deg, #D6E4F8 0%, #A9C4EF 55%, #8FB3EA 100%);
   overflow: hidden;
 }
@@ -41,10 +42,10 @@
 
 .wave {
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   width: 100%;
-  height: 46px;
+  height: 72px;
   z-index: 2;
 }
 
@@ -57,11 +58,11 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  height: 94%;
-  object-fit: cover;
-  object-position: top center;
-  z-index: 1;
+  width: 64%;
+  height: 88%;
+  object-fit: contain;
+  object-position: bottom center;
+  z-index: 3;
 }
 
 .content {
