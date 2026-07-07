@@ -4,13 +4,13 @@
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   width: 100%;
-  max-width: 395px;
+  max-width: 380px;
   margin: 0 auto;
 }
 
 .photoSection {
   position: relative;
-  height: clamp(235px, 62vw, 285px);
+  height: clamp(230px, 58vw, 290px);
   background: linear-gradient(160deg, #D6E4F8 0%, #A9C4EF 55%, #8FB3EA 100%);
   overflow: hidden;
 }
@@ -57,11 +57,11 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 88%;
-  height: 95%;
+  width: 62%;
+  height: 84%;
   object-fit: cover;
   object-position: top center;
-  z-index: 2;
+  z-index: 1;
 }
 
 .content {
