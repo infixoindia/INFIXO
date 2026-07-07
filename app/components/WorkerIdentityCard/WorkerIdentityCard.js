@@ -19,7 +19,7 @@ export default function WorkerIdentityCard({ worker }) {
           preserveAspectRatio="none"
           aria-hidden="true"
         >
-          <path className={styles.wavePath} d="M0,10 C100,55 300,55 400,10 L400,60 L0,60 Z" />
+          <path className={styles.wavePath} d="M0,22 C90,82 310,82 400,22 L400,80 L0,80 Z" />
         </svg>
 
         <img
