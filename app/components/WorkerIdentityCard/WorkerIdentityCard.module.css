@@ -54,14 +54,14 @@
 
 .photo {
   position: absolute;
-  bottom: 0;
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
-  width: 62%;
-  height: 84%;
+  width: 70%;
+  height: 92%;
   object-fit: cover;
-  object-position: top center;
-  z-index: 1;
+  object-position: center top;
+  z-index: 3;
 }
 
 .content {
