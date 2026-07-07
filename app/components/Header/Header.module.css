@@ -2,13 +2,16 @@
   position: relative;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding: var(--space-6) var(--space-4) var(--space-4);
+  text-align: center;
+  padding: var(--space-8) var(--space-4) var(--space-8);
   background-color: var(--color-background);
 }
 
 .header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 18px;
   left: 16px;
@@ -20,7 +23,7 @@
 }
 
 .header::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -70px;
   right: -70px;
@@ -33,7 +36,20 @@
 
 .logo {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 180px;
+  width: 100%;
   height: auto;
+  display: block;
+}
+
+.tagline {
+  position: relative;
+  z-index: 2;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  line-height: 1.4;
 }
