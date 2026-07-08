@@ -40,7 +40,7 @@ export default function WorkerIdentityCard({ worker }) {
       >
         <path
           className={styles.wavePath}
-          d="M0,28 C80,58 160,62 220,46 C290,28 350,12 400,24 L400,60 L0,60 Z"
+          d="M0,24 C70,55 150,68 220,50 C300,30 360,18 400,26 L400,60 L0,60 Z"
         />
       </svg>
 
