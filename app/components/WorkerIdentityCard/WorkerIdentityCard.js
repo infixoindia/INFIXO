@@ -7,114 +7,124 @@ import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 const FALLBACK_PHOTO = '/images/worker-placeholder.png';
 
 export default function WorkerIdentityCard({ worker }) {
+
   const {
     photoUrl,
     fullName,
-    isVerified,
     profession,
     experience,
     serviceArea,
+    isVerified,
   } = worker;
 
   const [imgSrc, setImgSrc] = useState(photoUrl);
 
   return (
+
     <section className={styles.card}>
 
-      {/* Photo Section */}
-      <div className={styles.photoSection}>
+      {/* ================= HERO ================= */}
+
+      <div className={styles.hero}>
+
+        <div className={styles.heroBackground}></div>
+
+        <div className={styles.pattern}></div>
+
         <img
           src={imgSrc}
           alt={fullName}
           className={styles.photo}
           onError={() => setImgSrc(FALLBACK_PHOTO)}
         />
+
       </div>
 
-      {/* Wave */}
+      {/* ================= WHITE PANEL ================= */}
+
+      <div className={styles.whitePanel}>
+
+        <div className={styles.waveTop}></div>
+
+        <div className={styles.content}>
+
+<h1 className={styles.name}>{fullName}</h1>
+
+<p className={styles.profession}>{profession}</p>
+
+<div className={styles.divider}></div>
+
+<div className={styles.infoBox}>
+
+  <div className={styles.infoItem}>
+
+    <span className={styles.infoIconWrap}>
       <svg
-        className={styles.wave}
-        viewBox="0 0 400 60"
-        preserveAspectRatio="none"
-        aria-hidden="true"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <path
-          className={styles.wavePath}
-          d="M0,18 C55,34 110,58 180,54 C255,50 315,8 400,20 L400,60 L0,60 Z"
-        />
+        <rect x="3" y="7" width="18" height="13" rx="2" />
+        <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        <path d="M3 12h18" />
       </svg>
+    </span>
 
-      {/* Content */}
-      <div className={styles.content}>
-        <h1 className={styles.name}>{fullName}</h1>
+    <span className={styles.infoText}>
+      <span className={styles.infoValue}>
+        {experience}+ Years
+      </span>
 
-        <p className={styles.profession}>{profession}</p>
+      <span className={styles.infoLabel}>
+        Experience
+      </span>
+    </span>
 
-        <div className={styles.divider}></div>
+  </div>
 
-        <div className={styles.infoBox}>
-          <div className={styles.infoItem}>
-            <span className={styles.infoIconWrap}>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="7" width="18" height="13" rx="2" />
-                <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                <path d="M3 12h18" />
-              </svg>
-            </span>
+  <div className={styles.infoDivider}></div>
 
-            <span className={styles.infoText}>
-              <span className={styles.infoValue}>
-                {experience}+ Years
-              </span>
+  <div className={styles.infoItem}>
 
-              <span className={styles.infoLabel}>
-                Experience
-              </span>
-            </span>
-          </div>
+    <span className={styles.infoIconWrap}>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12z" />
+        <circle cx="12" cy="9" r="2.5" />
+      </svg>
+    </span>
 
-          <div className={styles.infoDivider}></div>
+    <span className={styles.infoText}>
+      <span className={styles.infoValue}>
+        {serviceArea.join(', ')}
+      </span>
 
-          <div className={styles.infoItem}>
-            <span className={styles.infoIconWrap}>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12z" />
-                <circle cx="12" cy="9" r="2.5" />
-              </svg>
-            </span>
+      <span className={styles.infoLabel}>
+        Service Area
+      </span>
+    </span>
 
-            <span className={styles.infoText}>
-              <span className={styles.infoValue}>
-                {serviceArea.join(', ')}
-              </span>
+  </div>
 
-              <span className={styles.infoLabel}>
-                Service Area
-              </span>
-            </span>
-          </div>
-        </div>
+</div>
 
-        {isVerified && (
-          <div className={styles.badgeWrap}>
-            <VerifiedBadge />
-          </div>
-        )}
-      </div>
-    </section>
-  );
+{isVerified && (
+  <div className={styles.badgeWrap}>
+    <VerifiedBadge />
+  </div>
+)}
+
+</div>
+</div>
+</section>
+);
           }
