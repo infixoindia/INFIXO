@@ -39,16 +39,18 @@ export default function WorkerIdentityCard({ worker }) {
     preserveAspectRatio="none"
   >
     <path
-      className={styles.wavePath}
-      d="M0,0
-L90,24
-C120,62 160,62 185,62
-L215,62
-C240,62 280,62 310,24
-L400,0
-L400,70
-L0,70
-Z"
+  className={styles.wavePath}
+  d="M0,0
+     C40,10 70,18 100,28
+     C130,42 155,62 185,62
+     L215,62
+     C245,62 270,42 300,28
+     C330,18 360,10 400,0
+     L400,70
+     L0,70
+     Z"
+/>
+    
     />
   </svg>
 </div>
