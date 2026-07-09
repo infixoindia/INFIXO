@@ -10,7 +10,7 @@
 
 .hero {
   position: relative;
-  height: 260px;
+  height: 245px;
   overflow: hidden;
 }
 
@@ -51,7 +51,7 @@
 
 .photo{
   position:absolute;
-  bottom:6px;      
+  bottom:12px;      
   left:50%;
   transform:translateX(-50%);
   width:58%;      
@@ -63,7 +63,7 @@
 
 .whitePanel {
   position: relative;
-  margin-top: -8px;
+  margin-top: -22px;
   background: #FFFFFF;
   z-index: 1;
 }
@@ -85,7 +85,7 @@
 .content {
   position: relative;
   z-index: 2;
-  padding: 24px 22px 28px;
+  padding: 8px 22px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -192,5 +192,5 @@
 }
 
 .badgeWrap {
-  margin-top: 20px;
+  margin-top: 16px;
   }
