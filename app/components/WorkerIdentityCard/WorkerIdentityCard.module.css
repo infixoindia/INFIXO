@@ -67,15 +67,17 @@
   z-index: 5;
 }
 
-.waveTop {
+.wave {
   position: absolute;
-  top: -70px;
   left: 0;
+  bottom: -1px;
   width: 100%;
-  height: 70px;
-  background: #FFFFFF;
-  clip-path: path("M0,8 C44,15 88,47 132,53 C150,58 246,58 264,53 C282,47 326,15 400,8 L400,70 L0,70 Z");
-  z-index: 4;
+  height: 90px; /* pehle 58px tha */
+  z-index: 2;
+}
+
+.wavePath {
+  fill: #ffffff;
 }
   
 .content {
