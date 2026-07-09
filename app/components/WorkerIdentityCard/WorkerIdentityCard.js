@@ -42,9 +42,9 @@ export default function WorkerIdentityCard({ worker }) {
       className={styles.wavePath}
       d="M0,0
 L90,24
-Q130,62 180,62
-L220,62
-Q270,62 310,24
+C120,62 160,62 185,62
+L215,62
+C240,62 280,62 310,24
 L400,0
 L400,70
 L0,70
