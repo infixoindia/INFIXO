@@ -74,10 +74,10 @@
   width: 100%;
   height: 70px;
   background: #FFFFFF;
-  clip-path: path("M0,8 C51,15 94,47 112,53 C127,58 143,58 177,53 C195,47 238,15 400,8 L400,70 L0,70 Z");
+  clip-path: path("M0,8 C44,15 88,47 132,53 C150,58 246,58 264,53 C282,47 326,15 400,8 L400,70 L0,70 Z");
   z-index: 4;
 }
-
+  
 .content {
   position: relative;
   z-index: 2;
