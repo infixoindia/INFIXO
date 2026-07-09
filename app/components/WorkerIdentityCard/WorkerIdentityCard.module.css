@@ -63,7 +63,7 @@
 
 .whitePanel {
   position: relative;
-  margin-top: -18px;
+  margin-top: -8px;
   background: #FFFFFF;
   z-index: 1;
 }
@@ -85,10 +85,7 @@
 .content {
   position: relative;
   z-index: 2;
-  padding: 0 22px 20px;
-
-  transform: translateY(-10px);
-
+  padding: 24px 22px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
