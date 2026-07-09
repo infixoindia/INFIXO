@@ -5,6 +5,7 @@
   width: 100%;
   max-width: 340px;
   margin: 0 auto;
+  z-index:2
 }
 
 .hero {
@@ -62,18 +63,19 @@
 
 .whitePanel {
   position: relative;
-  margin-top: -70px;
+  margin-top: 0;
   background: #FFFFFF;
-  z-index: 5;
+  z-index: 1;
 }
 
-.wave {
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  width: 100%;
-  height: 70px;
-  z-index: 4;
+.wave{
+  position:absolute;
+  left:0;
+  bottom:-2px;
+  width:100%;
+  height:70px;
+  display:block;
+  z-index:10;
 }
 
 .wavePath {
