@@ -199,18 +199,22 @@
 }
 
 .infoValue {
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-text-primary);
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .infoLabel {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  white-space: nowrap;
+  margin-top: 3px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: #8A94A6;
+  text-transform: uppercase;
 }
 
 .badgeWrap {
