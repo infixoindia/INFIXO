@@ -54,7 +54,7 @@
   bottom:12px;      
   left:50%;
   transform:translateX(-50%)
-translateY(-20px);
+translateY(0);
   width:54%;      
   height:74%;      
   object-fit:cover;
