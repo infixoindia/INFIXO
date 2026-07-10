@@ -17,7 +17,7 @@
 .heroBackground {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, #D6E4F8 0%, #A9C4EF 55%, #8FB3EA 100%);
+  background: url('/images/test-worker.jpg') center center / cover no-repeat;
   z-index: 1;
 }
 
