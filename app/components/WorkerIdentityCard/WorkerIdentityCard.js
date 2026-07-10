@@ -59,7 +59,9 @@ Z"
         <div className={styles.content}>
           <h1 className={styles.name}>{fullName}</h1>
           <p className={styles.profession}>{profession}</p>
-          <div className={styles.divider}></div>
+          <div className={styles.divider}>
+  <span>▼</span>
+</div>
 
           <div className={styles.infoBox}>
             <div className={styles.infoItem}>
