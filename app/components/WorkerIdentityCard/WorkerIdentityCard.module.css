@@ -219,3 +219,38 @@
 .badgeWrap {
   margin-top: 16px;
   }
+
+.infoPanelBlue{
+  flex:1;
+  position:relative;
+  background:#F6F9FF;
+  padding:14px 18px;
+  clip-path:polygon(0 0,90% 0,100% 50%,90% 100%,0 100%);
+}
+
+.infoPanelOrange{
+  flex:1;
+  position:relative;
+  background:#FFF8F1;
+  padding:14px 18px 14px 28px;
+  clip-path:polygon(10% 0,100% 0,100% 100%,10% 100%,0 50%);
+}
+
+.arrowDivider{
+  width:0;
+  position:relative;
+  z-index:5;
+}
+
+.arrowDivider::before{
+  content:"";
+  position:absolute;
+  left:-18px;
+  top:50%;
+  transform:translateY(-50%);
+  width:36px;
+  height:64px;
+  background:#fff;
+  clip-path:polygon(0 0,100% 50%,0 100%,25% 100%,100% 50%,25% 0);
+  box-shadow:0 0 0 1px #E8EDF5;
+}
