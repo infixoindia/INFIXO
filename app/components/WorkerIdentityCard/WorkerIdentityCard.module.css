@@ -162,15 +162,29 @@
 }
 
 .infoIconWrap {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: #EEF4FF;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary);
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+.infoItem:first-child .infoIconWrap {
+  background: #EEF4FF;
+  color: #002D97;
+}
+
+.infoItem:last-child .infoIconWrap {
+  background: #FFF3E8;
+  color: #FD7901;
+}
+
+.infoIconWrap svg {
+  width: 22px;
+  height: 22px;
 }
 
 .infoIconWrap svg {
