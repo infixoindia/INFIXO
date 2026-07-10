@@ -100,24 +100,27 @@
 }
 
 .divider {
-  position: relative;
-  width: 62px;
-  height: 4px;
-  border-radius: 999px;
-  background: #E3E3E3;
-  margin: 16px 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin: 18px 0 22px;
 }
 
+.divider::before,
 .divider::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-  width: 22px;
-  height: 4px;
+  content: "";
+  flex: 1;
+  height: 1.5px;
+  background: #D8DCE6;
   border-radius: 999px;
-  background: var(--color-primary);
+}
+
+.divider span {
+  font-size: 13px;
+  color: var(--color-primary);
+  line-height: 1;
 }
 
 .infoBox {
