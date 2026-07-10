@@ -148,9 +148,17 @@
 }
 
 .infoDivider {
-  width: 1px;
+  width: 2px;
   align-self: stretch;
-  background: #E8E8E8;
+  background: linear-gradient(
+    to bottom,
+    #002D97 0%,
+    #002D97 45%,
+    #FD7901 55%,
+    #FD7901 100%
+  );
+  border-radius: 999px;
+  margin: 0 10px;
 }
 
 .infoIconWrap {
