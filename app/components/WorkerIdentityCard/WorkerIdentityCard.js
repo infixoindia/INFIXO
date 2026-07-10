@@ -49,6 +49,7 @@ export default function WorkerIdentityCard({ worker }) {
        L400,70
        L0,70
        Z"
+  />
 </svg>
 </div>
 
