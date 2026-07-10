@@ -148,7 +148,7 @@
 }
 
 .infoDivider {
-  width: 2px;
+  width: 1px;
   align-self: stretch;
   background: linear-gradient(
     to bottom,
@@ -195,6 +195,7 @@
 .infoText {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-width: 0;
 }
 
@@ -203,9 +204,7 @@
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.15;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  
 }
 
 .infoLabel {
