@@ -93,9 +93,10 @@
 
 .profession {
   margin-top: 8px;
-  font-size: 1.3rem;
-  font-weight: 500;
+  font-size: 1.28rem;
+  font-weight: 600;
   color: var(--color-primary);
+  letter-spacing: 0.2px;
 }
 
 .divider {
