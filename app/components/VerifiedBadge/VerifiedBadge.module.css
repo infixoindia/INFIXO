@@ -27,8 +27,8 @@
 }
 
 .shield{
-  width:24px;
-  height:24px;
+  width:26px;
+  height:26px;
 
   display:flex;
   align-items:center;
@@ -43,8 +43,8 @@
 }
 
 .shield svg{
-  width:24px;
-  height:24px;
+  width:26px;
+  height:26px;
   display:block;
 }
 
@@ -88,7 +88,7 @@
         transparent 20px
     );
 
-    opacity:.7;
+    opacity:.45;
 
     pointer-events:none;
 }
