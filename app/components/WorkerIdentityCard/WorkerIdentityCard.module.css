@@ -130,100 +130,76 @@
   margin-top:2px;
 }
 
-.leftPanel,
-.rightPanel{
-  flex:1;
-  height:82px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:0 14px;
-  position:relative;
-  overflow:hidden;
+.infoItem {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
-.leftPanel{
-  background:#F5F8FF;
-  border-radius:18px;
+.infoDivider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    to bottom,
+    #002D97 0%,
+    #002D97 45%,
+    #FD7901 55%,
+    #FD7901 100%
+  );
+  border-radius: 999px;
+  margin: 0 10px;
 }
 
-.rightPanel{
-  background:#FFF3E8;
-  border-radius:18px;
+.infoIconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-.leftPanel::after{
-  content:"";
-  position:absolute;
-  top:0;
-  right:-18px;
-  width:36px;
-  height:100%;
-  background:#F5F8FF;
-  transform:skewX(-24deg);
+.infoItem:first-child .infoIconWrap {
+  background: #EEF4FF;
+  color: #002D97;
 }
 
-.rightPanel::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-18px;
-  width:36px;
-  height:100%;
-  background:#FFF3E8;
-  transform:skewX(-24deg);
+.infoItem:last-child .infoIconWrap {
+  background: #FFF3E8;
+  color: #FD7901;
 }
 
-.centerGap{
-  width:18px;
-  flex-shrink:0;
+.infoIconWrap svg {
+  width: 20px;
+  height: 20px;
 }
 
-.iconBlue,
-.iconOrange{
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
+.infoText {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
-.iconBlue{
-  background:#E9F1FF;
-  color:#002D97;
+.infoValue {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.15;
 }
 
-.iconOrange{
-  background:#FFE8D4;
-  color:#FD7901;
-}
-
-.iconBlue svg,
-.iconOrange svg{
-  width:20px;
-  height:20px;
-}
-
-.panelText{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.panelLabel{
-  font-size:11px;
-  font-weight:600;
-  color:#7E8798;
-  margin-bottom:2px;
-}
-
-.panelValue{
-  font-size:15px;
-  font-weight:700;
-  color:#111827;
-}
+.infoLabel {
+  margin-top: 3px;
+  font-size: 0.70rem;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  color: #8A94A6;
+  text-transform: uppercase;
+  }
 
 .badgeWrap {
   margin-top: 16px;
