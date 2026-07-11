@@ -15,20 +15,20 @@
 
   border-radius:999px;
 
- background: linear-gradient(
+ background:linear-gradient(
 90deg,
-#149E43 0%,
-#19B84C 50%,
-#118C3A 100%
-);
+#1AA647 0%,
+#23B94E 55%,
+#169B40 100%);
+  
   box-shadow:
-      0 6px 18px rgba(24,184,77,.22),
+      0 4px 14px rgba(26,166,71,.18),
       inset 0 1px 0 rgba(255,255,255,.15);
 }
 
 .shield{
-  width:26px;
-  height:26px;
+  width:28px;
+  height:28px;
 
   display:flex;
   align-items:center;
@@ -76,7 +76,7 @@
     top:0;
     right:0;
 
-    width:120px;
+    width:105px;
     height:100%;
 
     background:
@@ -88,7 +88,7 @@
         transparent 20px
     );
 
-    opacity:.45;
+    opacity:.35;
 
     pointer-events:none;
 }
