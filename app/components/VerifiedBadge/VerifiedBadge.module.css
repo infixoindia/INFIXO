@@ -44,23 +44,24 @@ transparent 8px 16px);
 }
 
 .shield{
-  width:34px;
-  height:34px;
-
+  width:52px;
+  height:52px;
   border-radius:50%;
+  background:#FFFFFF;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  background:#FFFFFF;
-
-  color:#16C35B;
-
-  font-size:17px;
-
   box-shadow:
-  0 4px 12px rgba(0,0,0,.12);
+    0 6px 16px rgba(0,0,0,.15);
+
+  flex-shrink:0;
+}
+
+.shield svg{
+  width:34px;
+  height:34px;
 }
 
 .text{
