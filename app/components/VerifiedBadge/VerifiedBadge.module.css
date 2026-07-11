@@ -15,12 +15,12 @@
 
   border-radius:999px;
 
- background:linear-gradient(
+ background: linear-gradient(
 90deg,
-#1AA647 0%,
-#23B94E 55%,
-#169B40 100%);
-
+#149E43 0%,
+#19B84C 50%,
+#118C3A 100%
+);
   box-shadow:
       0 6px 18px rgba(24,184,77,.22),
       inset 0 1px 0 rgba(255,255,255,.15);
