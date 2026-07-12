@@ -1,1 +1,59 @@
-/* Navigation Tabs CSS */
+.grid{
+  max-width:340px;
+  margin:18px auto 0;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+}
+
+.card{
+
+  height:82px;
+
+  border:none;
+
+  border-radius:18px;
+
+  color:#fff;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  box-shadow:0 10px 22px rgba(0,0,0,.12);
+
+}
+
+.blue{
+
+background:linear-gradient(135deg,#7CB7FF,#5C88F5);
+
+}
+
+.orange{
+
+background:linear-gradient(135deg,#FFD49C,#FFA04C);
+
+}
+
+.green{
+
+background:linear-gradient(135deg,#A8FFD8,#75F1BF);
+
+color:#063;
+
+}
+
+.purple{
+
+background:linear-gradient(135deg,#F0B9FF,#D992FF);
+
+}
