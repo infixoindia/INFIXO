@@ -67,7 +67,7 @@
 
 .value{
 
-  padding:16px 24px;
+  padding:16px 22px;
 
   display:flex;
 
@@ -77,5 +77,5 @@
 
   gap:14px;
 
-  min-height:80px;
+  min-height:72px;
 }
