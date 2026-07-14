@@ -31,7 +31,7 @@
 
 .row{
   display:grid;
-  grid-template-columns:130px 1fr;
+  grid-template-columns:170px 1fr;
 
   background:#FFFFFF;
 
@@ -47,26 +47,22 @@
 }
 
 .label{
-
   background:#F4F7FD;
 
-  padding:26px 18px;
+  padding:20px 26px;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
   text-align:center;
 
-  font-size:22px;
-
+  font-size:18px;
   font-weight:700;
 
   color:#111827;
 
-  line-height:1.35;
+  line-height:1.3;
 }
 
 .value{
