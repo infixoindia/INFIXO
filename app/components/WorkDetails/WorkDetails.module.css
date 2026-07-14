@@ -101,3 +101,24 @@
     0 2px 6px rgba(253,121,1,.08),
     inset 0 1px 1px rgba(255,255,255,.9);
 }
+
+.serviceChip{
+  display:inline-flex;
+  align-items:center;
+
+  padding:6px 12px;
+
+  border-radius:10px;
+
+  background:#EEF5FF;
+
+  border:1px solid #C9DEFF;
+
+  color:#2563EB;
+
+  font-size:13px;
+
+  font-weight:600;
+
+  box-shadow:0 2px 6px rgba(37,99,235,.06);
+}
