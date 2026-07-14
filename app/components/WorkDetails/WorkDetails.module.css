@@ -69,7 +69,9 @@
 
   padding:16px 22px;
 
-  display:flex;
+  display:grid;
+
+  grid-template-columns:repeat(2, auto);
 
   align-items:center;
 
