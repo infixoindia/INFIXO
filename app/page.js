@@ -12,7 +12,7 @@ export default function HomePage() {
        
   <WorkerIdentityCard worker={dummyWorker} />
   <NavigationTabs />
-  <WorkDetails />
+  {/* <WorkDetails /> */}
       </div>
     </main>
   );
