@@ -26,11 +26,24 @@ export default function WorkDetails() {
   <div className={styles.label}>Services Offered</div>
 
   <div className={styles.value}>
-    <div className={styles.serviceChip}>🎨 Interior Painting</div>
-    <div className={styles.serviceChip}>🏠 Exterior Painting</div>
-    <div className={styles.serviceChip}>🧱 Putty Work</div>
-    <div className={styles.serviceChip}>✨ Texture Finish</div>
-  </div>
+    <div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Interior Painting
+</div>
+
+<div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Exterior Painting
+</div>
+
+<div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Putty Work
+</div>
+
+<div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Texture Finish
 </div>
 
         <div className={styles.row}>
