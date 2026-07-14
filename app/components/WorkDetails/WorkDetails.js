@@ -45,6 +45,9 @@ export default function WorkDetails() {
   <span className={styles.tick}>✓</span>
   Texture Finish
 </div>
+    
+ </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Experience</div>
