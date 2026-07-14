@@ -1,12 +1,13 @@
+import Link from "next/link";
 import styles from './NavigationTabs.module.css';
 
 export default function NavigationTabs() {
   return (
     <div className={styles.grid}>
 
-      <button className={`${styles.card} ${styles.blue}`}>
-        Work Details
-      </button>
+      <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
+  ...
+</Link>
 
       <button className={`${styles.card} ${styles.orange}`}>
         Worker Details
