@@ -1,3 +1,4 @@
+import WorkDetails from "./components/WorkDetails/WorkDetails";
 import NavigationTabs from './components/NavigationTabs/NavigationTabs';
 import Header from './components/Header/Header';
 import WorkerIdentityCard from './components/WorkerIdentityCard/WorkerIdentityCard';
@@ -11,6 +12,7 @@ export default function HomePage() {
        
   <WorkerIdentityCard worker={dummyWorker} />
   <NavigationTabs />
+  <WorkDetails />
       </div>
     </main>
   );
