@@ -13,8 +13,11 @@ export default function WorkDetails() {
 
         <div className={styles.row}>
           <div className={styles.label}>Primary Skill</div>
-          <div className={styles.value}>Painter</div>
-        </div>
+          <div className={styles.value}>
+  <div className={styles.primaryBadge}>
+    🖌️ Painter
+  </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Services Offered</div>
