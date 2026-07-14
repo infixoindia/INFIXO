@@ -31,7 +31,7 @@
 
 .row{
   display:grid;
-  grid-template-columns:140px 1fr;
+  grid-template-columns:130px 1fr;
 
   background:#FFFFFF;
 
