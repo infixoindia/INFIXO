@@ -28,22 +28,22 @@ export default function WorkDetails() {
   <div className={styles.value}>
     <div className={styles.serviceChip}>
   <span className={styles.tick}>✓</span>
-  Interior Painting
-</div>
-
-<div className={styles.serviceChip}>
-  <span className={styles.tick}>✓</span>
-  Exterior Painting
-</div>
-
-<div className={styles.serviceChip}>
-  <span className={styles.tick}>✓</span>
   Putty Work
 </div>
 
 <div className={styles.serviceChip}>
   <span className={styles.tick}>✓</span>
   Texture Finish
+</div>
+
+<div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Waterproofing 
+</div>
+
+<div className={styles.serviceChip}>
+  <span className={styles.tick}>✓</span>
+  Interior Paints
 </div>
     
  </div>
