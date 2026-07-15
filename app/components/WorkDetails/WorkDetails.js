@@ -23,7 +23,7 @@ export default function WorkDetails() {
 </div>
     
         <div className={styles.row}>
-  <div className={styles.label}>Services Offered</div>
+  <div className={styles.label}>Services</div>
 
   <div className={styles.value}>
     <div className={styles.serviceChip}>
