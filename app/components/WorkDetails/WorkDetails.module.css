@@ -157,24 +157,26 @@
 
 .experienceBadge{
   display:inline-flex;
-  align-items:center;
+  align-items:flex-start;
   gap:6px;
 
-  padding:6px 12px;
+  padding:8px 12px;
 
-  border-radius:999px;
+  border-radius:16px;
 
-  background:linear-gradient(180deg,#F7FFF8 0%,#ECFDF3 100%);
-  border:1px solid #B7EBC8;
+  background:linear-gradient(180deg,#F4FFF7 0%,#EAFBF1 100%);
+  border:1px solid #CFEEDC;
 
   color:#15803D;
 
   font-size:10px;
   font-weight:600;
-
-  box-shadow:
-    0 2px 6px rgba(34,197,94,.12),
-    inset 0 1px 1px rgba(255,255,255,.9);
+  line-height:1.35;
 
   width:fit-content;
+  max-width:230px;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.95),
+    0 2px 6px rgba(22,163,74,.10);
 }
