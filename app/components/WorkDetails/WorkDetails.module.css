@@ -66,20 +66,14 @@
 }
 
 .value{
-  padding:16px 18px;
+  padding:14px 16px;
 
   display:flex;
   flex-wrap:wrap;
 
-  grid-template-columns:repeat(2,max-content);
+  gap:6px;
 
-  justify-content:start;
-
-  align-content:center;
-
-  gap:8px;
-
-  min-height:72px;
+  align-items:flex-start;
 }
 
 .primaryBadge{
@@ -105,31 +99,30 @@
 }
 
 .serviceChip{
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  gap:5px;
+  gap:4px;
 
-  padding:4px 8px;
+  padding:2px 7px;   
 
-  border-radius:8px;
+  border-radius:999px;
 
   background:#EEF5FF;
   border:1px solid #C9DEFF;
 
   color:#1D4ED8;
 
-  font-size:10px;
+  font-size:8px;     
   font-weight:600;
 
-  min-width:150px;
-  justify-content:flex-start;
+  width:fit-content;
 
-  white-space:nowrap;
+  flex:0 0 auto;     
 }
 
 .tick{
-  width:16px;
-  height:16px;
+  width:14px;
+  height:14px;
 
   border-radius:50%;
 
@@ -140,7 +133,7 @@
   align-items:center;
   justify-content:center;
 
-  font-size:10px;
+  font-size:8px;
   font-weight:700;
 
   flex-shrink:0;
