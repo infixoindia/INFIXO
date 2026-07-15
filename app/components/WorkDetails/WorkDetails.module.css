@@ -145,3 +145,8 @@
 
   flex-shrink:0;
 }
+
+.serviceText{
+    white-space: nowrap;
+    line-height: 1;
+}
