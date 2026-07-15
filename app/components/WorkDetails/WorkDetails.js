@@ -50,9 +50,15 @@ export default function WorkDetails() {
 </div>
 
         <div className={styles.row}>
-          <div className={styles.label}>Experience</div>
-          <div className={styles.value}>8+ Years</div>
-        </div>
+  <div className={styles.label}>Experience</div>
+
+  <div className={styles.value}>
+    <div className={styles.experienceBadge}>
+      🏅
+      <span>8+ Years of experience in Painting</span>
+    </div>
+  </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Working Hours</div>
