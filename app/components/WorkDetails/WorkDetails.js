@@ -54,10 +54,13 @@ export default function WorkDetails() {
 
   <div className={styles.value}>
     <div className={styles.experienceBadge}>
-      🏅
-      <span>8+ Years of experience in Painting</span>
-    </div>
-  </div>
+  🏅
+  <span>
+    8+ Years of experience <br />
+    in painting work
+  </span>
+</div>
+</div> 
 </div>
 
         <div className={styles.row}>
