@@ -53,6 +53,9 @@ export default function WorkDetails() {
   <div className={styles.label}>Experience</div>
 
   <div className={styles.value}>
+    <div 
+    className={styles.experienceBadge}>
+      
     <span className={styles.expIcon}>🏅</span>
   <span>
     8+ Years of experience <br />
