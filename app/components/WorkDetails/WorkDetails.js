@@ -55,9 +55,20 @@ export default function WorkDetails() {
   <div className={styles.value}>
     <div 
     className={styles.experienceBadge}>
-      
-    <span className={styles.expIcon}>🏅</span>
-  <span>
+     <svg
+  className={styles.expIcon}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+  <circle cx="12" cy="8" r="5" />
+  <path d="M9 12.5L7.5 21l4.5-2.7 4.5 2.7-1.5-8.5" />
+</svg>
+    
+<span>
     8+ Years of experience <br />
     in painting work
   </span>
