@@ -166,14 +166,14 @@
 
   border-radius:18px;
 
-  background:linear-gradient(180deg,#F9FFFF 0%, #EAFBFF 100%);
-  border:1px solid #C7EEF3;
+  background: var(--color-verified-light);
+  border:1px solid #BEEAD0;
 
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,.9),
-    0 4px 10px rgba(0,160,180,.08);
+    0 4px 10px rgba(22,163,74,.10);
 
-  color:#168C93;
+  color: var(--color-verified);
 
   font-size:15px;
   font-weight:700;
