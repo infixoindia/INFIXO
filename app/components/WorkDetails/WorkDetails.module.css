@@ -80,21 +80,25 @@
 .primaryBadge{
   display:inline-flex;
   align-items:center;
-  gap:8px;
+  gap:5px;
 
-  padding:8px 14px;
+  padding:5px 10px;
 
-  border-radius:12px;
+  border-radius:10px;
 
   background:linear-gradient(180deg,#FFFDFB 0%,#FFF2E6 100%);
   border:1px solid #FFD6B8;
 
   color:#FD7901;
 
-  font-size:14px;
+  font-size:12px;
   font-weight:700;
 
   width:fit-content;
+}
+
+.primaryBadge span{
+  line-height:1;
 }
 
 .serviceChip{
