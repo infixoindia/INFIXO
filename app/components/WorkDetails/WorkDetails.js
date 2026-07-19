@@ -16,10 +16,10 @@ export default function WorkDetails() {
 
   <div className={styles.value}>
     <div className={styles.primaryBadge}>
-      🖌️ Painter
+      <span>🖌️</span>
+      <span>Painter</span>
     </div>
   </div>
-
 </div>
     
         <div className={styles.row}>
