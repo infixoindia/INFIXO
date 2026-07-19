@@ -63,6 +63,7 @@ export default function WorkDetails() {
   </span>
 </div>
 </div> 
+</div>
 
 
         <div className={styles.row}>
