@@ -57,15 +57,47 @@ export default function WorkDetails() {
     className={styles.experienceBadge}>
      <svg
   className={styles.expIcon}
-  viewBox="0 0 24 24"
+  viewBox="0 0 64 64"
   fill="none"
-  stroke="currentColor"
-  strokeWidth="2"
-  strokeLinecap="round"
-  strokeLinejoin="round"
+  xmlns="http://www.w3.org/2000/svg"
 >
-  <circle cx="12" cy="8" r="5" />
-  <path d="M9 12.5L7.5 21l4.5-2.7 4.5 2.7-1.5-8.5" />
+  {/* Medal circle */}
+  <circle
+    cx="32"
+    cy="25"
+    r="18"
+    fill="#E8FFFB"
+    stroke="#0F9D8C"
+    strokeWidth="3"
+  />
+
+  {/* Inner badge */}
+  <circle
+    cx="32"
+    cy="25"
+    r="12"
+    fill="#FFFFFF"
+    stroke="#0F9D8C"
+    strokeWidth="2"
+  />
+
+  {/* Star */}
+  <path
+    d="M32 16L34.8 21.8L41 22.7L36.5 27L37.6 33L32 30.1L26.4 33L27.5 27L23 22.7L29.2 21.8L32 16Z"
+    fill="#0F9D8C"
+  />
+
+  {/* Ribbon left */}
+  <path
+    d="M22 39L18 57L32 49L28 39H22Z"
+    fill="#14B8A6"
+  />
+
+  {/* Ribbon right */}
+  <path
+    d="M42 39L46 57L32 49L36 39H42Z"
+    fill="#0F766E"
+  />
 </svg>
     
 <span>
