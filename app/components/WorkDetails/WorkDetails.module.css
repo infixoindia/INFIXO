@@ -157,30 +157,28 @@
 
 .experienceBadge{
   display:inline-flex;
-  align-items:flex-start;
-  gap:6px;
+  align-items:center;
+  gap:12px;
 
-  padding:8px 12px;
+  padding:12px 18px;
 
-  border-radius:16px;
+  border-radius:18px;
 
-  background:linear-gradient(180deg,#F4FFF7 0%,#EAFBF1 100%);
-  border:1px solid #CFEEDC;
-
-  color:#15803D;
-
-  font-size:10px;
-  font-weight:600;
-  line-height:1.35;
-
-  width:fit-content;
-  max-width:230px;
+  background:linear-gradient(180deg,#F6FFFC 0%,#E9FFF5 100%);
+  border:1px solid #BCEFD8;
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.95),
-    0 2px 6px rgba(22,163,74,.10);
-  
+    inset 0 1px 1px rgba(255,255,255,.9),
+    0 5px 12px rgba(16,185,129,.12);
+
+  color:#047857;
+
+  font-size:15px;
+  font-weight:700;
+
+  line-height:1.35;
 }
+
 .expIcon{
   display:flex;
   align-items:center;
@@ -189,7 +187,7 @@
   width:28px;
   height:28px;
 
-  font-size:22px;
+  font-size:30px;
   line-height:1;
 
   flex-shrink:0;
