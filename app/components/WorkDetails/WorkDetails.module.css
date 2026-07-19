@@ -80,9 +80,9 @@
 .primaryBadge{
   display:inline-flex;
   align-items:center;
-  gap:5px;
+  gap:6px;
 
-  padding:5px 10px;
+  padding:6px 12px;
 
   border-radius:10px;
 
@@ -91,7 +91,7 @@
 
   color:#FD7901;
 
-  font-size:12px;
+  font-size:13px;
   font-weight:700;
 
   width:fit-content;
