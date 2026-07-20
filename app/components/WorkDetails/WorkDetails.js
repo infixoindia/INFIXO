@@ -124,9 +124,31 @@ export default function WorkDetails() {
 
 
         <div className={styles.row}>
-          <div className={styles.label}>Working Hours</div>
-          <div className={styles.value}>9:00 AM – 7:00 PM</div>
-        </div>
+  <div className={styles.label}>Working Hours</div>
+
+  <div className={styles.value}>
+    <div className={styles.workingHoursBadge}>
+
+      <svg
+        className={styles.workingHoursIcon}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
+
+      <span className={styles.workingHoursText}>
+        9:00 AM – 7:00 PM
+      </span>
+
+    </div>
+  </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Working Shift</div>
