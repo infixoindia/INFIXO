@@ -77,11 +77,9 @@ export default function WorkDetails() {
     </linearGradient>
   </defs>
 
-  <!-- Ribbons -->
   <path d="M22 39 L18 58 L30 49 L29 39 Z" fill="url(#ribbonLeft)"/>
   <path d="M42 39 L46 58 L34 49 L35 39 Z" fill="url(#ribbonRight)"/>
 
-  <!-- Medal -->
   <circle
     cx="32"
     cy="24"
@@ -91,7 +89,6 @@ export default function WorkDetails() {
     strokeWidth="3"
   />
 
-  <!-- Inner Ring -->
   <circle
     cx="32"
     cy="24"
@@ -101,7 +98,6 @@ export default function WorkDetails() {
     strokeWidth="2"
   />
 
-  <!-- Star -->
   <path
     d="M32 16
        L34.4 21
