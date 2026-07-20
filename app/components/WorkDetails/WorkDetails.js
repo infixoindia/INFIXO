@@ -58,45 +58,63 @@ export default function WorkDetails() {
      <svg
   className={styles.expIcon}
   viewBox="0 0 64 64"
-  fill="none"
   xmlns="http://www.w3.org/2000/svg"
 >
-  {/* Medal circle */}
+  <defs>
+    <linearGradient id="badgeFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#E9FFFC"/>
+      <stop offset="100%" stopColor="#CFF7F2"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonLeft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#19B7A4"/>
+      <stop offset="100%" stopColor="#0F8E82"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonRight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#0F8E82"/>
+      <stop offset="100%" stopColor="#0A6D66"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ribbons -->
+  <path d="M22 39 L18 58 L30 49 L29 39 Z" fill="url(#ribbonLeft)"/>
+  <path d="M42 39 L46 58 L34 49 L35 39 Z" fill="url(#ribbonRight)"/>
+
+  <!-- Medal -->
   <circle
     cx="32"
-    cy="25"
-    r="18"
-    fill="#E8FFFB"
-    stroke="#0F9D8C"
+    cy="24"
+    r="16"
+    fill="url(#badgeFill)"
+    stroke="#0F8E82"
     strokeWidth="3"
   />
 
-  {/* Inner badge */}
+  <!-- Inner Ring -->
   <circle
     cx="32"
-    cy="25"
-    r="12"
+    cy="24"
+    r="10.5"
     fill="#FFFFFF"
-    stroke="#0F9D8C"
+    stroke="#0F8E82"
     strokeWidth="2"
   />
 
-  {/* Star */}
+  <!-- Star -->
   <path
-    d="M32 16L34.8 21.8L41 22.7L36.5 27L37.6 33L32 30.1L26.4 33L27.5 27L23 22.7L29.2 21.8L32 16Z"
-    fill="#0F9D8C"
-  />
-
-  {/* Ribbon left */}
-  <path
-    d="M22 39L18 57L32 49L28 39H22Z"
-    fill="#14B8A6"
-  />
-
-  {/* Ribbon right */}
-  <path
-    d="M42 39L46 57L32 49L36 39H42Z"
-    fill="#0F766E"
+    d="M32 16
+       L34.4 21
+       L40 21.8
+       L36 25.6
+       L37 31
+       L32 28.3
+       L27 31
+       L28 25.6
+       L24 21.8
+       L29.6 21
+       Z"
+    fill="#0F8E82"
   />
 </svg>
     
