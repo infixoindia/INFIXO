@@ -200,11 +200,11 @@
 .workingHoursBadge{
   display:inline-flex;
   align-items:center;
-  gap:12px;
+  gap:8px;
 
-  padding:12px 22px;
+  padding:8px 16px;
 
-  border-radius:18px;
+  border-radius:15px;
 
   background:linear-gradient(
     180deg,
@@ -224,13 +224,13 @@
 }
 
 .workingHoursIcon{
-  width:32px;
-  height:32px;
+  width:24px;
+  height:24px;
   color:#19B54A;
 }
 
 .workingHoursText{
   color:#19B54A;
-  font-size:18px;
+  font-size:15px;
   font-weight:700;
 }
