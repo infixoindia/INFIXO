@@ -200,42 +200,36 @@
 .workingHoursBadge{
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
 
-  padding:10px 18px;
+  padding:12px 22px;
 
   border-radius:18px;
 
   background:linear-gradient(
     180deg,
-    #F7FFF8 0%,
-    #EAFBEA 100%
+    #F3FFF6 0%,
+    #D8F8DE 18%,
+    #B8F0C1 100%
   );
 
-  border:1px solid #CDEFCF;
+  border:1.5px solid #86D99A;
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.95),
-    0 3px 8px rgba(46,180,70,.12);
-
-  color:#10B63C;
-
-  font-size:15px;
-  font-weight:700;
-
-  width:fit-content;
+    inset 0 2px 3px rgba(255,255,255,.95),
+    inset 0 -2px 2px rgba(0,0,0,.04),
+    0 6px 14px rgba(53,173,86,.22);
 }
 
 .workingHoursIcon{
-  width:22px;
-  height:22px;
-  color:#10B63C;
+  width:34px;
+  height:34px;
+  color:#16B64F;
   flex-shrink:0;
 }
 
 .workingHoursText{
-  color:#10B63C;
+  color:#11A947;
+  font-size:18px;
   font-weight:700;
-  font-size:15px;
-  white-space:nowrap;
 }
