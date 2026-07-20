@@ -161,9 +161,9 @@
 .experienceBadge{
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:7px;
 
-  padding:10px 14px;
+  padding:7px 11px;
 
   border-radius:16px;
 
@@ -176,9 +176,9 @@
 
   color:#064E52;
 
-  font-size:13px;
+  font-size:11px;
   font-weight:700;
-  line-height:1.25;
+  line-height:1.15;
   width:fit-content;
 }
 
@@ -186,8 +186,8 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  width:26px;
-  height:26px;
+  width:22px;
+  height:22px;
   flex-shrink:0;
 }
 
