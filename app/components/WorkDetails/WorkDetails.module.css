@@ -86,14 +86,16 @@
 
   border-radius:14px;
 
-  background:linear-gradient(180deg,#FFFDFB 0%,#FFF2E6 100%);
-  border:1px solid #FFD6B8;
+  /* Only colors changed */
+  background:#FFF8F1;
+  border:1px solid #F0D4B6;
 
   box-shadow:
-    0 4px 10px rgba(253,121,1,.18),
-    inset 0 1px 1px rgba(255,255,255,.9);
+    0 3px 8px rgba(0,0,0,.06),
+    inset 0 1px 1px rgba(255,255,255,.95);
 
-  color:#FD7901;
+  color:#F97316;
+
   font-size:14px;
   font-weight:700;
 }
