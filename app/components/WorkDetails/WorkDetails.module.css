@@ -208,28 +208,29 @@
 
   background:linear-gradient(
     180deg,
-    #F3FFF6 0%,
-    #D8F8DE 18%,
-    #B8F0C1 100%
+    #F9FFF9 0%,
+    #EEFCEE 35%,
+    #E3F8E5 100%
   );
 
-  border:1.5px solid #86D99A;
+  border:1px solid #CBEFCF;
 
   box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.95),
-    inset 0 -2px 2px rgba(0,0,0,.04),
-    0 6px 14px rgba(53,173,86,.22);
+    inset 0 2px 2px rgba(255,255,255,.95),
+    inset 0 -1px 1px rgba(255,255,255,.4),
+    0 3px 8px rgba(63,181,84,.12);
+
+  color:#19B54A;
 }
 
 .workingHoursIcon{
-  width:34px;
-  height:34px;
-  color:#16B64F;
-  flex-shrink:0;
+  width:32px;
+  height:32px;
+  color:#19B54A;
 }
 
 .workingHoursText{
-  color:#11A947;
+  color:#19B54A;
   font-size:18px;
   font-weight:700;
 }
