@@ -216,9 +216,15 @@ export default function WorkDetails() {
 </div>
 
         <div className={styles.row}>
-          <div className={styles.label}>Service Area</div>
-          <div className={styles.value}>Indore</div>
-        </div>
+  <div className={styles.label}>Service Area</div>
+
+  <div className={styles.value}>
+    <div className={styles.serviceAreaBadge}>
+      <span>📍</span>
+      <span>Indore</span>
+    </div>
+  </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Why Choose Me</div>
