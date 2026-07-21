@@ -158,7 +158,7 @@ export default function WorkDetails() {
 
       <div className={styles.dayBadge}>
         ☀️
-        <span>Day Only</span>
+        <span>Day</span>
       </div>
 
       <div className={styles.nightBadge}>
