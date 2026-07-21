@@ -271,13 +271,13 @@
 
   border-radius:16px;
 
-  background:linear-gradient(
-    180deg,
-    #5F82B2 0%,
-    #476A99 55%,
-    #355885 100%
-  );
-
+background: linear-gradient(
+ 180deg,
+ #6D90BE 0%,
+ #4E73A5 55%,
+ #3A5E90 100%
+);
+  
   border:1px solid #7E9CC5;
 
   box-shadow:
