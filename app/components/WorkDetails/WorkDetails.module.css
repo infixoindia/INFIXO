@@ -339,3 +339,46 @@ background: linear-gradient(
   display:block;
   flex-shrink:0;
 }
+
+.whyChooseGrid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+
+  width:100%;
+}
+
+.whyBadge{
+  flex:0 0 calc(50% - 5px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:9px 10px;
+
+  border-radius:16px;
+
+  background:linear-gradient(
+    180deg,
+    #FFF9F2 0%,
+    #FFECD8 100%
+  );
+
+  border:1px solid #FFD3A5;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.45),
+    0 4px 10px rgba(209,115,0,.14);
+
+  color:#B45309;
+
+  font-size:12px;
+  font-weight:700;
+
+  line-height:1.2;
+
+  text-align:center;
+
+  min-height:44px;
+}
