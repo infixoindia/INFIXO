@@ -169,7 +169,7 @@ export default function WorkDetails() {
     </radialGradient>
   </defs>
 
-  <!-- Rays -->
+  {/* Rays */}
   <g stroke="#F5A300" strokeWidth="2" strokeLinecap="round">
     <line x1="12" y1="2"  x2="12" y2="5"/>
     <line x1="12" y1="19" x2="12" y2="22"/>
@@ -181,7 +181,7 @@ export default function WorkDetails() {
     <line x1="4.5" y1="19.5" x2="6.8" y2="17.2"/>
   </g>
 
-  <!-- Sun -->
+  {/* Sun */}
   <circle cx="12" cy="12" r="5" fill="url(#sunGradient)"/>
 </svg>
         <span>Day</span>
