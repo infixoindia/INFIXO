@@ -220,7 +220,30 @@ export default function WorkDetails() {
 
   <div className={styles.value}>
     <div className={styles.serviceAreaBadge}>
-      <span>📍</span>
+      <svg
+  className={styles.locationIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="pinGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#8A5A32"/>
+      <stop offset="100%" stopColor="#5C3A21"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M12 2C8.7 2 6 4.7 6 8c0 4.4 6 12 6 12s6-7.6 6-12c0-3.3-2.7-6-6-6z"
+    fill="url(#pinGradient)"
+  />
+
+  <circle
+    cx="12"
+    cy="8"
+    r="2.5"
+    fill="#FFFFFF"
+  />
+</svg>
       <span>Indore</span>
     </div>
   </div>
