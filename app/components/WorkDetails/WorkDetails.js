@@ -157,7 +157,33 @@ export default function WorkDetails() {
     <div className={styles.shiftBadges}>
 
       <div className={styles.dayBadge}>
-        ☀️
+        <svg
+  className={styles.sunIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <radialGradient id="sunGradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stopColor="#FFD95C"/>
+      <stop offset="100%" stopColor="#F5A300"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Rays -->
+  <g stroke="#F5A300" strokeWidth="2" strokeLinecap="round">
+    <line x1="12" y1="2"  x2="12" y2="5"/>
+    <line x1="12" y1="19" x2="12" y2="22"/>
+    <line x1="2"  y1="12" x2="5"  y2="12"/>
+    <line x1="19" y1="12" x2="22" y2="12"/>
+    <line x1="4.5" y1="4.5" x2="6.8" y2="6.8"/>
+    <line x1="17.2" y1="17.2" x2="19.5" y2="19.5"/>
+    <line x1="17.2" y1="6.8" x2="19.5" y2="4.5"/>
+    <line x1="4.5" y1="19.5" x2="6.8" y2="17.2"/>
+  </g>
+
+  <!-- Sun -->
+  <circle cx="12" cy="12" r="5" fill="url(#sunGradient)"/>
+</svg>
         <span>Day</span>
       </div>
 
