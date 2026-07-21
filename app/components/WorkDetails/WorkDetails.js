@@ -256,24 +256,28 @@ export default function WorkDetails() {
     <div className={styles.whyChooseGrid}>
 
       <div className={styles.whyBadge}>
-        ⭐ Clean Work
-      </div>
+  ⭐ Clean & Professional Work
+</div>
 
-      <div className={styles.whyBadge}>
-        🎨 Premium Finish
-      </div>
+<div className={styles.whyBadge}>
+  🎨 Premium Paint Finish
+</div>
 
-      <div className={styles.whyBadge}>
-        ⏰ On-Time
-      </div>
+<div className={styles.whyBadge}>
+  ⏰ On Time Work
+</div>
 
-      <div className={styles.whyBadge}>
-        💰 Fair Pricing
-      </div>
+<div className={styles.whyBadge}>
+  💰 Reasonable Pricing
+</div>
 
-      <div className={styles.whyBadge}>
-        🛡️ Trusted Worker
-      </div>
+<div className={styles.whyBadge}>
+  🛡️ 8+ Years Trusted Experience
+</div>
+
+<div className={styles.whyBadge}>
+  👍 Customer Satisfaction
+</div>
 
     </div>
   </div>
