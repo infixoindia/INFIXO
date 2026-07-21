@@ -303,3 +303,32 @@ background: linear-gradient(
   display:block;
   flex-shrink:0;
 }
+
+.serviceAreaBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+
+  padding:7px 12px;
+
+  border-radius:16px;
+
+  background:linear-gradient(
+    180deg,
+    #FCF8FF 0%,
+    #F2E9FF 100%
+  );
+
+  border:1px solid #D8BDF8;
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.45),
+    0 4px 10px rgba(124,58,237,.16);
+
+  color:#7C3AED;
+
+  font-size:13px;
+  font-weight:700;
+
+  width:fit-content;
+}
