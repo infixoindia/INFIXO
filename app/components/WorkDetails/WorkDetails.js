@@ -162,7 +162,16 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.nightBadge}>
-        🌙
+        <svg
+  className={styles.moonIcon}
+  viewBox="0 0 24 24"
+  fill="none"
+>
+  <path
+    d="M15.5 3C13.2 4.2 11.7 6.7 11.7 9.7C11.7 14.1 15.3 17.7 19.7 17.7C20.3 17.7 20.9 17.6 21.4 17.5C20.1 20.1 17.4 22 14.2 22C9.7 22 6 18.3 6 13.8C6 9.7 9 6.2 12.9 5.5C13.7 5.3 14.6 5.2 15.5 3Z"
+    fill="white"
+  />
+</svg>
         <span>Night</span>
       </div>
 
