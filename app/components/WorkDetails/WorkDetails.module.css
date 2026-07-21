@@ -162,7 +162,7 @@
 .experienceBadge{
   display:inline-flex;
   align-items:center;
-  gap:7px;
+  gap:9px;
 
   padding:7px 11px;
 
@@ -200,6 +200,7 @@
 .workingHoursBadge{
   display:inline-flex;
   align-items:center;
+  line-height: 1;
   gap:8px;
 
   padding:8px 12px;
