@@ -151,9 +151,24 @@ export default function WorkDetails() {
 </div>
 
         <div className={styles.row}>
-          <div className={styles.label}>Working Shift</div>
-          <div className={styles.value}>Day Only</div>
-        </div>
+  <div className={styles.label}>Working Shift</div>
+
+  <div className={styles.value}>
+    <div className={styles.shiftBadges}>
+
+      <div className={styles.dayBadge}>
+        ☀️
+        <span>Day Only</span>
+      </div>
+
+      <div className={styles.nightBadge}>
+        🌙
+        <span>Night</span>
+      </div>
+
+    </div>
+  </div>
+</div>
 
         <div className={styles.row}>
           <div className={styles.label}>Service Area</div>
