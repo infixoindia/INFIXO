@@ -349,11 +349,10 @@ background: linear-gradient(
 }
 
 .whyBadge{
-  flex:0 0 calc(50% - 5px);
-
+  width:100%;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
 
   padding:9px 10px;
 
@@ -378,7 +377,7 @@ background: linear-gradient(
 
   line-height:1.2;
 
-  text-align:center;
+  text-align:left;
 
   min-height:44px;
 }
