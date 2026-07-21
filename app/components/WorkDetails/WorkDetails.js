@@ -162,14 +162,24 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.nightBadge}>
-        <svg
+<svg
   className={styles.moonIcon}
   viewBox="0 0 24 24"
   xmlns="http://www.w3.org/2000/svg"
 >
-  <path
+  <defs>
+    <mask id="moon-mask">
+      <rect width="24" height="24" fill="white"/>
+      <circle cx="15.5" cy="10" r="7.5" fill="black"/>
+    </mask>
+  </defs>
+
+  <circle
+    cx="11"
+    cy="12"
+    r="8"
     fill="#FFFFFF"
-    d="M16.8 3.2C14.5 3.7 12.5 5.3 11.5 7.5C10 10.8 11.1 14.8 14.2 16.9C16.4 18.4 19.1 18.8 21.5 18C20.2 20.5 17.6 22 14.7 22C10 22 6.2 18.2 6.2 13.5C6.2 8.9 9.8 5.1 14.4 5C15.2 5 16 4.5 16.8 3.2Z"
+    mask="url(#moon-mask)"
   />
 </svg>
         <span>Night</span>
