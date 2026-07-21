@@ -203,16 +203,15 @@
   line-height: 1;
   gap:9px;
 
-  padding:8px 12px;
+  padding:7px 11px;
 
-  border-radius:15px;
+  border-radius:16px;
 
   background:linear-gradient(
-    180deg,
-    #F9FFF9 0%,
-    #EEFCEE 35%,
-    #E3F8E5 100%
-  );
+180deg,
+#E4F8E7 0%,
+#D5F2DA 100%
+);
 
   border:1px solid #CBEFCF;
 
