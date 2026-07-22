@@ -249,20 +249,24 @@ export default function WorkDetails() {
   </div>
 </div>
 
-  <div className={styles.row}>
-  <div className={styles.label}>
-    Why Choose Me
+  <div className={styles.whyCard}>
+
+  <div className={styles.whyHeader}>
+
+    <div className={styles.whyTitle}>
+      Why Choose Me
+    </div>
+
+    <div className={styles.whySubtitle}>
+      Reasons to choose this worker
+    </div>
+
   </div>
 
-  <div className={styles.value}>      
-<div className={styles.whySection}>
+  <div className={styles.whyBody}>
 
-  <div className={styles.whySubtitle}>
-    Reasons to choose this worker
-  </div>
-
-  <div className={styles.whyList}>
-
+    <div className={styles.whyList}>
+      
     <div className={styles.whyBadge}>
       ⭐ Clean & Professional Work
     </div>
