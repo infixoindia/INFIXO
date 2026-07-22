@@ -266,76 +266,81 @@ export default function WorkDetails() {
   <div className={styles.whyBody}>
 
     <div className={styles.whyList}>
-      
+
       <div className={styles.whyBadge}>
 
-<svg
-  className={styles.whyIcon}
-  viewBox="0 0 24 24"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <defs>
-    <linearGradient id="goldStar" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#FFE58A"/>
-      <stop offset="45%" stopColor="#FFD54A"/>
-      <stop offset="100%" stopColor="#F5A300"/>
-    </linearGradient>
+        <svg
+          className={styles.whyIcon}
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient id="goldStar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#FFE58A"/>
+              <stop offset="45%" stopColor="#FFD54A"/>
+              <stop offset="100%" stopColor="#F5A300"/>
+            </linearGradient>
 
-    <filter id="starShadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow
-        dx="0"
-        dy="1.5"
-        stdDeviation="1.2"
-        floodColor="#C98A00"
-        floodOpacity="0.35"
-      />
-    </filter>
-  </defs>
+            <filter id="starShadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow
+                dx="0"
+                dy="1.5"
+                stdDeviation="1.2"
+                floodColor="#C98A00"
+                floodOpacity="0.35"
+              />
+            </filter>
+          </defs>
 
-  <path
-    d="M12 2.2
-       L14.8 8.1
-       L21.3 9
-       L16.5 13.2
-       L17.8 20
-       L12 16.8
-       L6.2 20
-       L7.5 13.2
-       L2.7 9
-       L9.2 8.1
-       Z"
-    fill="url(#goldStar)"
-    stroke="#D18A00"
-    strokeWidth="1"
-    filter="url(#starShadow)"
-  />
-</svg>
-      
-    <div className={styles.whyBadge}>
-      🎨 Premium Paint Finish
+          <path
+            d="M12 2.2
+               L14.8 8.1
+               L21.3 9
+               L16.5 13.2
+               L17.8 20
+               L12 16.8
+               L6.2 20
+               L7.5 13.2
+               L2.7 9
+               L9.2 8.1
+               Z"
+            fill="url(#goldStar)"
+            stroke="#D18A00"
+            strokeWidth="1"
+            filter="url(#starShadow)"
+          />
+        </svg>
+
+        <span>Clean & Professional Work</span>
+
+      </div>
+
+      <div className={styles.whyBadge}>
+        🎨 <span>Premium Paint Finish</span>
+      </div>
+
+      <div className={styles.whyBadge}>
+        ⏰ <span>On Time Work</span>
+      </div>
+
+      <div className={styles.whyBadge}>
+        💰 <span>Reasonable Pricing</span>
+      </div>
+
+      <div className={styles.whyBadge}>
+        🛡️ <span>8+ Years Trusted Experience</span>
+      </div>
+
+      <div className={styles.whyBadge}>
+        👍 <span>Customer Satisfaction</span>
+      </div>
+
     </div>
 
-    <div className={styles.whyBadge}>
-      ⏰ On Time Work
-    </div>
+  </div>
 
-    <div className={styles.whyBadge}>
-      💰 Reasonable Pricing
-    </div>
-
-    <div className={styles.whyBadge}>
-      🛡️ 8+ Years Trusted Experience
-    </div>
-
-    <div className={styles.whyBadge}>
-      👍 Customer Satisfaction
-    </div>
-
- </div>
 </div>
-</div>
-</div>
-      
+
     </section>
   );
-}
+            }
