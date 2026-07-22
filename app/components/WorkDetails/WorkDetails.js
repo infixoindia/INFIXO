@@ -267,9 +267,41 @@ export default function WorkDetails() {
 
     <div className={styles.whyList}>
       
-    <div className={styles.whyBadge}>
-      ⭐ Clean & Professional Work
-    </div>
+      <div className={styles.whyBadge}>
+
+<svg
+  className={styles.whyIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="cleanGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stopColor="#FFD95C"/>
+      <stop offset="100%" stopColor="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M12 2L14.8 8.2L21.5 9L16.5 13.5L18 20L12 16.5L6 20L7.5 13.5L2.5 9L9.2 8.2L12 2Z"
+    fill="url(#cleanGradient)"
+  />
+
+  <path
+    d="M8 12.5L10.5 15L16 9.5"
+    fill="none"
+    stroke="#FFFFFF"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />
+
+</svg>
+
+<span>
+  Clean & Professional Work
+</span>
+
+</div>
 
     <div className={styles.whyBadge}>
       🎨 Premium Paint Finish
