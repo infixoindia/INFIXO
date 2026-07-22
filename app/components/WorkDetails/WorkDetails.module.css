@@ -408,7 +408,12 @@ background: linear-gradient(
 
 .whyList{
   display:flex;
+  
   flex-direction:column;
+  
   gap:10px;
+  
   width:100%;
+
+  align-items:flex-start;
 }
