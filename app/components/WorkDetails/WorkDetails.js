@@ -343,8 +343,6 @@ export default function WorkDetails() {
 
 </div>
             
-</div>
-
 
     </section>
     );
