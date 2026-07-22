@@ -249,6 +249,8 @@ export default function WorkDetails() {
   </div>
 </div>
 
+      
+  <div className={styles.row}>
   <div className={styles.whyCard}>
 
   <div className={styles.whyHeader}>
@@ -342,5 +344,5 @@ export default function WorkDetails() {
 </div>
 
     </section>
-  );
-            }
+    );
+}
