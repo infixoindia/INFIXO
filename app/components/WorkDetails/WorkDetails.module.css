@@ -352,18 +352,18 @@ background: linear-gradient(
   border-radius:16px;
 
   background:linear-gradient(
-    180deg,
-    #FFF9F2 0%,
-    #FFECD8 100%
-  );
+  180deg,
+  #EEF5FF 0%,
+  #DCEBFF 100%
+);
 
-  border:1px solid #FFD3A5;
+border:1px solid #BFD6FF;
 
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.45),
-    0 4px 10px rgba(209,115,0,.14);
+box-shadow:
+  inset 0 1px 1px rgba(255,255,255,.6),
+  0 4px 10px rgba(0,45,151,.12);
 
-  color:#B45309;
+color:#002D97;
 
   font-size:12px;
   font-weight:700;
