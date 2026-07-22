@@ -249,41 +249,48 @@ export default function WorkDetails() {
   </div>
 </div>
 
-        <div className={styles.row}>
-  <div className={styles.label}>Why Choose Me</div>
+        
+<div className={styles.whySection}>
 
-  <div className={styles.value}>
-    <div className={styles.whyChooseGrid}>
-
-      <div className={styles.whyBadge}>
-  ⭐ Clean & Professional Work
-</div>
-
-<div className={styles.whyBadge}>
-  🎨 Premium Paint Finish
-</div>
-
-<div className={styles.whyBadge}>
-  ⏰ On Time Work
-</div>
-
-<div className={styles.whyBadge}>
-  💰 Reasonable Pricing
-</div>
-
-<div className={styles.whyBadge}>
-  🛡️ 8+ Years Trusted Experience
-</div>
-
-<div className={styles.whyBadge}>
-  👍 Customer Satisfaction
-</div>
-
-    </div>
+  <div className={styles.whyTitle}>
+    Why Choose Me
   </div>
+
+  <div className={styles.whySubtitle}>
+    Reasons to choose this worker
+  </div>
+
+  <div className={styles.whyList}>
+
+    <div className={styles.whyBadge}>
+      ⭐ Clean & Professional Work
+    </div>
+
+    <div className={styles.whyBadge}>
+      🎨 Premium Paint Finish
+    </div>
+
+    <div className={styles.whyBadge}>
+      ⏰ On Time Work
+    </div>
+
+    <div className={styles.whyBadge}>
+      💰 Reasonable Pricing
+    </div>
+
+    <div className={styles.whyBadge}>
+      🛡️ 8+ Years Trusted Experience
+    </div>
+
+    <div className={styles.whyBadge}>
+      👍 Customer Satisfaction
+    </div>
+
+  </div>
+
 </div>
 
-      </div>
+      
 
     </section>
   );
