@@ -286,11 +286,9 @@ export default function WorkDetails() {
       👍 Customer Satisfaction
     </div>
 
-  </div>
-
+ </div>
 </div>
-
-      
+</div>
 
     </section>
   );
