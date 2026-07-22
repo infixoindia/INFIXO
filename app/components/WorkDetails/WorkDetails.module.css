@@ -340,14 +340,6 @@ background: linear-gradient(
   flex-shrink:0;
 }
 
-.whyChooseGrid{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-
-  width:100%;
-}
-
 .whyBadge{
   width:fit-content;
   min-width:100%;
@@ -413,6 +405,6 @@ background: linear-gradient(
 .whyList{
   display:flex;
   flex-direction:column;
-
   gap:10px;
+  width:100%;
 }
