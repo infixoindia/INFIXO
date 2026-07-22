@@ -294,7 +294,8 @@ export default function WorkDetails() {
  </div>
 </div>
 </div>
-
+</div>
+      
     </section>
   );
 }
