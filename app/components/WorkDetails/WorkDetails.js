@@ -249,7 +249,12 @@ export default function WorkDetails() {
   </div>
 </div>
 
-        
+  <div className={styles.row}>
+  <div className={styles.label}>
+    Why Choose Me
+  </div>
+
+  <div className={styles.value}>      
 <div className={styles.whySection}>
 
   <div className={styles.whyTitle}>
