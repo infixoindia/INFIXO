@@ -417,3 +417,35 @@ background: linear-gradient(
 
   align-items:flex-start;
 }
+
+.whyCard{
+  background:#FFFFFF;
+
+  border-radius:24px;
+
+  overflow:hidden;
+
+  border:1px solid #ECEEF5;
+
+  box-shadow:
+    0 8px 22px rgba(0,0,0,.06),
+    0 2px 8px rgba(0,0,0,.04);
+
+  margin-top:4px;
+}
+
+.whyHeader{
+  padding:18px 18px 14px;
+
+  background:linear-gradient(
+    180deg,
+    #F8FBFF 0%,
+    #EEF5FF 100%
+  );
+
+  border-bottom:1px solid #E5E7EB;
+}
+
+.whyBody{
+  padding:16px;
+}
