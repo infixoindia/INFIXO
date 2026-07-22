@@ -275,26 +275,49 @@ export default function WorkDetails() {
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    <linearGradient id="cleanGradient" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#FFD95C"/>
-      <stop offset="100%" stopColor="#F59E0B"/>
+    <linearGradient id="goldStar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#FFE58A"/>
+      <stop offset="45%" stopColor="#FFD54A"/>
+      <stop offset="100%" stopColor="#F5A300"/>
     </linearGradient>
+
+    <filter id="starShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow
+        dx="0"
+        dy="1.5"
+        stdDeviation="1.2"
+        floodColor="#C98A00"
+        floodOpacity="0.35"
+      />
+    </filter>
   </defs>
 
   <path
-    d="M12 2L14.8 8.2L21.5 9L16.5 13.5L18 20L12 16.5L6 20L7.5 13.5L2.5 9L9.2 8.2L12 2Z"
-    fill="url(#cleanGradient)"
+    d="M12 2.2
+       L14.8 8.1
+       L21.3 9
+       L16.5 13.2
+       L17.8 20
+       L12 16.8
+       L6.2 20
+       L7.5 13.2
+       L2.7 9
+       L9.2 8.1
+       Z"
+    fill="url(#goldStar)"
+    stroke="#D18A00"
+    strokeWidth="1"
+    filter="url(#starShadow)"
   />
 
   <path
-    d="M8 12.5L10.5 15L16 9.5"
-    fill="none"
-    stroke="#FFFFFF"
-    strokeWidth="2"
+    d="M10 5.5
+       C10.8 4.8 12.2 4.8 13 5.5"
+    stroke="#FFF9D8"
+    strokeWidth="1.3"
     strokeLinecap="round"
-    strokeLinejoin="round"
+    opacity="0.9"
   />
-
 </svg>
 
 <span>
