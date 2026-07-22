@@ -250,7 +250,7 @@ export default function WorkDetails() {
 </div>
 
       
-  <div className={styles.row}>
+<div className={styles.row}>
   <div className={styles.whyCard}>
 
   <div className={styles.whyHeader}>
@@ -270,7 +270,6 @@ export default function WorkDetails() {
     <div className={styles.whyList}>
 
       <div className={styles.whyBadge}>
-
         <svg
           className={styles.whyIcon}
           viewBox="0 0 24 24"
@@ -341,9 +340,9 @@ export default function WorkDetails() {
 
   </div>
 
-</div>
-            
+  </div>
+  </div>
 
     </section>
     );
-}
+              }
