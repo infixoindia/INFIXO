@@ -257,10 +257,6 @@ export default function WorkDetails() {
   <div className={styles.value}>      
 <div className={styles.whySection}>
 
-  <div className={styles.whyTitle}>
-    Why Choose Me
-  </div>
-
   <div className={styles.whySubtitle}>
     Reasons to choose this worker
   </div>
