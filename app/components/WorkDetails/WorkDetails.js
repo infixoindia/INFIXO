@@ -309,23 +309,8 @@ export default function WorkDetails() {
     strokeWidth="1"
     filter="url(#starShadow)"
   />
-
-  <path
-    d="M10 5.5
-       C10.8 4.8 12.2 4.8 13 5.5"
-    stroke="#FFF9D8"
-    strokeWidth="1.3"
-    strokeLinecap="round"
-    opacity="0.9"
-  />
 </svg>
-
-<span>
-  Clean & Professional Work
-</span>
-
-</div>
-
+      
     <div className={styles.whyBadge}>
       🎨 Premium Paint Finish
     </div>
