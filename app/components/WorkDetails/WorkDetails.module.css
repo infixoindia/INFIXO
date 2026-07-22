@@ -389,21 +389,15 @@ background: linear-gradient(
 .whyTitle{
   font-size:16px;
   font-weight:700;
-  
-  margin-left:10px;
-
   color:#1F2937;
+  margin-bottom:8px;
 }
 
 .whySubtitle{
   font-size:12px;
   font-weight:500;
-  
-  margin-left:10px;
-
-  color:#6B7280;
-
-  margin-top:-8px;
+  color:#5FA7C8;
+  margin:0;
 }
 
 .whyList{
