@@ -338,7 +338,7 @@ export default function WorkDetails() {
     </linearGradient>
   </defs>
 
-  <!-- Bucket -->
+
   <path
     d="M6 8H18L17 18H7L6 8Z"
     fill="url(#bucketGold)"
@@ -346,13 +346,13 @@ export default function WorkDetails() {
     strokeWidth="1"
   />
 
-  <!-- Paint -->
+
   <path
     d="M6 8C8 6.8 10 7.6 12 8C14 8.4 16 7.4 18 8V10H6Z"
     fill="url(#paintBlue)"
   />
 
-  <!-- Handle -->
+  
   <path
     d="M8 8C8 5.8 9.8 4 12 4C14.2 4 16 5.8 16 8"
     fill="none"
@@ -361,7 +361,7 @@ export default function WorkDetails() {
     strokeLinecap="round"
   />
 
-  <!-- Brush -->
+  
   <g transform="translate(15 13) rotate(35)">
     <rect
       x="0"
