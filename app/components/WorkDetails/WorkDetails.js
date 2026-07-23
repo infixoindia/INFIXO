@@ -622,74 +622,53 @@ strokeWidth="1.3"
       </div>
 
       <div className={styles.whyBadge}>
-        <svg
-  className={styles.customerIcon}
-  viewBox="0 0 64 64"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <defs>
-    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".25"/>
-    </filter>
-  </defs>
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 64 64">
 
-  <path
-    d="M10 48 A22 22 0 0 1 54 48"
-    fill="none"
-    stroke="#DADFE8"
-    stroke-width="8"
-    stroke-linecap="round"
-  />
+  <path d="M14 46 A18 18 0 0 1 20.5 27"
+        stroke="#EF4444"
+        stroke-width="7"
+        fill="none"
+        stroke-linecap="round"/>
 
-  <path
-    d="M10 48 A22 22 0 0 1 19 29"
-    fill="none"
-    stroke="#F44336"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
+  <path d="M20.5 27 A18 18 0 0 1 31 18.3"
+        stroke="#F59E0B"
+        stroke-width="7"
+        fill="none"
+        stroke-linecap="round"/>
 
-  <path
-    d="M19 29 A22 22 0 0 1 29 20"
-    fill="none"
-    stroke="#FF9800"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
+  <path d="M31 18.3 A18 18 0 0 1 41.5 27"
+        stroke="#FACC15"
+        stroke-width="7"
+        fill="none"
+        stroke-linecap="round"/>
 
-  <path
-    d="M29 20 A22 22 0 0 1 39 20"
-    fill="none"
-    stroke="#FFD54F"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
-
-  <path
-    d="M39 20 A22 22 0 0 1 54 48"
-    fill="none"
-    stroke="#32C766"
-    stroke-width="6"
-    stroke-linecap="round"
-  />
+  <path d="M41.5 27 A18 18 0 0 1 50 46"
+        stroke="#22C55E"
+        stroke-width="7"
+        fill="none"
+        stroke-linecap="round"/>
 
   <line
-    x1="32"
-    y1="48"
-    x2="46"
-    y2="33"
-    stroke="#1B355F"
-    stroke-width="3.5"
-    stroke-linecap="round"
-    filter="url(#shadow)"
-  />
+      x1="32"
+      y1="46"
+      x2="46"
+      y2="25"
+      stroke="#1E3A8A"
+      stroke-width="4"
+      stroke-linecap="round"/>
 
   <circle
-    cx="32"
-    cy="48"
-    r="4"
-    fill="#1B355F"
-  />
+      cx="32"
+      cy="46"
+      r="3.8"
+      fill="#1E3A8A"/>
+
+  <circle
+      cx="32"
+      cy="46"
+      r="1.5"
+      fill="#ffffff"/>
+
 </svg>
           
           <span>Customer Satisfaction</span>
