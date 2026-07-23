@@ -316,76 +316,55 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.whyBadge}>
-        <svg
-  className={styles.whyIcon}
-  viewBox="0 0 64 64"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <defs>
-    <linearGradient id="bucketBody" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#FFD55A"/>
-      <stop offset="100%" stopColor="#F5A300"/>
-    </linearGradient>
+  <svg
+    className={styles.whyIcon}
+    viewBox="0 0 64 64"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="bucketBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#FFFFFF"/>
+        <stop offset="100%" stopColor="#E4E9F2"/>
+      </linearGradient>
+      <linearGradient id="bucketRim" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#D6DEEC"/>
+        <stop offset="100%" stopColor="#AEBBD4"/>
+      </linearGradient>
+      <linearGradient id="paintFill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#3E6EE0"/>
+        <stop offset="100%" stopColor="#002D97"/>
+      </linearGradient>
+      <linearGradient id="brushHandle" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#B98455"/>
+        <stop offset="100%" stopColor="#8A5E34"/>
+      </linearGradient>
+    </defs>
 
-    <linearGradient id="paintTop" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#7ED8FF"/>
-      <stop offset="100%" stopColor="#38AFFF"/>
-    </linearGradient>
+    {/* handle */}
+    <path d="M21 23 Q32 6 43 23" fill="none" stroke="#9AACC9" strokeWidth="3" strokeLinecap="round"/>
 
-    <linearGradient id="brushHandle" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#8B5A2B"/>
-      <stop offset="100%" stopColor="#5A3718"/>
-    </linearGradient>
-  </defs>
+    {/* bucket body */}
+    <path d="M17 24 L47 24 L44 47 Q44 51 40 51 L24 51 Q20 51 20 47 Z"
+          fill="url(#bucketBody)" stroke="#B7C3DA" strokeWidth="1.5"/>
 
-  <path
-    d="M22 18 C22 10 42 10 42 18"
-    fill="none"
-    stroke="#6A4523"
-    strokeWidth="5"
-    strokeLinecap="round"
-  />
+    {/* rim */}
+    <ellipse cx="32" cy="24" rx="15.5" ry="3.4" fill="url(#bucketRim)" stroke="#9AACC9" strokeWidth="1"/>
 
-  <path
-    d="M18 18 H46 L42 48 H22 Z"
-    fill="url(#bucketBody)"
-    stroke="#D88900"
-    strokeWidth="2"
-  />
+    {/* paint inside */}
+    <ellipse cx="32" cy="24.2" rx="11.5" ry="2.2" fill="url(#paintFill)"/>
+    <ellipse cx="27" cy="23.6" rx="3.5" ry="0.9" fill="#7CA0F5" opacity="0.8"/>
 
-  <path
-    d="M18 18 H46 C43 24 37 22 33 20 C29 18 24 19 18 18"
-    fill="url(#paintTop)"
-  />
+    {/* brush handle, leaning diagonally out of the bucket */}
+    <rect x="-3" y="0" width="6" height="30" rx="3"
+          fill="url(#brushHandle)"
+          transform="translate(41,18) rotate(-38)"/>
 
-  <rect
-    x="39"
-    y="30"
-    width="6"
-    height="22"
-    rx="2"
-    transform="rotate(35 39 30)"
-    fill="url(#brushHandle)"
-  />
-
-  <rect
-    x="35"
-    y="24"
-    width="6"
-    height="8"
-    rx="1"
-    transform="rotate(35 35 24)"
-    fill="#D9D9D9"
-  />
-
-  <path
-    d="M30 20 L35 25 L28 30 L24 26 Z"
-    fill="#19B7A4"
-  />
-</svg>
-      
-       <span>Premium Paint Finish</span>
-      </div>
+    {/* wet dipped brush tip, resting in the paint */}
+    <path d="M34 20 Q31 16 35 12 Q40 10 41 15 Q41 20 37 22 Z" fill="url(#paintFill)"/>
+    <path d="M35 18 Q34 15 36.5 13.5" fill="none" stroke="#7CA0F5" strokeWidth="1.2" strokeLinecap="round" opacity="0.8"/>
+  </svg>
+  <span>Premium Paint Finish</span>
+</div>
 
       <div className={styles.whyBadge}>
         ⏰ <span>On Time Work</span>
