@@ -622,7 +622,77 @@ strokeWidth="1.3"
       </div>
 
       <div className={styles.whyBadge}>
-        👍 <span>Customer Satisfaction</span>
+        <svg
+  className={styles.customerIcon}
+  viewBox="0 0 64 64"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".25"/>
+    </filter>
+  </defs>
+
+  <path
+    d="M10 48 A22 22 0 0 1 54 48"
+    fill="none"
+    stroke="#DADFE8"
+    stroke-width="8"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M10 48 A22 22 0 0 1 19 29"
+    fill="none"
+    stroke="#F44336"
+    stroke-width="6"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M19 29 A22 22 0 0 1 29 20"
+    fill="none"
+    stroke="#FF9800"
+    stroke-width="6"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M29 20 A22 22 0 0 1 39 20"
+    fill="none"
+    stroke="#FFD54F"
+    stroke-width="6"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M39 20 A22 22 0 0 1 54 48"
+    fill="none"
+    stroke="#32C766"
+    stroke-width="6"
+    stroke-linecap="round"
+  />
+
+  <line
+    x1="32"
+    y1="48"
+    x2="46"
+    y2="33"
+    stroke="#1B355F"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    filter="url(#shadow)"
+  />
+
+  <circle
+    cx="32"
+    cy="48"
+    r="4"
+    fill="#1B355F"
+  />
+</svg>
+          
+          <span>Customer Satisfaction</span>
       </div>
 
     </div> 
