@@ -622,52 +622,46 @@ strokeWidth="1.3"
       </div>
 
       <div className={styles.whyBadge}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 64 64">
+        <svg width="36" height="22" viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
 
-  <path d="M14 46 A18 18 0 0 1 20.5 27"
-        stroke="#EF4444"
-        stroke-width="7"
-        fill="none"
-        stroke-linecap="round"/>
+<path d="M12 36 A24 24 0 0 1 24 15"
+stroke="#F44336"
+stroke-width="8"
+stroke-linecap="round"
+fill="none"/>
 
-  <path d="M20.5 27 A18 18 0 0 1 31 18.3"
-        stroke="#F59E0B"
-        stroke-width="7"
-        fill="none"
-        stroke-linecap="round"/>
+<path d="M24 15 A24 24 0 0 1 36 10"
+stroke="#FF9800"
+stroke-width="8"
+stroke-linecap="round"
+fill="none"/>
 
-  <path d="M31 18.3 A18 18 0 0 1 41.5 27"
-        stroke="#FACC15"
-        stroke-width="7"
-        fill="none"
-        stroke-linecap="round"/>
+<path d="M36 10 A24 24 0 0 1 48 15"
+stroke="#FFC107"
+stroke-width="8"
+stroke-linecap="round"
+fill="none"/>
 
-  <path d="M41.5 27 A18 18 0 0 1 50 46"
-        stroke="#22C55E"
-        stroke-width="7"
-        fill="none"
-        stroke-linecap="round"/>
+<path d="M48 15 A24 24 0 0 1 60 36"
+stroke="#22C55E"
+stroke-width="8"
+stroke-linecap="round"
+fill="none"/>
 
-  <line
-      x1="32"
-      y1="46"
-      x2="46"
-      y2="25"
-      stroke="#1E3A8A"
-      stroke-width="4"
-      stroke-linecap="round"/>
+<line
+x1="36"
+y1="36"
+x2="53"
+y2="18"
+stroke="#23408E"
+stroke-width="4"
+stroke-linecap="round"/>
 
-  <circle
-      cx="32"
-      cy="46"
-      r="3.8"
-      fill="#1E3A8A"/>
-
-  <circle
-      cx="32"
-      cy="46"
-      r="1.5"
-      fill="#ffffff"/>
+<circle
+cx="36"
+cy="36"
+r="3.5"
+fill="#23408E"/>
 
 </svg>
           
