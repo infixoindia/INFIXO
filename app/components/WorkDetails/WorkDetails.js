@@ -552,7 +552,61 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.whyBadge}>
-        🛡️ <span>8+ Years Trusted Experience</span>
+      <svg className={styles.whyIcon} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shieldBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#DCE7EF"/>
+      <stop offset="100%" stopColor="#8FA7B8"/>
+    </linearGradient>
+
+    <linearGradient id="shieldInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#F6FBFF"/>
+      <stop offset="100%" stopColor="#C7DAE6"/>
+    </linearGradient>
+
+    <linearGradient id="goldStar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#FFE78A"/>
+      <stop offset="100%" stopColor="#F5B300"/>
+    </linearGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000" floodOpacity="0.20"/>
+    </filter>
+  </defs>
+
+  <g fill="url(#goldStar)">
+    <path d="M32 5 L33.3 8.2 L36.8 8.5 L34.2 10.7 L35 14 L32 12.2 L29 14 L29.8 10.7 L27.2 8.5 L30.7 8.2 Z"/>
+    <path d="M12 20 L13 22.4 L15.6 22.6 L13.7 24.3 L14.3 26.8 L12 25.5 L9.7 26.8 L10.3 24.3 L8.4 22.6 L11 22.4 Z"/>
+    <path d="M52 20 L53 22.4 L55.6 22.6 L53.7 24.3 L54.3 26.8 L52 25.5 L49.7 26.8 L50.3 24.3 L48.4 22.6 L51 22.4 Z"/>
+    <path d="M17 49 L18 51.4 L20.6 51.6 L18.7 53.3 L19.3 55.8 L17 54.5 L14.7 55.8 L15.3 53.3 L13.4 51.6 L16 51.4 Z"/>
+    <path d="M47 49 L48 51.4 L50.6 51.6 L48.7 53.3 L49.3 55.8 L47 54.5 L44.7 55.8 L45.3 53.3 L43.4 51.6 L46 51.4 Z"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <path
+      d="M32 10 L48 15 V30 C48 41 40 50 32 55 C24 50 16 41 16 30 V15 Z"
+      fill="url(#shieldBody)"
+      stroke="#6E8799"
+      strokeWidth="2"
+    />
+
+    <path
+      d="M32 16 L43 19 V30 C43 38 37 45 32 48 C27 45 21 38 21 30 V19 Z"
+      fill="url(#shieldInner)"
+    />
+
+    <path
+      d="M25 31 L30 36 L39 25"
+      fill="none"
+      stroke="#18A84D"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </g>
+</svg>
+      
+         <span>8+ Years Trusted Experience</span>
       </div>
 
       <div className={styles.whyBadge}>
