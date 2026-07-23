@@ -367,7 +367,48 @@ export default function WorkDetails() {
 </div>
 
       <div className={styles.whyBadge}>
-        ⏰ <span>On Time Work</span>
+
+           <svg
+  className={styles.whyIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="clockGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#4FD1C5"/>
+      <stop offset="100%" stopColor="#0F8E82"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="11" cy="12" r="7" fill="url(#clockGrad)" />
+  <circle cx="11" cy="12" r="5" fill="#FFFFFF"/>
+
+  <path
+    d="M11 12V9"
+    stroke="#0F8E82"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  />
+
+  <path
+    d="M11 12L13.3 13.5"
+    stroke="#0F8E82"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+  />
+
+  <circle cx="18" cy="18" r="3" fill="#16A34A"/>
+
+  <path
+    d="M16.9 18L17.7 18.8L19.2 17.2"
+    stroke="#FFFFFF"
+    strokeWidth="1.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />
+</svg>
+      
+         <span>On Time Work</span>
       </div>
 
       <div className={styles.whyBadge}>
