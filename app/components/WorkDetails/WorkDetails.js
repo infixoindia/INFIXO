@@ -437,7 +437,88 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.whyBadge}>
-        💰 <span>Reasonable Pricing</span>
+        <svg
+  className={styles.whyIcon}
+  viewBox="0 0 64 64"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="walletBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#D79A42"/>
+      <stop offset="100%" stopColor="#8C5A22"/>
+    </linearGradient>
+
+    <linearGradient id="walletTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#F3C36B"/>
+      <stop offset="100%" stopColor="#C78429"/>
+    </linearGradient>
+
+    <radialGradient id="coinFill" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stopColor="#FFE58A"/>
+      <stop offset="100%" stopColor="#F5B300"/>
+    </radialGradient>
+
+    <filter id="walletShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow
+        dx="0"
+        dy="2"
+        stdDeviation="2"
+        floodColor="#6B4315"
+        floodOpacity="0.28"
+      />
+    </filter>
+  </defs>
+
+  <g filter="url(#walletShadow)">
+    <rect
+      x="12"
+      y="20"
+      width="40"
+      height="28"
+      rx="6"
+      fill="url(#walletBody)"
+    />
+
+    <rect
+      x="12"
+      y="16"
+      width="40"
+      height="10"
+      rx="5"
+      fill="url(#walletTop)"
+    />
+
+    <circle
+      cx="44"
+      cy="34"
+      r="2"
+      fill="#6B4315"
+    />
+  </g>
+
+  <circle
+    cx="22"
+    cy="44"
+    r="10"
+    fill="url(#coinFill)"
+    stroke="#D18A00"
+    strokeWidth="2"
+  />
+
+  <text
+    x="22"
+    y="48"
+    textAnchor="middle"
+    fontSize="12"
+    fontWeight="700"
+    fill="#8C5A22"
+    fontFamily="Arial"
+  >
+    ₹
+  </text>
+</svg>
+      
+      <span>Reasonable Pricing</span>
       </div>
 
       <div className={styles.whyBadge}>
