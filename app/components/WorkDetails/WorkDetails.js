@@ -316,7 +316,59 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.whyBadge}>
-        🎨 <span>Premium Paint Finish</span>
+        <svg
+  className={styles.whyIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="brushGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#FFD76A"/>
+      <stop offset="100%" stopColor="#F5A300"/>
+    </linearGradient>
+
+    <linearGradient id="brushHandle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#8A5A32"/>
+      <stop offset="100%" stopColor="#5C3A21"/>
+    </linearGradient>
+  </defs>
+
+  
+  <path
+    d="M5 8C8 4 15 4 19 8L17 10C14 8 10 8 7 10Z"
+    fill="url(#brushGold)"
+  />
+
+  
+  <rect
+    x="13.5"
+    y="10"
+    width="2.8"
+    height="9"
+    rx="1.2"
+    transform="rotate(45 15 15)"
+    fill="url(#brushHandle)"
+  />
+
+
+  <rect
+    x="11.8"
+    y="8.5"
+    width="2"
+    height="4"
+    rx=".5"
+    transform="rotate(45 12.8 10.5)"
+    fill="#C7CDD8"
+  />
+
+  
+  <path
+    d="M8.8 11.5L11 9.3L12.5 10.8L10.3 13Z"
+    fill="#0F8E82"
+  />
+</svg>
+      
+       <span>Premium Paint Finish</span>
       </div>
 
       <div className={styles.whyBadge}>
