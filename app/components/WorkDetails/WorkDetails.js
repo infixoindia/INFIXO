@@ -437,25 +437,25 @@ export default function WorkDetails() {
       </div>
 
       <div className={styles.whyBadge}>
-        <svg
+      <svg
   className={styles.whyIcon}
   viewBox="0 0 64 64"
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    <linearGradient id="walletBody" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#D79A42"/>
-      <stop offset="100%" stopColor="#8C5A22"/>
+    <linearGradient id="walletMain" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#B67A45"/>
+      <stop offset="100%" stopColor="#70411C"/>
     </linearGradient>
 
-    <linearGradient id="walletTop" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#F3C36B"/>
-      <stop offset="100%" stopColor="#C78429"/>
+    <linearGradient id="walletFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#D69B5A"/>
+      <stop offset="100%" stopColor="#8E5629"/>
     </linearGradient>
 
     <radialGradient id="coinFill" cx="50%" cy="50%" r="60%">
-      <stop offset="0%" stopColor="#FFE58A"/>
-      <stop offset="100%" stopColor="#F5B300"/>
+      <stop offset="0%" stopColor="#FFF3B2"/>
+      <stop offset="100%" stopColor="#F4B400"/>
     </radialGradient>
 
     <filter id="walletShadow" x="-50%" y="-50%" width="200%" height="200%">
@@ -463,56 +463,86 @@ export default function WorkDetails() {
         dx="0"
         dy="2"
         stdDeviation="2"
-        floodColor="#6B4315"
+        floodColor="#3B1F0D"
         floodOpacity="0.28"
       />
     </filter>
   </defs>
 
   <g filter="url(#walletShadow)">
+
     <rect
-      x="12"
-      y="20"
-      width="40"
+      x="10"
+      y="18"
+      width="42"
       height="28"
       rx="6"
-      fill="url(#walletBody)"
+      fill="url(#walletMain)"
     />
 
     <rect
-      x="12"
-      y="16"
-      width="40"
-      height="10"
-      rx="5"
-      fill="url(#walletTop)"
+      x="28"
+      y="18"
+      width="24"
+      height="28"
+      rx="6"
+      fill="url(#walletFront)"
+    />
+
+    <line
+      x1="28"
+      y1="18"
+      x2="28"
+      y2="46"
+      stroke="#5B3214"
+      strokeWidth="2"
+    />
+
+    <line
+      x1="32"
+      y1="25"
+      x2="48"
+      y2="25"
+      stroke="#F3C68A"
+      strokeWidth="1.4"
+      opacity="0.55"
+    />
+
+    <line
+      x1="32"
+      y1="31"
+      x2="48"
+      y2="31"
+      stroke="#F3C68A"
+      strokeWidth="1.4"
+      opacity="0.55"
     />
 
     <circle
-      cx="44"
-      cy="34"
-      r="2"
-      fill="#6B4315"
+      cx="46"
+      cy="38"
+      r="1.8"
+      fill="#F6D78A"
     />
   </g>
 
   <circle
-    cx="22"
-    cy="44"
+    cx="18"
+    cy="45"
     r="10"
     fill="url(#coinFill)"
-    stroke="#D18A00"
+    stroke="#D08A00"
     strokeWidth="2"
   />
 
   <text
-    x="22"
-    y="48"
+    x="18"
+    y="49"
     textAnchor="middle"
-    fontSize="12"
-    fontWeight="700"
-    fill="#8C5A22"
     fontFamily="Arial"
+    fontWeight="700"
+    fontSize="12"
+    fill="#7A4B14"
   >
     ₹
   </text>
