@@ -370,41 +370,66 @@ export default function WorkDetails() {
 
            <svg
   className={styles.whyIcon}
-  viewBox="0 0 24 24"
+  viewBox="0 0 64 64"
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    <linearGradient id="clockGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#4FD1C5"/>
-      <stop offset="100%" stopColor="#0F8E82"/>
+    <linearGradient id="clockRing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#38C8C2"/>
+      <stop offset="100%" stopColor="#168F89"/>
     </linearGradient>
+
+    <filter id="clockShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow
+        dx="0"
+        dy="2"
+        stdDeviation="2"
+        floodColor="#0A6D66"
+        floodOpacity="0.28"
+      />
+    </filter>
   </defs>
 
-  <circle cx="11" cy="12" r="7" fill="url(#clockGrad)" />
-  <circle cx="11" cy="12" r="5" fill="#FFFFFF"/>
+  <circle
+    cx="32"
+    cy="32"
+    r="22"
+    fill="url(#clockRing)"
+    filter="url(#clockShadow)"
+  />
 
-  <path
-    d="M11 12V9"
-    stroke="#0F8E82"
-    strokeWidth="1.6"
+  <circle
+    cx="32"
+    cy="32"
+    r="16"
+    fill="#FFFFFF"
+  />
+
+  <circle
+    cx="32"
+    cy="32"
+    r="2"
+    fill="#168F89"
+  />
+
+  <line
+    x1="32"
+    y1="32"
+    x2="32"
+    y2="22"
+    stroke="#168F89"
+    strokeWidth="3"
     strokeLinecap="round"
   />
 
-  <path
-    d="M11 12L13.3 13.5"
-    stroke="#0F8E82"
-    strokeWidth="1.6"
+  <line
+    x1="32"
+    y1="32"
+    x2="40"
+    y2="37"
+    stroke="#168F89"
+    strokeWidth="3"
     strokeLinecap="round"
-  />
-
-  <circle cx="18" cy="18" r="3" fill="#16A34A"/>
-
-  <path
-    d="M16.9 18L17.7 18.8L19.2 17.2"
-    stroke="#FFFFFF"
-    strokeWidth="1.2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
   />
 </svg>
       
