@@ -318,72 +318,70 @@ export default function WorkDetails() {
       <div className={styles.whyBadge}>
         <svg
   className={styles.whyIcon}
-  viewBox="0 0 24 24"
+  viewBox="0 0 64 64"
   xmlns="http://www.w3.org/2000/svg"
 >
   <defs>
-    <linearGradient id="bucketGold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#FFE27A"/>
+    <linearGradient id="bucketBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#FFD55A"/>
       <stop offset="100%" stopColor="#F5A300"/>
     </linearGradient>
 
-    <linearGradient id="handleBrown" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#8A5A32"/>
-      <stop offset="100%" stopColor="#5C3A21"/>
+    <linearGradient id="paintTop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#7ED8FF"/>
+      <stop offset="100%" stopColor="#38AFFF"/>
     </linearGradient>
 
-    <linearGradient id="paintBlue" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stopColor="#4FC3F7"/>
-      <stop offset="100%" stopColor="#0288D1"/>
+    <linearGradient id="brushHandle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#8B5A2B"/>
+      <stop offset="100%" stopColor="#5A3718"/>
     </linearGradient>
   </defs>
 
-
   <path
-    d="M6 8H18L17 18H7L6 8Z"
-    fill="url(#bucketGold)"
-    stroke="#D18A00"
-    strokeWidth="1"
-  />
-
-
-  <path
-    d="M6 8C8 6.8 10 7.6 12 8C14 8.4 16 7.4 18 8V10H6Z"
-    fill="url(#paintBlue)"
-  />
-
-  
-  <path
-    d="M8 8C8 5.8 9.8 4 12 4C14.2 4 16 5.8 16 8"
+    d="M22 18 C22 10 42 10 42 18"
     fill="none"
-    stroke="url(#handleBrown)"
-    strokeWidth="1.8"
+    stroke="#6A4523"
+    strokeWidth="5"
     strokeLinecap="round"
   />
 
-  
-  <g transform="translate(15 13) rotate(35)">
-    <rect
-      x="0"
-      y="0"
-      width="2"
-      height="7"
-      rx="1"
-      fill="url(#handleBrown)"
-    />
-    <rect
-      x="-0.3"
-      y="-2"
-      width="2.6"
-      height="2"
-      rx="0.4"
-      fill="#C8CDD7"
-    />
-    <path
-      d="M0 -3L2 -3L1 -5Z"
-      fill="#0F8E82"
-    />
-  </g>
+  <path
+    d="M18 18 H46 L42 48 H22 Z"
+    fill="url(#bucketBody)"
+    stroke="#D88900"
+    strokeWidth="2"
+  />
+
+  <path
+    d="M18 18 H46 C43 24 37 22 33 20 C29 18 24 19 18 18"
+    fill="url(#paintTop)"
+  />
+
+  <rect
+    x="39"
+    y="30"
+    width="6"
+    height="22"
+    rx="2"
+    transform="rotate(35 39 30)"
+    fill="url(#brushHandle)"
+  />
+
+  <rect
+    x="35"
+    y="24"
+    width="6"
+    height="8"
+    rx="1"
+    transform="rotate(35 35 24)"
+    fill="#D9D9D9"
+  />
+
+  <path
+    d="M30 20 L35 25 L28 30 L24 26 Z"
+    fill="#19B7A4"
+  />
 </svg>
       
        <span>Premium Paint Finish</span>
