@@ -5,6 +5,8 @@ export default function WorkDetails() {
   return (
     <section className={styles.wrapper}>
 
+      <div className={styles.header}>
+    
     <Link href="/" className={styles.backLink}>
   <svg
     className={styles.backArrow}
@@ -22,8 +24,7 @@ export default function WorkDetails() {
 
   <span>Home</span>
 </Link>
-
-      <div className={styles.header}>
+        
         <h2>Work Details</h2>
         <p>Everything about the work.</p>
       </div>
