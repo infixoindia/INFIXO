@@ -78,6 +78,8 @@
 }
 
 .primaryBadge{
+  position: relative;
+  overflow: hidden;
   display:inline-flex;
   align-items:center;
   gap:8px;
@@ -99,8 +101,29 @@
   font-weight:700;
 }
 
+.primaryBadge::after{
+  content:'';
+  position:absolute;
+  top:-45%;
+  right:-8%;
+  width:55%;
+  height:150%;
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%);
+  pointer-events:none;
+}
+
 .primaryBadge span{
+  position:relative;
+  z-index:1;
   line-height:1;
+}
+
+.skillIcon{
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+  position:relative;
+  z-index:1;
 }
 
 .serviceChip{
