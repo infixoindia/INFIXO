@@ -481,21 +481,26 @@ color:#002D97;
   top:50%;
   transform:translateY(-50%);
 
-  display:inline-flex;
+  display:flex;
   align-items:center;
-  gap:6px;
+  justify-content:center;
 
-  color:#6B7280;
-  font-size:14px;
-  font-weight:600;
+  width:36px;
+  height:36px;
+
   text-decoration:none;
 }
 
-.backLink:hover{
-  color:#002D97;
+.backArrow{
+  width:24px;
+  height:24px;
+
+  color:#111827;
+
+  transition:.2s;
 }
 
-.backArrow{
-  width:18px;
-  height:18px;
+.backLink:hover .backArrow{
+  color:#F97316;
+  transform:translateX(-2px);
 }
