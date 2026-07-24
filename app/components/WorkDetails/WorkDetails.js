@@ -30,6 +30,8 @@ export default function WorkDetails() {
   </svg>
   <span>Painter</span>
 </div>
+</div>
+</div>
     
         <div className={styles.row}>
   <div className={styles.label}>Services</div>
