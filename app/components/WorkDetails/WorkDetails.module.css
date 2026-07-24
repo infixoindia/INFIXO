@@ -469,12 +469,16 @@ color:#002D97;
   padding:16px 16px 30px;
 }
 
+.backWrapper{
+  display:flex;
+  justify-content:flex-start;
+  margin:0 0 8px 12px;
+}
+
 .backLink{
   display:inline-flex;
   align-items:center;
   gap:6px;
-
-  margin:8px 0 6px 12px;
 
   color:#6B7280;
   font-size:14px;
