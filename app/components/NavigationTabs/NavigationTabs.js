@@ -6,7 +6,7 @@ export default function NavigationTabs() {
     <div className={styles.grid}>
 
       <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
-  ...
+  Work Details
 </Link>
 
       <button className={`${styles.card} ${styles.orange}`}>
