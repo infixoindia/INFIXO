@@ -25,6 +25,7 @@ export default function WorkDetails() {
 
   <span>Home</span>
 </Link>
+</div>   
         
         <h2>Work Details</h2>
         <p>Everything about the work.</p>
