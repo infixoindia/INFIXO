@@ -468,3 +468,22 @@ color:#002D97;
 .whyBody{
   padding:16px 16px 30px;
 }
+
+.backLink{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  margin:16px 0 12px;
+
+  color:#6B7280;
+  font-size:15px;
+  font-weight:600;
+
+  text-decoration:none;
+}
+
+.backArrow{
+  width:18px;
+  height:18px;
+}
