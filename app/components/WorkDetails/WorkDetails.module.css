@@ -450,6 +450,7 @@ color:#002D97;
     0 2px 8px rgba(0,0,0,.04);
 
   margin-top:4px;
+  margin-bottom:36px;
 }
 
 .whyHeader{
@@ -465,5 +466,5 @@ color:#002D97;
 }
 
 .whyBody{
-  padding:16px;
+  padding:16px 16px 30px;
 }
