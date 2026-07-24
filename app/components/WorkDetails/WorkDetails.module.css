@@ -86,12 +86,12 @@
 
   border-radius:14px;
 
-  background:#FFF7EE;
-  border:1px solid #E8C9A6;
-  
+  background:linear-gradient(180deg,#FFF9F5 0%,#FFF2E9 100%);
+  border:1px solid #F5C8A5;
+
   box-shadow:
-  0 3px 8px rgba(0,0,0,.06),
-  inset 0 1px 1px rgba(255,255,255,.95);
+    0 4px 10px rgba(249,115,22,.10),
+    inset 0 1px 0 rgba(255,255,255,.95);
 
   color:#F97316;
 
