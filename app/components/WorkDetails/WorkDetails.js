@@ -22,7 +22,6 @@ export default function WorkDetails() {
     />
   </svg>
 
-  <span>Home</span>
 </Link>
  
         
