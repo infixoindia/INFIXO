@@ -16,18 +16,43 @@ export default function WorkDetails() {
 
   <div className={styles.value}>
    <div className={styles.primaryBadge}>
-  <svg
-    className={styles.skillIcon}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M18.37 2.63L14 7l-1.59-1.59a2 2 0 0 0-2.82 0L8 7l9 9 1.59-1.59a2 2 0 0 0 0-2.82L17 10l4.37-4.37a2.12 2.12 0 1 0-3-3z"/>
-    <path d="M9 8c-2 3-4 3.5-7 4l8 10c2-1 2-2 2-3"/>
-  </svg>
+<svg
+  className={styles.skillIcon}
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M19.5 2.5L21.5 4.5L15.8 10.2L13.8 8.2L19.5 2.5Z"
+    fill="currentColor"
+  />
+
+  <path
+    d="M13.8 8.2L15.8 10.2L9.2 16.8L7.2 14.8L13.8 8.2Z"
+    fill="currentColor"
+  />
+
+  <rect
+    x="5.9"
+    y="15.4"
+    width="4.2"
+    height="2.4"
+    rx="0.5"
+    transform="rotate(-45 5.9 15.4)"
+    fill="currentColor"
+  />
+
+  <path
+    d="M2.3 21.7
+       L4.8 18.6
+       L7.7 21.5
+       L4.6 23.9
+       C4.2 24.2 3.7 24.2 3.3 23.8
+       L2.4 22.9
+       C2 22.5 2 22.1 2.3 21.7Z"
+    fill="currentColor"
+  />
+</svg>
   <span>Painter</span>
 </div>
 </div>
