@@ -7,6 +7,7 @@ export default function WorkDetails() {
 
       <div className={styles.header}>
     
+    <div className={styles.backWrapper}>
     <Link href="/" className={styles.backLink}>
   <svg
     className={styles.backArrow}
