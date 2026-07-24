@@ -7,7 +7,6 @@ export default function WorkDetails() {
 
       <div className={styles.header}>
     
-    <div className={styles.backWrapper}>
     <Link href="/" className={styles.backLink}>
   <svg
     className={styles.backArrow}
@@ -25,7 +24,7 @@ export default function WorkDetails() {
 
   <span>Home</span>
 </Link>
-</div>   
+ 
         
         <h2>Work Details</h2>
         <p>Everything about the work.</p>
