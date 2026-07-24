@@ -483,7 +483,12 @@ color:#002D97;
   text-decoration:none;
 }
 
+.backLink:hover{
+  color:#002D97;
+}
+
 .backArrow{
   width:18px;
   height:18px;
+  flex-shrink:0;
 }
