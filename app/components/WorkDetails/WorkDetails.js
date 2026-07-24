@@ -1,15 +1,15 @@
+import Link from "next/link";
 import styles from "./WorkDetails.module.css";
 
 export default function WorkDetails() {
   return (
     <section className={styles.wrapper}>
 
-    <a href="/" className={styles.backLink}>
+    <Link href="/" className={styles.backLink}>
   <svg
     className={styles.backArrow}
     viewBox="0 0 24 24"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
   >
     <path
       d="M15 5L8 12L15 19"
@@ -21,7 +21,7 @@ export default function WorkDetails() {
   </svg>
 
   <span>Home</span>
-</a>
+</Link>
 
       <div className={styles.header}>
         <h2>Work Details</h2>
