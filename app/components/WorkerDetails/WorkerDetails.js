@@ -99,9 +99,33 @@ export default function WorkerDetails() {
 </div>
 
 
-      {/* Infixo Verification */}
-      <div className={styles.card}>
-      </div>
+<div className={styles.verificationSection}>
+
+  <div className={styles.verificationHeader}>
+    <h3>Infixo Verification</h3>
+    <p>Verified details to build trust.</p>
+  </div>
+
+  <div className={styles.verificationBadges}>
+
+    <div className={styles.verifyBadge worker}>
+      <span>✓</span>
+      Worker Verified
+    </div>
+
+    <div className={styles.verifyBadge work}>
+      <span>✓</span>
+      Work Verified
+    </div>
+
+    <div className={styles.verifyBadge address}>
+      <span>✓</span>
+      Address Verified
+    </div>
+
+  </div>
+
+</div>
 
     </section>
   );
