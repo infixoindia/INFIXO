@@ -16,7 +16,7 @@ export default function WorkerDetails() {
     <p>Basic information about the worker</p>
   </div>
 
-  <div className={styles.detailsBody}>
+<div className={styles.detailsBody}>
 
   <div className={styles.detailRow}>
     <div className={styles.label}>Full Name</div>
@@ -53,6 +53,7 @@ export default function WorkerDetails() {
     </div>
   </div>
 
+</div>
 </div>
 
       {/* About Me */}
