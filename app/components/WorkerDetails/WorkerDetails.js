@@ -16,32 +16,37 @@ export default function WorkerDetails() {
     <p>Basic information about the worker</p>
   </div>
 
-  <div className={styles.detailsGrid}>
+  <div className={styles.detailsBody}>
 
-    <div className={styles.detailRow}>
+    <div className={styles.detaiRow}>
       <div className={styles.label}>Full Name</div>
-      <div className={styles.value}>Rahul Sharma</div>
-    </div>
+      <div className={styles.value}>
+  <span className={styles.detailText}>Rahul Sharma</span>
+</div>
 
     <div className={styles.detailRow}>
       <div className={styles.label}>Gender</div>
-      <div className={styles.value}>Male</div>
-    </div>
+      <div className={styles.value}>
+  <span className={styles.detailText}>Male</span>
+</div>
 
     <div className={styles.detailRow}>
       <div className={styles.label}>Age</div>
-      <div className={styles.value}>28 Years</div>
-    </div>
+      <div className={styles.value}>
+  <span className={styles.detailText}>28 Years</span>
+</div>
 
     <div className={styles.detailRow}>
       <div className={styles.label}>Address</div>
-      <div className={styles.value}>Indore, Madhya Pradesh</div>
-    </div>
+      <div className={styles.value}>
+  <span className={styles.detailText}>Indore, Madhya Pradesh</span>
+</div>
 
     <div className={styles.detailRow}>
       <div className={styles.label}>Languages</div>
-      <div className={styles.value}>Hindi, English</div>
-    </div>
+      <div className={styles.value}>
+  <span className={styles.detailText}>Hindi, English</span>
+</div>
 
   </div>
 
