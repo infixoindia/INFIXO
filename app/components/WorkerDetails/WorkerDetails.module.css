@@ -115,7 +115,7 @@
 }
 
 .detailsBody{
-  padding:18px;
+  padding:28px 18px;
   display:flex;
   flex-direction:column;
   gap:18px;
