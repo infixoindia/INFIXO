@@ -247,55 +247,52 @@
 }
 
 .verifyBadge{
-  display:flex;
-
+  display:inline-flex;
   align-items:center;
+  gap:14px;
 
-  width:fit-content;
+  min-width:260px;
+  max-width:320px;
+  width:auto;
 
-  margin:24px 28px 28px;
+  padding:12px 22px;
 
-  padding:8px 22px 8px 8px;
-
-  gap:16px;
-
-  background:#fff;
-
+  background:#FFFFFF;
   border-radius:999px;
 
   border:1px solid #EEF2F7;
 
   box-shadow:
-    8px 8px 18px rgba(0,0,0,.08),
-    -8px -8px 18px rgba(255,255,255,.95);
+    -6px -6px 12px rgba(255,255,255,.95),
+     8px 8px 18px rgba(15,23,42,.08);
 }
 
 .verifyIcon{
-  width:42px;
-
-  height:42px;
+  width:52px;
+  height:52px;
 
   border-radius:50%;
 
   background:#16A34A;
+  color:#FFFFFF;
 
   display:flex;
-
   align-items:center;
-
   justify-content:center;
 
-  color:#fff;
-
-  font-size:20px;
-
+  font-size:24px;
   font-weight:700;
+
+  flex-shrink:0;
+
+  box-shadow:
+    inset 2px 2px 4px rgba(255,255,255,.25),
+    inset -2px -2px 4px rgba(0,0,0,.08);
 }
 
 .verifyBadge span{
   color:#16A34A;
-
-  font-size:19px;
-
+  font-size:18px;
   font-weight:700;
-}
+  line-height:1;
+  }
