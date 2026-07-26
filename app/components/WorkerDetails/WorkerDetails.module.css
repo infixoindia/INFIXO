@@ -236,6 +236,7 @@
 .verifyList {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 14px;
 }
 
@@ -279,11 +280,29 @@
   line-height:1;
 }
 
-.green .verifyIcon { background: linear-gradient(135deg, #22C55E, #16A34A); box-shadow: 0 4px 10px rgba(22,163,74,0.35); }
+.green .verifyIcon {
+  background: linear-gradient(135deg, #22C55E, #16A34A);
+  box-shadow:
+    0 4px 10px rgba(22,163,74,0.35),
+    inset 0 -3px 5px rgba(0,0,0,0.28),
+    inset 0 2px 3px rgba(255,255,255,0.4);
+}
 .green span { color: #16A34A; }
 
-.blue .verifyIcon { background: linear-gradient(135deg, #3B82F6, #002D97); box-shadow: 0 4px 10px rgba(0,45,151,0.35); }
+.blue .verifyIcon {
+  background: linear-gradient(135deg, #3B82F6, #002D97);
+  box-shadow:
+    0 4px 10px rgba(0,45,151,0.35),
+    inset 0 -3px 5px rgba(0,0,0,0.28),
+    inset 0 2px 3px rgba(255,255,255,0.4);
+}
 .blue span { color: #002D97; }
 
-.orange .verifyIcon { background: linear-gradient(135deg, #FDBB70, #FD7901); box-shadow: 0 4px 10px rgba(253,121,1,0.35); }
+.orange .verifyIcon {
+  background: linear-gradient(135deg, #FDBB70, #FD7901);
+  box-shadow:
+    0 4px 10px rgba(253,121,1,0.35),
+    inset 0 -3px 5px rgba(0,0,0,0.28),
+    inset 0 2px 3px rgba(255,255,255,0.4);
+}
 .orange span { color: #FD7901; }
