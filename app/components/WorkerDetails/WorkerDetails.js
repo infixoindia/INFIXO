@@ -108,14 +108,17 @@ export default function WorkerDetails() {
         
 <div className={styles.verificationContent}>
 
-<div className={styles.verifyIconOuter}>
-  <div className={styles.verifyIcon}>
-    ✓
-  </div>
-</div>
+  <div className={styles.verifyBadge}>
 
-  <span>Worker Verified</span>
-</div>
+    <div className={styles.verifyIconOuter}>
+      <div className={styles.verifyIcon}>
+        ✓
+      </div>
+    </div>
+
+    <span>Worker Verified</span>
+
+  </div>
 
 </div>
 </div>
