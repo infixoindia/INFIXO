@@ -106,24 +106,15 @@ export default function WorkerDetails() {
     <p>Verified details to build trust.</p>
   </div>
 
-  <div className={styles.verificationBadges}>
-
-    <div className={`${styles.verifyBadge} ${styles.worker}`}>
-      <span>✓</span>
-      Worker Verified
-    </div>
-
-    <div className={`${styles.verifyBadge} ${styles.work}`}>
-      <span>✓</span>
-      Work Verified
-    </div>
-
-    <div className={`${styles.verifyBadge} ${styles.address}`}>
-      <span>✓</span>
-      Address Verified
-    </div>
-
+<div className={styles.verifyBadge}>
+  <div className={styles.verifyIcon}>
+    ✓
   </div>
+
+  <span>Worker Verified</span>
+</div>
+
+</div>
 
 </div>
 
