@@ -108,17 +108,17 @@ export default function WorkerDetails() {
 
   <div className={styles.verificationBadges}>
 
-    <div className={styles.verifyBadge worker}>
+    <div className={`${styles.verifyBadge} ${styles.worker}`}>
       <span>✓</span>
       Worker Verified
     </div>
 
-    <div className={styles.verifyBadge work}>
+    <div className={`${styles.verifyBadge} ${styles.work}`}>
       <span>✓</span>
       Work Verified
     </div>
 
-    <div className={styles.verifyBadge address}>
+    <div className={`${styles.verifyBadge} ${styles.address}`}>
       <span>✓</span>
       Address Verified
     </div>
