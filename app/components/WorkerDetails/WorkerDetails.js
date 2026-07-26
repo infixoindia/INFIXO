@@ -105,6 +105,8 @@ export default function WorkerDetails() {
     <h3>Infixo Verification</h3>
     <p>Verified details to build trust.</p>
   </div>
+        
+<div className={styles.verificationContent}>
 
 <div className={styles.verifyBadge}>
   <div className={styles.verifyIcon}>
