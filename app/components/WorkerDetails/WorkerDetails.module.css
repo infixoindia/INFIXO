@@ -256,29 +256,24 @@
 }
 
 .verifyIcon{
-  width:28px;
-  height:28px;
+  width:36px;
+  height:36px;
 
   border-radius:50%;
 
-background:linear-gradient(
- 145deg,
- #22C55E 0%,
- #16A34A 100%
-);
-
-  color:#fff;
+  background:linear-gradient(
+    180deg,
+    #22C55E 0%,
+    #16A34A 100%
+  );
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  font-size:15px;
-  font-weight:700;
-
   box-shadow:
-    inset 1px 1px 2px rgba(255,255,255,0.35),
-    inset -1px -1px 2px rgba(0,0,0,.15);
+    inset 1px 1px 2px rgba(255,255,255,.35),
+    0 4px 8px rgba(22,163,74,.30);
 }
 
 .verifyBadge span{
@@ -293,25 +288,31 @@ background:linear-gradient(
 }
 
 .verifyIconOuter{
-  width:44px;
-  height:44px;
+  width:50px;
+  height:50px;
 
   border-radius:50%;
-
-  background:radial-gradient(
-    circle at center,
-    #E0E4EA 0%,
-    #E8ECF2 55%,
-    #F2F4F7 100%
-  );
 
   display:flex;
   align-items:center;
   justify-content:center;
 
+  background:linear-gradient(
+    180deg,
+    #F8FAFC 0%,
+    #E9EEF4 100%
+  );
+
   box-shadow:
-    inset 1px 1px 2px rgba(255,255,255,.9),
-    inset -1px -1px 2px rgba(0,0,0,.06);
+    -3px -3px 8px rgba(255,255,255,.9),
+     3px 3px 8px rgba(163,177,198,.35);
 
   flex-shrink:0;
+}
+
+.verifyTick{
+  width:18px;
+  height:18px;
+
+  color:#FFFFFF;
 }
