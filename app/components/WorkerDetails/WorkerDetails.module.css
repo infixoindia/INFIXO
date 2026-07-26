@@ -1,5 +1,6 @@
 .wrapper{
   margin-top:12px;
+  padding:0 12px;
 }
 
 .header{
@@ -36,8 +37,7 @@
     0 8px 22px rgba(0,0,0,.06),
     0 2px 8px rgba(0,0,0,.04);
 
-  margin-top:22px;
-  margin-bottom:36px;
+  margin:22px 4px 36px;
 }
 
 .row{
