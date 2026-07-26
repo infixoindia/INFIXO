@@ -115,6 +115,7 @@ export default function WorkerDetails() {
             <path d="M20 6L9 17L4 12" />
           </svg>
         </div>
+        <span className={styles.verifyDivider}></span>
         <span>Worker Verified</span>
       </div>
 
@@ -124,6 +125,7 @@ export default function WorkerDetails() {
             <path d="M20 6L9 17L4 12" />
           </svg>
         </div>
+        <span className={styles.verifyDivider}></span>
         <span>Work Verified</span>
       </div>
 
@@ -133,6 +135,7 @@ export default function WorkerDetails() {
             <path d="M20 6L9 17L4 12" />
           </svg>
         </div>
+        <span className={styles.verifyDivider}></span>
         <span>Address Verified</span>
       </div>
 
