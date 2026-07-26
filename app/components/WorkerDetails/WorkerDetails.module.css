@@ -188,9 +188,18 @@
   line-height:1.9;
 
   font-weight:500;
+
+  padding-left:18px;
+
+  position:relative;
 }
 
-.aboutBody p:last-child{
-  margin-bottom:0;
-}
+.aboutBody p::before{
+  content:"•";
 
+  position:absolute;
+  left:0;
+
+  color:#111827;
+  font-weight:700;
+}
