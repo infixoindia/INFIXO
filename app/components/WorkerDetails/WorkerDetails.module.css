@@ -75,7 +75,7 @@
 }
 
 .value{
-  padding:12px 16px;
+  padding:12px 14px;
 
   display:flex;
   align-items:center;
@@ -121,7 +121,7 @@
 
 .detailRow{
   display:grid;
-  grid-template-columns:135px 1fr;
+  grid-template-columns:110px 1fr;
 
   background:#FFFFFF;
 
