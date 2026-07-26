@@ -108,10 +108,11 @@ export default function WorkerDetails() {
         
 <div className={styles.verificationContent}>
 
-<div className={styles.verifyBadge}>
+<div className={styles.verifyIconOuter}>
   <div className={styles.verifyIcon}>
     ✓
   </div>
+</div>
 
   <span>Worker Verified</span>
 </div>
