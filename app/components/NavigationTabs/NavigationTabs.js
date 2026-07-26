@@ -9,9 +9,9 @@ export default function NavigationTabs() {
   Work Details
 </Link>
 
-      <button className={`${styles.card} ${styles.orange}`}>
-        Worker Details
-      </button>
+<Link href="/worker-details" className={`${styles.card} ${styles.orange}`}>
+  Worker Details
+</Link>
 
       <button className={`${styles.card} ${styles.green}`}>
         Work Photos
