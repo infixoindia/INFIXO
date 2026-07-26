@@ -236,23 +236,23 @@
 .verifyBadge{
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:14px;
 
   width:fit-content;
   min-width:unset;
   max-width:none;
 
-  padding:8px 14px;
+  padding:10px 18px;
 
-  border-radius:18px;
+  border-radius:999px;
 
   background:#FFFFFF;
 
   border:1px solid #E5E7EB;
 
   box-shadow:
-    0 4px 10px rgba(0,0,0,.08),
-    inset 0 1px 1px rgba(255,255,255,.7);
+    0 8px 18px rgba(0,0,0,.08),
+  inset 0 1px 1px rgba(255,255,255,.9);
 }
 
 .verifyIcon{
@@ -261,7 +261,11 @@
 
   border-radius:50%;
 
-  background:#16A34A;
+background:linear-gradient(
+ 180deg,
+ #22C55E 0%,
+ #16A34A 100%
+);
 
   color:#fff;
 
@@ -294,13 +298,20 @@
 
   border-radius:50%;
 
-  background:#F5F7FB;
+  background:linear-gradient(
+ 180deg,
+ #FFFFFF 0%,
+ #EEF2F7 100%
+);
 
   display:flex;
   align-items:center;
   justify-content:center;
 
   box-shadow:
-    inset 1px 1px 2px rgba(255,255,255,.9),
-    inset -1px -1px 2px rgba(0,0,0,.05);
+  inset 0 2px 2px rgba(255,255,255,.95),
+  inset 0 -2px 3px rgba(0,0,0,.05),
+  0 3px 8px rgba(0,0,0,.08);
+
+  flex-shrink:0;
 }
