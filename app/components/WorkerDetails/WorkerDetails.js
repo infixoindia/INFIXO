@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
 
 export default function WorkerDetails() {
@@ -5,7 +6,23 @@ export default function WorkerDetails() {
     <section className={styles.wrapper}>
 
       <div className={styles.header}>
-        <h2>Worker Details</h2>
+       <Link href="/" className={styles.backLink}>
+  <svg
+    className={styles.backArrow}
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M15 5L8 12L15 19"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</Link>
+        
+      <h2>Worker Details</h2>
         <p>Everything about the worker.</p>
       </div>
 
