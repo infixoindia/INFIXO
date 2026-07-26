@@ -221,33 +221,28 @@
 }
 
 .verificationHeader{
-  background:linear-gradient(180deg,#F8FBFF 0%,#EEF5FF 100%);
+  padding:18px;
 
-  padding:18px 18px 14px;
+  background:linear-gradient(
+    180deg,
+    #F8FBFF 0%,
+    #EEF5FF 100%
+  );
 
   border-bottom:1px solid #E5E7EB;
 }
 
 .verificationHeader h3{
   margin:0;
-
-  font-size:16px;
-
-  font-weight:700;
-
-  color:#1F2937;
+  font-size:18px;
+  font-weight:800;
+  color:#111827;
 }
 
 .verificationHeader p{
-  margin:6px 0 0;
-
-  font-size:12px;
-
-  font-weight:500;
-
+  margin-top:4px;
+  font-size:13px;
   color:#6B7280;
-
-  line-height:1.4;
 }
 
 .verifyBadge{
