@@ -107,26 +107,36 @@ export default function WorkerDetails() {
   </div>
 
   <div className={styles.verificationContent}>
+    <div className={styles.verifyList}>
 
-    <div className={styles.verifyBadge}>
-      <div className={styles.verifyIcon}>
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className={styles.verifyTick}
-        >
-          <path d="M20 6L9 17L4 12" />
-        </svg>
+      <div className={`${styles.verifyBadge} ${styles.green}`}>
+        <div className={styles.verifyIcon}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={styles.verifyTick}>
+            <path d="M20 6L9 17L4 12" />
+          </svg>
+        </div>
+        <span>Worker Verified</span>
       </div>
 
-      <span>Worker Verified</span>
+      <div className={`${styles.verifyBadge} ${styles.blue}`}>
+        <div className={styles.verifyIcon}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={styles.verifyTick}>
+            <path d="M20 6L9 17L4 12" />
+          </svg>
+        </div>
+        <span>Work Verified</span>
+      </div>
+
+      <div className={`${styles.verifyBadge} ${styles.orange}`}>
+        <div className={styles.verifyIcon}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={styles.verifyTick}>
+            <path d="M20 6L9 17L4 12" />
+          </svg>
+        </div>
+        <span>Address Verified</span>
+      </div>
 
     </div>
-
   </div>
 
 </div>
