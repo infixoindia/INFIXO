@@ -99,7 +99,7 @@ export default function WorkerDetails() {
 </div>
 
 
-<div className={styles.verificationSection}>
+<div className={styles.card}>
 
   <div className={styles.verificationHeader}>
     <h3>Infixo Verification</h3>
