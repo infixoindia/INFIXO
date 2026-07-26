@@ -73,9 +73,31 @@ export default function WorkerDetails() {
 </div>
 </div>
 
-      {/* About Me */}
       <div className={styles.card}>
-      </div>
+
+  <div className={styles.cardHeader}>
+    <h3>About Me</h3>
+    <p>A short introduction about the worker.</p>
+  </div>
+
+  <div className={styles.aboutBody}>
+
+    <p>
+      • Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.
+    </p>
+
+    <p>
+      • He pays close attention to every detail and ensures every project is completed with care and a premium finish.
+    </p>
+
+    <p>
+      • His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.
+    </p>
+
+  </div>
+
+</div>
+
 
       {/* Infixo Verification */}
       <div className={styles.card}>
