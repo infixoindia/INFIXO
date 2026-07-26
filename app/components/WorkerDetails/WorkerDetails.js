@@ -122,7 +122,6 @@ export default function WorkerDetails() {
       <path d="M20 6L9 17L4 12" />
     </svg>
   </div>
-</div>
 
     <span>Worker Verified</span>
 
