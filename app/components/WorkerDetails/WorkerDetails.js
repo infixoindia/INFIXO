@@ -109,9 +109,6 @@ export default function WorkerDetails() {
 <div className={styles.verificationContent}>
 
   <div className={styles.verifyBadge}>
-
-
-        <div className={styles.verifyIconOuter}>
   <div className={styles.verifyIcon}>
     <svg
       viewBox="0 0 24 24"
