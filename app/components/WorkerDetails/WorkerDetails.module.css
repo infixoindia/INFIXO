@@ -121,10 +121,8 @@
 }
 
 .detailsBody{
-  padding:16px;
-
   display:flex;
   flex-direction:column;
-
-  gap:18px;
+  gap:22px;
+  padding:22px 16px;
 }
