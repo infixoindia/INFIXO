@@ -233,63 +233,57 @@
   color:#6B7280;
 }
 
+.verifyList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .verifyBadge{
   display:inline-flex;
   align-items:center;
   gap:12px;
 
   width:fit-content;
-  min-width:unset;
-  max-width:none;
 
-  padding:10px 18px;
+  padding:10px 20px 10px 10px;
 
   border-radius:999px;
 
   background:#FFFFFF;
 
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  box-shadow:
+    0 10px 22px rgba(17,24,39,0.10),
+    0 2px 6px rgba(17,24,39,0.06);
 }
 
 .verifyIcon{
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #22C55E, #16A34A);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(22,163,74,0.35);
-}
-
-.verifyBadge span{
-  color:#16A34A;
-  font-size:14px;
-  font-weight:700;
-  line-height:1;
-  }
-
-.verificationContent{
-  padding:28px 0 36px 22px;
-}
-
-.verifyIconOuter{
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: #F3F5F8;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow:
-    -4px -4px 10px rgba(255,255,255,0.9),
-    4px 4px 10px rgba(163,177,198,0.45);
 }
 
 .verifyTick{
   width:18px;
   height:18px;
-
   color:#FFFFFF;
 }
+
+.verifyBadge span{
+  font-size:14px;
+  font-weight:700;
+  line-height:1;
+}
+
+.green .verifyIcon { background: linear-gradient(135deg, #22C55E, #16A34A); box-shadow: 0 4px 10px rgba(22,163,74,0.35); }
+.green span { color: #16A34A; }
+
+.blue .verifyIcon { background: linear-gradient(135deg, #3B82F6, #002D97); box-shadow: 0 4px 10px rgba(0,45,151,0.35); }
+.blue span { color: #002D97; }
+
+.orange .verifyIcon { background: linear-gradient(135deg, #FDBB70, #FD7901); box-shadow: 0 4px 10px rgba(253,121,1,0.35); }
+.orange span { color: #FD7901; }
