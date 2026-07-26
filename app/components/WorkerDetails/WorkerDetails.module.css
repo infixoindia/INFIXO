@@ -253,6 +253,8 @@
   box-shadow:
     0 4px 10px rgba(0,0,0,.08),
     inset 0 1px 1px rgba(255,255,255,.7);
+  
+  margin-left:18px;
 }
 
 .verifyIcon{
