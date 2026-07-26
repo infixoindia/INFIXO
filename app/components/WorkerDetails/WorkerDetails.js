@@ -83,15 +83,15 @@ export default function WorkerDetails() {
   <div className={styles.aboutBody}>
 
     <p>
-      • Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.
+      Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.
     </p>
 
     <p>
-      • He pays close attention to every detail and ensures every project is completed with care and a premium finish.
+      He pays close attention to every detail and ensures every project is completed with care and a premium finish.
     </p>
 
     <p>
-      • His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.
+      His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.
     </p>
 
   </div>
