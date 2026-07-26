@@ -171,3 +171,25 @@
   color:#F97316;
   transform:translateX(-2px);
 }
+
+.aboutBody{
+  background:#FFFFFF;
+
+  padding:24px 28px;
+}
+
+.aboutBody p{
+  margin:0 0 18px 0;
+
+  color:#111827;
+
+  font-size:15px;
+
+  line-height:1.8;
+
+  font-weight:500;
+}
+
+.aboutBody p:last-child{
+  margin-bottom:0;
+}
