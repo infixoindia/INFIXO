@@ -110,11 +110,22 @@ export default function WorkerDetails() {
 
   <div className={styles.verifyBadge}>
 
-    <div className={styles.verifyIconOuter}>
-      <div className={styles.verifyIcon}>
-        ✓
-      </div>
-    </div>
+
+        <div className={styles.verifyIconOuter}>
+  <div className={styles.verifyIcon}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={styles.verifyTick}
+    >
+      <path d="M20 6L9 17L4 12" />
+    </svg>
+  </div>
+</div>
 
     <span>Worker Verified</span>
 
