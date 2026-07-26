@@ -105,25 +105,27 @@ export default function WorkerDetails() {
     <h3>Infixo Verification</h3>
     <p>Verified details to build trust.</p>
   </div>
-        
-<div className={styles.verificationContent}>
 
-  <div className={styles.verifyBadge}>
-  <div className={styles.verifyIcon}>
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={styles.verifyTick}
-    >
-      <path d="M20 6L9 17L4 12" />
-    </svg>
-  </div>
+  <div className={styles.verificationContent}>
 
-    <span>Worker Verified</span>
+    <div className={styles.verifyBadge}>
+      <div className={styles.verifyIcon}>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={styles.verifyTick}
+        >
+          <path d="M20 6L9 17L4 12" />
+        </svg>
+      </div>
+
+      <span>Worker Verified</span>
+
+    </div>
 
   </div>
 
