@@ -115,7 +115,7 @@
 }
 
 .detailsBody{
-  padding:28px 18px;
+  padding:18px;
   display:flex;
   flex-direction:column;
   gap:18px;
@@ -136,6 +136,10 @@
   box-shadow:
     0 6px 18px rgba(0,0,0,.05),
     0 2px 8px rgba(0,0,0,.03);
+}
+
+.detailRow:last-child{
+  margin-bottom:16px;
 }
 
 .backLink{
