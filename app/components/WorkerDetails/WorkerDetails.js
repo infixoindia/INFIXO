@@ -358,7 +358,6 @@ const [addressOpen, setAddressOpen] = useState(false);
     <span className={styles.morePlus}>+</span>
     <span>More Information</span>
   </Link>
-
 </div>
 
       </div>
@@ -367,7 +366,6 @@ const [addressOpen, setAddressOpen] = useState(false);
 
   </div>
 
-</div>
                 
     </section>
   );
