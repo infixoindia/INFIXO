@@ -195,43 +195,89 @@ const [workOpen, setWorkOpen] = useState(false);
   </div>
 
 
+{/* Work Verified */}
 
-      {/* Work Verified */}
-      <div
+<div
   className={`${styles.verifyBadge} ${styles.blue}`}
   onClick={() => setWorkOpen(!workOpen)}
 >
 
-        <div className={styles.verifyIconOuter}>
-          <div className={styles.verifyIcon}>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={styles.verifyTick}
-            >
-              <path d="M20 6L9 17L4 12" />
-            </svg>
-          </div>
-        </div>
-
-        <span className={styles.verifyDivider}></span>
-
-        <div className={styles.verifyText}>
-  <span>Work Verified</span>
-
-  <div className={styles.verifyArrow}>
-    {workOpen ? "⌃" : "⌄"}
+  <div className={styles.verifyIconOuter}>
+    <div className={styles.verifyIcon}>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={styles.verifyTick}
+      >
+        <path d="M20 6L9 17L4 12" />
+      </svg>
+    </div>
   </div>
+
+  <span className={styles.verifyDivider}></span>
+
+  <div className={styles.verifyText}>
+    <span>Work Verified</span>
+
+    <div
+      className={`${styles.verifyArrow} ${
+        workOpen ? styles.arrowOpen : ""
+      }`}
+    >
+      <svg
+        className={styles.arrowIcon}
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M7 10L12 15L17 10"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+
+  </div>
+
 </div>
+
+
+<div
+  className={`${styles.verifyInfo} ${
+    workOpen ? styles.verifyInfoOpen : ""
+  }`}
+>
+
+  <ul className={styles.verifyPoints}>
+
+    <li>
+      Work samples have been reviewed by Infixo.
+    </li>
+
+    <li>
+      The photos and videos available on this profile have been reviewed to help ensure they represent the worker's submitted work and professional services before profile approval.
+    </li>
+
+  </ul>
+
+
+  <Link
+    href="/policies/worker-verification"
+    className={`${styles.moreInfo} ${styles.moreInfoBlue}`}
+  >
+    <span className={styles.morePlus}>+</span>
+    <span>More Information</span>
+  </Link>
+
+</div>
+
     
-</div>
-
-
-
       {/* Address Verified */}
       <div className={`${styles.verifyBadge} ${styles.orange}`}>
 
