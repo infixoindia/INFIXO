@@ -8,7 +8,8 @@ export default function WorkerDetails() {
 
 const [workerOpen, setWorkerOpen] = useState(false);
 const [workOpen, setWorkOpen] = useState(false);
-
+const [addressOpen, setAddressOpen] = useState(false);
+  
   return (
     <section className={styles.wrapper}>
 
@@ -279,27 +280,86 @@ const [workOpen, setWorkOpen] = useState(false);
 
     
       {/* Address Verified */}
-      <div className={`${styles.verifyBadge} ${styles.orange}`}>
 
-        <div className={styles.verifyIconOuter}>
-          <div className={styles.verifyIcon}>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={styles.verifyTick}
-            >
-              <path d="M20 6L9 17L4 12" />
-            </svg>
-          </div>
-        </div>
+<div
+  className={`${styles.verifyBadge} ${styles.orange}`}
+  onClick={() => setAddressOpen(!addressOpen)}
+>
 
-        <span className={styles.verifyDivider}></span>
+  <div className={styles.verifyIconOuter}>
+    <div className={styles.verifyIcon}>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={styles.verifyTick}
+      >
+        <path d="M20 6L9 17L4 12" />
+      </svg>
+    </div>
+  </div>
 
-        <span>Address Verified</span>
+  <span className={styles.verifyDivider}></span>
+
+  <div className={styles.verifyText}>
+    <span>Address Verified</span>
+
+    <div
+      className={`${styles.verifyArrow} ${
+        addressOpen ? styles.arrowOpen : ""
+      }`}
+    >
+      <svg
+        className={styles.arrowIcon}
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M7 10L12 15L17 10"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  className={`${styles.verifyInfo} ${
+    addressOpen ? styles.verifyInfoOpen : ""
+  }`}
+>
+
+  <ul className={styles.verifyPoints}>
+
+    <li>
+      Address details have been verified by Infixo.
+    </li>
+
+    <li>
+      The address information submitted during registration has been reviewed and verified as part of the Infixo verification process before profile approval.
+    </li>
+
+  </ul>
+
+
+  <Link
+    href="/policies/worker-verification"
+    className={`${styles.moreInfo} ${styles.moreInfoOrange}`}
+  >
+    <span className={styles.morePlus}>+</span>
+    <span>More Information</span>
+  </Link>
+
+</div>
 
       </div>
 
