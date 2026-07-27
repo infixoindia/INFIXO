@@ -130,10 +130,7 @@ export default function WorkerDetails() {
     {workerOpen ? "⌃" : "⌄"}
   </div>
 </div>
-    
-</div> 
-    
-</div> 
+
 
       <div className={`${styles.verifyBadge} ${styles.blue}`}>
         <div className={styles.verifyIcon}>
