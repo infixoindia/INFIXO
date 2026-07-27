@@ -3,6 +3,9 @@ import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
 
 export default function WorkerDetails() {
+
+  const [workerOpen, setWorkerOpen] = useState(false);
+
   return (
     <section className={styles.wrapper}>
 
