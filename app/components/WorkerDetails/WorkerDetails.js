@@ -162,7 +162,7 @@ export default function WorkerDetails() {
         
 </div>
 
-      {workerOpen && (
+{workerOpen && (
   <div className={styles.verifyInfo}>
 
     <ul className={styles.verifyPoints}>
@@ -172,13 +172,16 @@ export default function WorkerDetails() {
       </li>
 
       <li>
-        The worker has completed our verification process using the submitted identity documents before profile approval.
+        The worker has successfully completed the Infixo verification process. The identity information submitted by the worker has been reviewed and verified before profile approval.
       </li>
 
     </ul>
 
-    <Link href="/policies/worker-verification" className={styles.moreInfo}>
-      + More Information
+    <Link
+      href="/policies/worker-verification"
+      className={styles.moreInfo}
+    >
+      More Information →
     </Link>
 
   </div>
