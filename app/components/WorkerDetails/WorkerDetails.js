@@ -153,10 +153,13 @@ export default function WorkerDetails() {
       </div>
 
     </div>
+    
   </div>
 
 </div>
-        
+    
+</div>   
+    
     </section>
   );
 }
