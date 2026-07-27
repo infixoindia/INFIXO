@@ -404,16 +404,39 @@
   display:inline-flex;
   align-items:center;
 
-  margin-top:6px;
+  gap:8px;
+
+  margin-top:12px;
 
   color:#002D97;
   font-size:14px;
-  font-weight:600;
+  font-weight:700;
+
   text-decoration:none;
 }
 
 .moreInfo:hover{
   text-decoration:underline;
+}
+
+.morePlus{
+  width:20px;
+  height:20px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#EAF0FB;
+
+  color:#002D97;
+
+  font-size:16px;
+  font-weight:800;
+
+  line-height:1;
 }
 
 @keyframes fadeDown{
