@@ -6,7 +6,8 @@ import styles from "./WorkerDetails.module.css";
 
 export default function WorkerDetails() {
 
-  const [workerOpen, setWorkerOpen] = useState(false);
+const [workerOpen, setWorkerOpen] = useState(false);
+const [workOpen, setWorkOpen] = useState(false);
 
   return (
     <section className={styles.wrapper}>
@@ -116,7 +117,7 @@ export default function WorkerDetails() {
 
     <div className={styles.verifyList}>
 
-      {/* Worker Verified */}
+      {/* Worker Verified */}bg
       <div
         className={`${styles.verifyBadge} ${styles.green}`}
         onClick={() => setWorkerOpen(!workerOpen)}
@@ -196,7 +197,10 @@ export default function WorkerDetails() {
 
 
       {/* Work Verified */}
-      <div className={`${styles.verifyBadge} ${styles.blue}`}>
+      <div
+  className={`${styles.verifyBadge} ${styles.blue}`}
+  onClick={() => setWorkOpen(!workOpen)}
+>
 
         <div className={styles.verifyIconOuter}>
           <div className={styles.verifyIcon}>
@@ -216,9 +220,17 @@ export default function WorkerDetails() {
 
         <span className={styles.verifyDivider}></span>
 
-        <span>Work Verified</span>
+        <div className={styles.verifyText}>
+  <span>Work Verified</span>
 
-      </div>
+  <div className={styles.verifyArrow}>
+    {workOpen ? "⌃" : "⌄"}
+  </div>
+</div>
+    
+</div>
+
+
 
       {/* Address Verified */}
       <div className={`${styles.verifyBadge} ${styles.orange}`}>
