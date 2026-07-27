@@ -344,6 +344,10 @@
   transition:transform .25s ease;
 }
 
+.arrowOpen{
+  transform:rotate(180deg);
+}
+
 .verifyArrow svg{
   width:20px;
   height:20px;
