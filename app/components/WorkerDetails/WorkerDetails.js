@@ -132,6 +132,8 @@ export default function WorkerDetails() {
 </div>
     
 </div> 
+    
+</div> 
 
       <div className={`${styles.verifyBadge} ${styles.blue}`}>
         <div className={styles.verifyIcon}>
