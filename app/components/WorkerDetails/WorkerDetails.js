@@ -117,7 +117,7 @@ const [workOpen, setWorkOpen] = useState(false);
 
     <div className={styles.verifyList}>
 
-      {/* Worker Verified */}bg
+      {/* Worker Verified */}
       <div
         className={`${styles.verifyBadge} ${styles.green}`}
         onClick={() => setWorkerOpen(!workerOpen)}
