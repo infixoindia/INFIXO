@@ -420,21 +420,17 @@
 }
 
 .morePlus{
-  width:20px;
-  height:20px;
-
-  border-radius:50%;
+  width:16px;
+  height:16px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  background:#EAF0FB;
-
   color:#002D97;
 
-  font-size:16px;
-  font-weight:800;
+  font-size:20px;
+  font-weight:700;
 
   line-height:1;
 }
