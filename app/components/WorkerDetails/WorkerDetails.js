@@ -184,9 +184,9 @@ export default function WorkerDetails() {
 
     </ul>
 
-    <Link
-      href="/policies/worker-verification"
-      className={styles.moreInfo}
+<Link
+  href="/policies/worker-verification"
+  className={`${styles.moreInfo} ${styles.moreInfoGreen}`}
 >
   <span className={styles.morePlus}>+</span>
   <span>More Information</span>
