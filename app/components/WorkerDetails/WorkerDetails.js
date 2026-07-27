@@ -166,8 +166,11 @@ export default function WorkerDetails() {
         
 </div>
 
-{workerOpen && (
-  <div className={styles.verifyInfo}>
+<div
+  className={`${styles.verifyInfo} ${
+    workerOpen ? styles.verifyInfoOpen : ""
+  }`}
+>
 
     <ul className={styles.verifyPoints}>
 
@@ -189,7 +192,7 @@ export default function WorkerDetails() {
     </Link>
 
   </div>
-)}
+
 
 
       {/* Work Verified */}
