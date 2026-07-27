@@ -446,3 +446,11 @@
     transform:translateY(0);
   }
 }
+
+.moreInfoGreen{
+  color:#16A34A;
+}
+
+.moreInfoGreen .morePlus{
+  color:#16A34A;
+}
