@@ -162,6 +162,28 @@ export default function WorkerDetails() {
         
 </div>
 
+      {workerOpen && (
+  <div className={styles.verifyInfo}>
+
+    <ul className={styles.verifyPoints}>
+
+      <li>
+        Identity details have been verified by Infixo.
+      </li>
+
+      <li>
+        The worker has completed our verification process using the submitted identity documents before profile approval.
+      </li>
+
+    </ul>
+
+    <Link href="/policies/worker-verification" className={styles.moreInfo}>
+      + More Information
+    </Link>
+
+  </div>
+)}
+
 
       {/* Work Verified */}
       <div className={`${styles.verifyBadge} ${styles.blue}`}>
