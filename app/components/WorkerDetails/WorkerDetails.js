@@ -123,8 +123,13 @@ export default function WorkerDetails() {
           </svg>
         </div>
         <span className={styles.verifyDivider}></span>
-        <span>Worker Verified</span>
-      </div>
+        <div className={styles.verifyText}>
+  <span>Worker Verified</span>
+
+  <div className={styles.verifyArrow}>
+    {workerOpen ? "⌃" : "⌄"}
+  </div>
+</div>
 
       <div className={`${styles.verifyBadge} ${styles.blue}`}>
         <div className={styles.verifyIcon}>
