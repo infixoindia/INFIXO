@@ -1,4 +1,4 @@
-import WorkPhotos from "@/app/components/WorkPhotos/WorkPhotos";
+import WorkPhotos from "../components/WorkPhotos/WorkPhotos";
 
 export default function WorkPhotosPage() {
   return <WorkPhotos />;
