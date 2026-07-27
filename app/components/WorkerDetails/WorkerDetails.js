@@ -142,9 +142,21 @@ export default function WorkerDetails() {
 
         <div className={styles.verifyText}>
           <span>Worker Verified</span>
-          <div className={styles.verifyArrow}>
-            {workerOpen ? "⌃" : "⌄"}
-          </div>
+          <div className={`${styles.verifyArrow} ${workerOpen ? styles.open : ""}`}>
+  <svg
+    className={styles.arrowIcon}
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M7 10L12 15L17 10"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</div>
         </div>
 
       </div>
