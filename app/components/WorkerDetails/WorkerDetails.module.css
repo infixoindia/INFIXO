@@ -321,8 +321,8 @@
 .verifyText{
   display:flex;
   align-items:center;
-  gap:12px;
   width:100%;
+  gap:12px;
 }
 
 .verifyText span{
@@ -330,7 +330,21 @@
 }
 
 .verifyArrow{
-  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:20px;
+  height:20px;
+
   color:#6B7280;
-  margin-left:auto;
+
+  flex-shrink:0;
+
+  transition:transform .25s ease;
+}
+
+.verifyArrow svg{
+  width:16px;
+  height:16px;
 }
