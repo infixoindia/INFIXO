@@ -187,10 +187,10 @@ export default function WorkerDetails() {
     <Link
       href="/policies/worker-verification"
       className={styles.moreInfo}
-    >
-      More Information →
-    </Link>
-
+>
+  <span className={styles.morePlus}>+</span>
+  <span>More Information</span>
+</Link>
   </div>
 
 
