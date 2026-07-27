@@ -157,8 +157,7 @@ export default function WorkerDetails() {
   </div>
 
 </div>
-    
-</div>   
+     
     
     </section>
   );
