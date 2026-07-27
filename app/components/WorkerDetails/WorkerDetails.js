@@ -113,7 +113,10 @@ export default function WorkerDetails() {
   <div className={styles.verificationContent}>
     <div className={styles.verifyList}>
 
-      <div className={`${styles.verifyBadge} ${styles.green}`}>
+      <div
+  className={`${styles.verifyBadge} ${styles.green}`}
+  onClick={() => setWorkerOpen(!workerOpen)}
+>
         <div className={styles.verifyIcon}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={styles.verifyTick}>
             <path d="M20 6L9 17L4 12" />
