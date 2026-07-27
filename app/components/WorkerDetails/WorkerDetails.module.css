@@ -233,12 +233,13 @@
   color:#6B7280;
 }
 
-.verifyList {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-  padding:36px 0 42px 28px;
+.verifyList{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:18px;
+
+  padding:32px 20px 42px 20px;
 }
 
 .verifyBadge{
@@ -246,7 +247,8 @@
   align-items:center;
   gap:14px;
 
-  width:fit-content;
+  width:300px;
+  justify-content:flex-start;
 
   padding:10px 20px 10px 12px;
 
@@ -315,3 +317,20 @@
     inset 0 2px 3px rgba(255,255,255,0.4);
 }
 .orange span { color: #FD7901; }
+
+.verifyText{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+}
+
+.verifyText span{
+  flex:1;
+}
+
+.verifyArrow{
+  font-size:16px;
+  color:#6B7280;
+  margin-left:auto;
+}
