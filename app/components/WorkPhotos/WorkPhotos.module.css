@@ -1,0 +1,25 @@
+.wrapper{
+  width:100%;
+}
+
+.header{
+  margin-bottom:24px;
+}
+
+.header h2{
+  margin:0;
+
+  font-size:32px;
+  font-weight:700;
+
+  color:#111827;
+}
+
+.header p{
+  margin-top:8px;
+
+  font-size:16px;
+  line-height:1.6;
+
+  color:#6B7280;
+}
