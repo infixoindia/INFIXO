@@ -157,9 +157,11 @@ export default function WorkerDetails() {
     />
   </svg>
 </div>
-        </div>
+        
+</div>
+        
+</div>
 
-      </div>
 
       {/* Work Verified */}
       <div className={`${styles.verifyBadge} ${styles.blue}`}>
