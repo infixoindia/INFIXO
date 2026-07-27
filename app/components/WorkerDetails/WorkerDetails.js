@@ -142,7 +142,11 @@ export default function WorkerDetails() {
 
         <div className={styles.verifyText}>
           <span>Worker Verified</span>
-          <div className={`${styles.verifyArrow} ${workerOpen ? styles.open : ""}`}>
+          <div
+  className={`${styles.verifyArrow} ${
+    workerOpen ? styles.arrowOpen : ""
+  }`}
+>
   <svg
     className={styles.arrowIcon}
     viewBox="0 0 24 24"
