@@ -354,18 +354,35 @@
 }
 
 .verifyInfo{
-  margin-top:12px;
-  margin-left:8px;
+  max-height:0;
 
-  width:300px;
+  opacity:0;
+
+  overflow:hidden;
+
+  padding:0 18px;
 
   background:#F5F7FA;
-  border:1px solid #E5E7EB;
+
   border-radius:18px;
 
-  padding:16px 18px;
+  margin-top:0;
 
-  animation:fadeDown .25s ease;
+  transition:
+    max-height .45s ease,
+    opacity .30s ease,
+    padding .35s ease,
+    margin-top .35s ease;
+}
+
+.verifyInfoOpen{
+  max-height:260px;
+
+  opacity:1;
+
+  padding:18px;
+
+  margin-top:12px;
 }
 
 .verifyPoints{
