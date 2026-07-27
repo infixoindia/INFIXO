@@ -387,11 +387,13 @@
 
 .verifyPoints{
   margin:0;
-  padding-left:18px;
+  padding-left:22px;
 
   color:#6B7280;
   font-size:14px;
   line-height:1.8;
+
+  list-style-type:disc;
 }
 
 .verifyPoints li{
