@@ -3,23 +3,48 @@
 }
 
 .header{
-  margin-bottom:24px;
+  display:flex;
+  align-items:flex-start;
+
+  gap:16px;
+
+  margin-bottom:28px;
 }
 
-.header h2{
+.backLink{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:36px;
+  height:36px;
+
+  color:#111827;
+
+  text-decoration:none;
+
+  flex-shrink:0;
+}
+
+.backArrow{
+  width:24px;
+  height:24px;
+}
+
+.headerText h2{
   margin:0;
 
-  font-size:32px;
+  font-size:28px;
   font-weight:700;
 
   color:#111827;
 }
 
-.header p{
-  margin-top:8px;
+.headerText p{
+  margin:6px 0 0;
 
-  font-size:16px;
-  line-height:1.6;
+  font-size:15px;
+  font-weight:500;
 
   color:#6B7280;
 }
