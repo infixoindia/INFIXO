@@ -32,33 +32,34 @@ export default function WorkPhotos() {
 
       </div>
 
-                <div className={styles.gallery}>
+               <div className={styles.gallery}>
 
   <div className={styles.photoItem}>
-    <img src="/images/work1.jpg" alt="Work 1" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
   <div className={styles.photoItem}>
-    <img src="/images/work2.jpg" alt="Work 2" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
   <div className={styles.photoItem}>
-    <img src="/images/work3.jpg" alt="Work 3" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
   <div className={styles.photoItem}>
-    <img src="/images/work4.jpg" alt="Work 4" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
   <div className={styles.photoItem}>
-    <img src="/images/work5.jpg" alt="Work 5" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
   <div className={styles.photoItem}>
-    <img src="/images/work6.jpg" alt="Work 6" />
+    <img src="/image/work1.png" alt="Work Photo" />
   </div>
 
 </div>
+
 
     </section>
   );
