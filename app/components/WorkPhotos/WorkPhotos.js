@@ -22,32 +22,43 @@ const images = [
 const [currentIndex, setCurrentIndex] = useState(0);
   
 const [touchStart, setTouchStart] = useState(null);
+  
 const [touchEnd, setTouchEnd] = useState(null);
+  
+const [direction, setDirection] = useState(""); 
   
   const handleSwipe = () => {
   if (!touchStart || !touchEnd) return;
 
   const distance = touchStart - touchEnd;
 
-  // Left swipe (next image)
-  if (distance > 50) {
-    if (currentIndex < images.length - 1) {
-      const nextIndex = currentIndex + 1;
+// Left swipe (next image)
+if (distance > 50) {
 
-      setCurrentIndex(nextIndex);
-      setSelectedImage(images[nextIndex]);
-    }
+  if (currentIndex < images.length - 1) {
+
+    setDirection("left");
+
+    const nextIndex = currentIndex + 1;
+
+    setCurrentIndex(nextIndex);
+    setSelectedImage(images[nextIndex]);
   }
+}
 
-  // Right swipe (previous image)
-  if (distance < -50) {
-    if (currentIndex > 0) {
-      const prevIndex = currentIndex - 1;
+// Right swipe (previous image)
+if (distance < -50) {
 
-      setCurrentIndex(prevIndex);
-      setSelectedImage(images[prevIndex]);
-    }
+  if (currentIndex > 0) {
+
+    setDirection("right");
+
+    const prevIndex = currentIndex - 1;
+
+    setCurrentIndex(prevIndex);
+    setSelectedImage(images[prevIndex]);
   }
+}
 
   setTouchStart(null);
   setTouchEnd(null);
