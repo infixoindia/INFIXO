@@ -58,3 +58,48 @@
 
   color:#111827;
 }
+
+.gallery{
+  display:grid;
+
+  grid-template-columns:repeat(2,1fr);
+
+  gap:8px;
+
+  margin-top:8px;
+}
+
+.photoItem{
+  position:relative;
+
+  aspect-ratio:3/4;
+
+  border-radius:18px;
+
+  overflow:hidden;
+
+  background:#F3F4F6;
+
+  cursor:pointer;
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease;
+}
+
+.photoItem:hover{
+  transform:scale(.98);
+}
+
+.photoItem img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+  user-select:none;
+
+  -webkit-user-drag:none;
+}
