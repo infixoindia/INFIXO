@@ -42,6 +42,8 @@ if (distance > 50) {
 
     const nextIndex = currentIndex + 1;
 
+    setPreviousImage(selectedImage);
+    
     setCurrentIndex(nextIndex);
     setSelectedImage(images[nextIndex]);
   }
@@ -56,6 +58,8 @@ if (distance < -50) {
 
     const prevIndex = currentIndex - 1;
 
+    setPreviousImage(selectedImage);
+    
     setCurrentIndex(prevIndex);
     setSelectedImage(images[prevIndex]);
   }
