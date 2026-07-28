@@ -102,11 +102,25 @@ export default function WorkPhotos() {
   <div className={styles.viewer}>
 
     <button
-      className={styles.closeButton}
-      onClick={() => setSelectedImage(null)}
-    >
-      ✕
-    </button>
+  className={styles.closeButton}
+  onClick={() => setSelectedImage(null)}
+  aria-label="Close"
+>
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M6 6L18 18M18 6L6 18"
+      stroke="white"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</button>
 
     <img
       src={selectedImage}
