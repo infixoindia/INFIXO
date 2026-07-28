@@ -64,47 +64,21 @@ const [currentIndex, setCurrentIndex] = useState(0);
 
                <div className={styles.gallery}>
 
-  <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
-
-  <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
-
+  {images.map((image, index) => (
     <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
-
-    <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
-
-    <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
-
-    <div
-  className={styles.photoItem}
-  onClick={() => setSelectedImage("/images/work1.png")}
->
-  <img src="/images/work1.png" alt="Work Photo" />
-</div>
+      key={index}
+      className={styles.photoItem}
+      onClick={() => {
+        setCurrentIndex(index);
+        setSelectedImage(image);
+      }}
+    >
+      <img
+        src={image}
+        alt={`Work Photo ${index + 1}`}
+      />
+    </div>
+  ))}
 
 </div>
 
