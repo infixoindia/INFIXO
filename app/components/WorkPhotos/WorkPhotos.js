@@ -164,16 +164,26 @@ if (distance < -50) {
   </svg>
 </button>
 
+{previousImage && (
+  <img
+    src={previousImage}
+    alt="Previous Work Photo"
+    className={`${styles.viewerImage} ${
+      direction === "left"
+        ? styles.exitLeft
+        : styles.exitRight
+    }`}
+  />
+)}
+
 <img
   key={currentIndex}
   src={selectedImage}
   alt="Work Photo"
   className={`${styles.viewerImage} ${
     direction === "left"
-      ? styles.slideLeft
-      : direction === "right"
-      ? styles.slideRight
-      : ""
+      ? styles.enterRight
+      : styles.enterLeft
   }`}
 />
   
