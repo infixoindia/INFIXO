@@ -21,6 +21,9 @@ export default function WorkPhotos() {
 
 const [currentIndex, setCurrentIndex] = useState(0);
   
+const [touchStart, setTouchStart] = useState(null);
+const [touchEnd, setTouchEnd] = useState(null);
+  
   useEffect(() => {
   if (selectedImage) {
     document.body.style.overflow = "hidden";
@@ -84,7 +87,15 @@ const [currentIndex, setCurrentIndex] = useState(0);
 
 
 {selectedImage && (
-  <div className={styles.viewer}>
+  <div
+  className={styles.viewer}
+  onTouchStart={(e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  }}
+  onTouchMove={(e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  }}
+>
 
     <button
   className={styles.closeButton}
