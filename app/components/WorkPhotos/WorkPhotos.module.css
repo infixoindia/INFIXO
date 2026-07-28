@@ -167,3 +167,44 @@
   }
   to{
     opacity:
+    
+
+.closeButton{
+  position:absolute;
+  top:18px;
+  right:18px;
+
+  width:46px;
+  height:46px;
+
+  border:none;
+  outline:none;
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,.14);
+  backdrop-filter:blur(18px);
+
+  color:#FFFFFF;
+
+  font-size:22px;
+  font-weight:700;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  z-index:10000;
+
+  transition:.2s ease;
+}
+
+.closeButton:active{
+  transform:scale(.94);
+}
+
+.closeButton:hover{
+  background:rgba(255,255,255,.22);
+}
