@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Link from "next/link";
 
@@ -9,6 +9,18 @@ import styles from "./WorkPhotos.module.css";
 export default function WorkPhotos() {
   
  const [selectedImage, setSelectedImage] = useState(null);
+  
+  useEffect(() => {
+  if (selectedImage) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [selectedImage]);
   
   return (
     
