@@ -10,6 +10,17 @@ export default function WorkPhotos() {
   
  const [selectedImage, setSelectedImage] = useState(null);
   
+  const images = [
+  "/images/work1.png",
+  "/images/work1.png",
+  "/images/work1.png",
+  "/images/work1.png",
+  "/images/work1.png",
+  "/images/work1.png",
+];
+
+const [currentIndex, setCurrentIndex] = useState(0);
+  
   useEffect(() => {
   if (selectedImage) {
     document.body.style.overflow = "hidden";
