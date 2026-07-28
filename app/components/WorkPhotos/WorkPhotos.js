@@ -1,10 +1,17 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
+
 import styles from "./WorkPhotos.module.css";
 
 export default function WorkPhotos() {
+  
+ const [selectedImage, setSelectedImage] = useState(null);
+  
   return (
+    
     <section className={styles.wrapper}>
 
       <div className={styles.header}>
@@ -34,32 +41,62 @@ export default function WorkPhotos() {
 
                <div className={styles.gallery}>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+  <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+  <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+    <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+    <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+    <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
-  <div className={styles.photoItem}>
-    <img src="/images/work1.png" alt="Work Photo" />
-  </div>
+    <div
+  className={styles.photoItem}
+  onClick={() => setSelectedImage("/images/work1.png")}
+>
+  <img src="/images/work1.png" alt="Work Photo" />
+</div>
 
 </div>
 
+    {selectedImage && (
+  <div
+    className={styles.viewer}
+    onClick={() => setSelectedImage(null)}
+  >
+    <img
+      src={selectedImage}
+      alt="Work Photo"
+      className={styles.viewerImage}
+    />
+  </div>
+)}
 
     </section>
   );
