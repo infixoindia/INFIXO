@@ -10,13 +10,13 @@ export default function WorkPhotos() {
   
  const [selectedImage, setSelectedImage] = useState(null);
   
-  const images = [
+const images = [
   "/images/work1.png",
-  "/images/work1.png",
-  "/images/work1.png",
-  "/images/work1.png",
-  "/images/work1.png",
-  "/images/work1.png",
+  "/images/work2.png",
+  "/images/work3.png",
+  "/images/work4.png",
+  "/images/work5.png",
+  "/images/work6.png",
 ];
 
 const [currentIndex, setCurrentIndex] = useState(0);
