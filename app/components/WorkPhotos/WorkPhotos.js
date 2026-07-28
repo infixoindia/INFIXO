@@ -20,9 +20,10 @@ const images = [
 ];
 
 const [currentIndex, setCurrentIndex] = useState(0);
+const [previousImage, setPreviousImage] = useState(null);
+
   
-const [touchStart, setTouchStart] = useState(null);
-  
+const [touchStart, setTouchStart] = useState(null); 
 const [touchEnd, setTouchEnd] = useState(null);
   
 const [direction, setDirection] = useState(""); 
