@@ -24,6 +24,35 @@ const [currentIndex, setCurrentIndex] = useState(0);
 const [touchStart, setTouchStart] = useState(null);
 const [touchEnd, setTouchEnd] = useState(null);
   
+  const handleSwipe = () => {
+  if (!touchStart || !touchEnd) return;
+
+  const distance = touchStart - touchEnd;
+
+  // Left swipe (next image)
+  if (distance > 50) {
+    if (currentIndex < images.length - 1) {
+      const nextIndex = currentIndex + 1;
+
+      setCurrentIndex(nextIndex);
+      setSelectedImage(images[nextIndex]);
+    }
+  }
+
+  // Right swipe (previous image)
+  if (distance < -50) {
+    if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+
+      setCurrentIndex(prevIndex);
+      setSelectedImage(images[prevIndex]);
+    }
+  }
+
+  setTouchStart(null);
+  setTouchEnd(null);
+};
+  
   useEffect(() => {
   if (selectedImage) {
     document.body.style.overflow = "hidden";
@@ -95,6 +124,7 @@ const [touchEnd, setTouchEnd] = useState(null);
   onTouchMove={(e) => {
     setTouchEnd(e.targetTouches[0].clientX);
   }}
+  onTouchEnd={handleSwipe}
 >
 
     <button
