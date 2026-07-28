@@ -170,35 +170,34 @@
 
 .closeButton{
   position:absolute;
-  top:18px;
-  right:18px;
+  top:24px;
+  right:24px;
 
-  width:48px;
-  height:48px;
+  width:52px;
+  height:52px;
+
+  border:none;
+  border-radius:50%;
+
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(16px);
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  padding:0;
-  line-height:1;
-
-  border:none;
-  border-radius:50%;
-
-  background:rgba(255,255,255,.14);
-  backdrop-filter:blur(16px);
-
-  color:#FFFFFF;
-
-  font-size:28px;
-  font-weight:400;
+  color:white;
 
   cursor:pointer;
 
   z-index:10001;
 
-  transition:.2s ease;
+  padding:0;
+}
+
+.closeButton svg{
+  width:30px;
+  height:30px;
 }
 
 .closeButton:active{
@@ -207,4 +206,8 @@
 
 .closeButton:hover{
   background:rgba(255,255,255,.22);
+}
+
+.viewer{
+  overflow:hidden;
 }
