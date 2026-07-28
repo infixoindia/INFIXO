@@ -159,12 +159,18 @@ if (distance < -50) {
   </svg>
 </button>
 
-    <img
-      src={selectedImage}
-      alt="Work Photo"
-      className={styles.viewerImage}
-    />
-
+<img
+  src={selectedImage}
+  alt="Work Photo"
+  className={`${styles.viewerImage} ${
+    direction === "left"
+      ? styles.slideLeft
+      : direction === "right"
+      ? styles.slideRight
+      : ""
+  }`}
+/>
+  
   </div>
 )}
 
