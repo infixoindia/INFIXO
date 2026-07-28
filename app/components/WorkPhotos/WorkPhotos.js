@@ -160,6 +160,7 @@ if (distance < -50) {
 </button>
 
 <img
+  key={currentIndex}
   src={selectedImage}
   alt="Work Photo"
   className={`${styles.viewerImage} ${
