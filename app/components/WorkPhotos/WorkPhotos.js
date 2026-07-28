@@ -85,19 +85,27 @@ export default function WorkPhotos() {
 
 </div>
 
-    {selectedImage && (
-  <div
-    className={styles.viewer}
-    onClick={() => setSelectedImage(null)}
-  >
+
+{selectedImage && (
+  <div className={styles.viewer}>
+
+    <button
+      className={styles.closeButton}
+      onClick={() => setSelectedImage(null)}
+    >
+      ✕
+    </button>
+
     <img
       src={selectedImage}
       alt="Work Photo"
       className={styles.viewerImage}
     />
+
   </div>
 )}
 
+  
     </section>
   );
 }
