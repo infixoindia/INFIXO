@@ -70,18 +70,57 @@ const handleTouchMove = (e) => {
 const handleTouchEnd = () => {
 
   if (!isDragging.current) {
+
     setTouchStartX(0);
     setTouchEndX(0);
+
     return;
   }
+
 
   const distance = touchStartX - touchEndX;
 
+
+  // small movement = tap ignore
   if (Math.abs(distance) < 80) {
+
     setTouchStartX(0);
     setTouchEndX(0);
+
     return;
   }
+
+
+  // left swipe = next image
+  if (distance > 80) {
+
+    if (currentIndex < images.length - 1) {
+
+      setCurrentIndex((prev) => prev + 1);
+
+    }
+
+  }
+
+
+  // right swipe = previous image
+  if (distance < -80) {
+
+    if (currentIndex > 0) {
+
+      setCurrentIndex((prev) => prev - 1);
+
+    }
+
+  }
+
+
+  setTouchStartX(0);
+  setTouchEndX(0);
+
+  isDragging.current = false;
+
+};
 
 
   
