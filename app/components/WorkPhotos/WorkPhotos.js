@@ -19,8 +19,14 @@ export default function WorkPhotos() {
 
   const [viewerOpen, setViewerOpen] = useState(false);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] =  useS(0);
+  
+  const [zoomScale, setZoomScale] = useState(1);
 
+  const initialDistance = useRef(null);
+
+  const lastTapTime = useRef(0);
+  
   const [touchStartX, setTouchStartX] = useState(0);
 
   const [touchEndX, setTouchEndX] = useState(0);
@@ -43,11 +49,13 @@ export default function WorkPhotos() {
 
   const openViewer = (index) => {
 
-    setCurrentIndex(index);
+  setCurrentIndex(index);
 
-    setViewerOpen(true);
+  setZoomScale(1);
 
-  };
+  setViewerOpen(true);
+
+};
 
   const closeViewer = () => {
 
@@ -56,18 +64,78 @@ export default function WorkPhotos() {
   };
 
   const handleTouchStart = (e) => {
+
+  if (e.touches.length === 2) {
+
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+
+    const distance = Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+
+    initialDistance.current = distance;
+
+    return;
+  }
+
+
   isDragging.current = false;
+
   setTouchStartX(e.touches[0].clientX);
+
   setTouchEndX(e.touches[0].clientX);
+
 };
 
 
 const handleTouchMove = (e) => {
+
+  if (e.touches.length === 2 && initialDistance.current) {
+
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+
+    const distance = Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+
+
+    const scaleChange = distance / initialDistance.current;
+
+
+    let newScale = scaleChange;
+
+
+    if (newScale < 1) {
+      newScale = 1;
+    }
+
+
+    if (newScale > 3) {
+      newScale = 3;
+    }
+
+
+    setZoomScale(newScale);
+
+    return;
+
+  }
+
+
   isDragging.current = true;
+
   setTouchEndX(e.touches[0].clientX);
+
 };
+  
 
 const handleTouchEnd = () => {
+
+  initialDistance.current = null;
 
   if (!isDragging.current) {
 
@@ -235,11 +303,30 @@ const handleTouchEnd = () => {
       >
 
         <img
-          src={image}
-          alt={`Work ${index + 1}`}
-          className={styles.viewerImage}
-          draggable={false}
-        />
+  src={image}
+  alt={`Work ${index + 1}`}
+  className={styles.viewerImage}
+  draggable={false}
+  onTouchEnd={() => {
+
+    const now = Date.now();
+
+    if (now - lastTapTime.current < 300) {
+
+      setZoomScale((prev) =>
+        prev > 1 ? 1 : 2
+      );
+
+    }
+
+    lastTapTime.current = now;
+
+  }}
+  style={{
+    transform:`scale(${zoomScale})`,
+    transition:"transform .25s ease"
+  }}
+/>
 
       </div>
 
