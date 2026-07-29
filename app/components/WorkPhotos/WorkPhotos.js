@@ -184,11 +184,7 @@ if (distance < -50) {
         <img
           src={previousImage}
           alt=""
-          className={`${styles.viewerImage} ${
-            direction === "left"
-              ? styles.exitLeft
-              : styles.exitRight
-          }`}
+          className={styles.viewerImage}
         />
       )}
 
@@ -196,13 +192,7 @@ if (distance < -50) {
         key={currentIndex}
         src={selectedImage}
         alt="Work Photo"
-        className={`${styles.viewerImage} ${
-          previousImage
-            ? direction === "left"
-              ? styles.enterRight
-              : styles.enterLeft
-            : ""
-        }`}
+        className={styles.viewerImage}
       />
 
     </div>
