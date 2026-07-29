@@ -249,15 +249,10 @@ const handleTouchEnd = () => {
 
 </div>
 
-<button
-  className={`${styles.arrow} ${styles.leftArrow}`}
-  onClick={() => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
-    }
-  }}
-  disabled={currentIndex === 0}
-  aria-label="Previous image"
+<div
+  className={`${styles.arrow} ${styles.leftArrow} ${
+    currentIndex === 0 ? styles.disabled : ""
+  }`}
 >
   <svg
     width="18"
@@ -273,17 +268,12 @@ const handleTouchEnd = () => {
       strokeLinejoin="round"
     />
   </svg>
-</button>
+</div>
 
-<button
-  className={`${styles.arrow} ${styles.rightArrow}`}
-  onClick={() => {
-    if (currentIndex < images.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    }
-  }}
-  disabled={currentIndex === images.length - 1}
-  aria-label="Next image"
+<div
+  className={`${styles.arrow} ${styles.rightArrow} ${
+    currentIndex === images.length - 1 ? styles.disabled : ""
+  }`}
 >
   <svg
     width="18"
@@ -299,7 +289,7 @@ const handleTouchEnd = () => {
       strokeLinejoin="round"
     />
   </svg>
-</button>
+</div>
         
 </div>
 
