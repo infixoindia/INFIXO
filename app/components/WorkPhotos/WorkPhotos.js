@@ -147,6 +147,26 @@ export default function WorkPhotos() {
       </div>
 
 
+{viewerOpen && (
+
+  <div className={styles.viewer}>
+
+    <button
+      className={styles.closeButton}
+      onClick={closeViewer}
+    >
+      X
+    </button>
+
+    <img
+      src={images[currentIndex]}
+      alt="Work Photo"
+      className={styles.viewerImage}
+    />
+
+  </div>
+
+)}
 
     </section>
 
