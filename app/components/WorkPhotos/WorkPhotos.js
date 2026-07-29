@@ -213,7 +213,7 @@ const handleTouchEnd = () => {
     </button>
 
             
-    <div
+<div
   className={styles.sliderViewport}
   onTouchStart={handleTouchStart}
   onTouchMove={handleTouchMove}
@@ -223,11 +223,11 @@ const handleTouchEnd = () => {
   <div
     className={styles.sliderTrack}
     style={{
-      transform:`translateX(-${currentIndex * 100}%)`
+      transform: `translateX(-${currentIndex * 100}%)`
     }}
   >
 
-    {images.map((image,index)=>(
+    {images.map((image, index) => (
 
       <div
         key={index}
@@ -243,11 +243,35 @@ const handleTouchEnd = () => {
 
       </div>
 
-        ))}
+    ))}
 
   </div>
 
 </div>
+
+<button
+  className={`${styles.arrow} ${styles.leftArrow}`}
+  onClick={() => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+  }}
+  disabled={currentIndex === 0}
+>
+  &#8249;
+</button>
+
+<button
+  className={`${styles.arrow} ${styles.rightArrow}`}
+  onClick={() => {
+    if (currentIndex < images.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+  }}
+  disabled={currentIndex === images.length - 1}
+>
+  &#8250;
+</button>
 
 </div>
 
