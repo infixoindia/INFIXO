@@ -199,9 +199,11 @@ if (distance < -50) {
   src={selectedImage}
   alt="Work Photo"
   className={`${styles.viewerImage} ${
-    direction === "left"
-      ? styles.enterRight
-      : styles.enterLeft
+    previousImage
+      ? direction === "left"
+        ? styles.enterRight
+        : styles.enterLeft
+      : ""
   }`}
 />
   
