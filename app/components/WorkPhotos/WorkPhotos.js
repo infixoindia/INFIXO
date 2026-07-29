@@ -19,7 +19,7 @@ export default function WorkPhotos() {
 
   const [viewerOpen, setViewerOpen] = useState(false);
 
-  const [currentIndex, setCurrentIndex] =  useS(0);
+  const [currentIndex, setCurrentIndex] =  useState(0);
   
   const [zoomScale, setZoomScale] = useState(1);
 
