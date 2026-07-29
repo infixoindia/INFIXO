@@ -1,70 +1,105 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 
 import styles from "./WorkPhotos.module.css";
 
 export default function WorkPhotos() {
-  
- const [selectedImage, setSelectedImage] = useState(null);
-  
-const images = [
-  "/images/work1.png",
-  "/images/work2.png",
-  "/images/work3.png",
-  "/images/work4.png",
-  "/images/work5.png",
-  "/images/work6.png",
-];
 
-const [currentIndex, setCurrentIndex] = useState(0);
+  const images = [
+    "/images/work1.png",
+    "/images/work2.png",
+    "/images/work3.png",
+    "/images/work4.png",
+    "/images/work5.png",
+    "/images/work6.png",
+  ];
 
-const [touchStart, setTouchStart] = useState(null); 
-const [touchEnd, setTouchEnd] = useState(null);
-  
-  
- const handleSwipe = () => {
-  if (!touchStart || !touchEnd || !selectedImage) return;
+  const [viewerOpen, setViewerOpen] = useState(false);
 
-  const distance = touchStart - touchEnd;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  if (distance > 50 && currentIndex < images.length - 1) {
-    const next = currentIndex + 1;
-    setCurrentIndex(next);
-    setSelectedImage(images[next]);
-  }
+  const [touchStartX, setTouchStartX] = useState(0);
 
-  if (distance < -50 && currentIndex > 0) {
-    const prev = currentIndex - 1;
-    setCurrentIndex(prev);
-    setSelectedImage(images[prev]);
-  }
+  const [touchEndX, setTouchEndX] = useState(0);
 
-  setTouchStart(null);
-  setTouchEnd(null);
-};
-  
+  const sliderRef = useRef(null);
+
   useEffect(() => {
-  if (selectedImage) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
 
-  return () => {
-    document.body.style.overflow = "";
+    if (viewerOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+
+  }, [viewerOpen]);
+
+  const openViewer = (index) => {
+
+    setCurrentIndex(index);
+
+    setViewerOpen(true);
+
   };
-}, [selectedImage]);
-  
+
+  const closeViewer = () => {
+
+    setViewerOpen(false);
+
+  };
+
+  const handleTouchStart = (e) => {
+
+    setTouchStartX(e.targetTouches[0].clientX);
+
+  };
+
+  const handleTouchMove = (e) => {
+
+    setTouchEndX(e.targetTouches[0].clientX);
+
+  };
+
+  const handleTouchEnd = () => {
+
+    const distance = touchStartX - touchEndX;
+
+    if (distance > 60 && currentIndex < images.length - 1) {
+
+      setCurrentIndex((prev) => prev + 1);
+
+    }
+
+    if (distance < -60 && currentIndex > 0) {
+
+      setCurrentIndex((prev) => prev - 1);
+
+    }
+
+    setTouchStartX(0);
+
+    setTouchEndX(0);
+
+  };
+
   return (
-    
+
     <section className={styles.wrapper}>
 
       <div className={styles.header}>
 
-        <Link href="/" className={styles.backLink}>
+        <Link
+          href="/"
+          className={styles.backLink}
+        >
+
           <svg
             className={styles.backArrow}
             viewBox="0 0 24 24"
@@ -78,91 +113,129 @@ const [touchEnd, setTouchEnd] = useState(null);
               strokeLinejoin="round"
             />
           </svg>
+
         </Link>
 
         <div className={styles.headerText}>
+
           <h2>Work Gallery</h2>
+
           <p>Professional work photos.</p>
+
         </div>
 
       </div>
 
-               <div className={styles.gallery}>
+      <div className={styles.gallery}>
 
-  {images.map((image, index) => (
-    <div
-      key={index}
-      className={styles.photoItem}
-      onClick={() => {
-        setCurrentIndex(index);
-        setSelectedImage(image);
-      }}
-    >
-      <img
-        src={image}
-        alt={`Work Photo ${index + 1}`}
-      />
-    </div>
-  ))}
+        {images.map((image, index) => (
 
-</div>
+          <div
+            key={index}
+            className={styles.photoItem}
+            onClick={() => openViewer(index)}
+          >
+
+            <img
+              src={image}
+              alt={`Work ${index + 1}`}
+            />
+
+          </div>
+
+        ))}
+
+      </div>
 
 
-{selectedImage && (
-  <div
-    className={styles.viewer}
-    onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
-    onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
-    onTouchEnd={handleSwipe}
-  >
+      {viewerOpen && (
 
-    <button
-      className={styles.closeButton}
-      onClick={() => setSelectedImage(null)}
-      aria-label="Close"
-    >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M6 6L18 18M18 6L6 18"
-          stroke="white"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
+        <div
+          className={styles.viewer}
+        >
 
-<div
-  className={styles.sliderTrack}
-  style={{
-    transform: `translateX(-${currentIndex * 100}%)`,
-  }}
->
+          <button
+            className={styles.closeButton}
+            onClick={closeViewer}
+            aria-label="Close"
+          >
 
-  {images.map((image, index) => (
-    <div
-      key={index}
-      className={styles.slide}
-    >
-      <img
-        src={image}
-        alt={`Work ${index + 1}`}
-        className={styles.viewerImage}
-      />
-    </div>
-  ))}
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
 
-</div>
-  
-  </div>
-)}
+              <path
+                d="M6 6L18 18M18 6L6 18"
+                stroke="white"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
 
-  
+            </svg>
+
+          </button>
+
+          <div
+            className={styles.sliderViewport}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+
+            <div
+              ref={sliderRef}
+              className={styles.sliderTrack}
+              style={{
+                transform: `translateX(-${currentIndex * 100}%)`,
+              }}
+            >
+
+              {images.map((image, index) => (
+
+                <div
+                  key={index}
+                  className={styles.slide}
+                >
+
+                  <img
+                    src={image}
+                    alt={`Work ${index + 1}`}
+                    className={styles.viewerImage}
+                    draggable={false}
+                  />
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </div>
+
+          <button
+            className={`${styles.arrow} ${styles.leftArrow}`}
+            disabled={currentIndex === 0}
+          >
+            ‹
+          </button>
+
+          <button
+            className={`${styles.arrow} ${styles.rightArrow}`}
+            disabled={currentIndex === images.length - 1}
+          >
+            ›
+          </button>
+
+        </div>
+
+      )}
+
     </section>
+
   );
+
 }
