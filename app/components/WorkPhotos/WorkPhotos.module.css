@@ -488,3 +488,10 @@
   }
   
   }
+
+
+.sliderViewport{
+
+  touch-action: pan-y;
+
+}
