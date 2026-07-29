@@ -179,7 +179,8 @@
   overflow:hidden;
 
   z-index:9999;
-
+  
+  animation: viewerFade .25s ease;
 }
 
 
@@ -265,7 +266,8 @@
   user-select:none;
 
   -webkit-user-drag:none;
-
+  
+  animation:imageOpen .3s ease;
 }
 
 
@@ -446,7 +448,7 @@
     max-width:94vw;
 
     max-height:82vh;
-
+    
   }
 
 
