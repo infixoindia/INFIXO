@@ -405,11 +405,7 @@
 .arrow{
   -webkit-tap-highlight-color:transparent;
 
-.arrow{
-  user-select:none;
-  -webkit-user-select:none;
-  -webkit-touch-callout:none;
-}
+
 
 .arrow:hover{
   background:#F3F4F6;
