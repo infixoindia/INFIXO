@@ -147,73 +147,7 @@ export default function WorkPhotos() {
       </div>
 
 
-      {viewerOpen && (
-
-        <div
-          className={styles.viewer}
-        >
-
-          <button
-            className={styles.closeButton}
-            onClick={closeViewer}
-            aria-label="Close"
-          >
-
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-
-              <path
-                d="M6 6L18 18M18 6L6 18"
-                stroke="white"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-            </svg>
-
-          </button>
-
-          <div
-            className={styles.sliderViewport}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-
-            <div
-              ref={sliderRef}
-              className={styles.sliderTrack}
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-
-              {images.map((image, index) => (
-
-                <div
-                  key={index}
-                  className={styles.slide}
-                >
-
-                  <img
-                    src={image}
-                    alt={`Work ${index + 1}`}
-                    className={styles.viewerImage}
-                    draggable={false}
-                  />
-
-                </div>
-
-              ))}
-
-            </div>
-
-          </div>
+      
 
           
 
