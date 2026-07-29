@@ -153,10 +153,10 @@ export default function WorkPhotos() {
 
 
 <button
-      className={styles.closeButton}
-      onClick={() => setSelectedImage(null)}
-      aria-label="Close"
-    >
+  className={styles.closeButton}
+  onClick={closeViewer}
+  aria-label="Close"
+>
       <svg
         width="24"
         height="24"
