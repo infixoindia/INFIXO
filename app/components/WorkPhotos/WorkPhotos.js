@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 
@@ -24,6 +24,8 @@ export default function WorkPhotos() {
   const [touchStartX, setTouchStartX] = useState(0);
 
   const [touchEndX, setTouchEndX] = useState(0);
+
+  const isDragging = useRef(false);
   
   useEffect(() => {
 
@@ -54,46 +56,35 @@ export default function WorkPhotos() {
   };
 
   const handleTouchStart = (e) => {
+  isDragging.current = false;
   setTouchStartX(e.touches[0].clientX);
-};
-
-
-const handleTouchMove = (e) => {
   setTouchEndX(e.touches[0].clientX);
 };
 
 
+const handleTouchMove = (e) => {
+  isDragging.current = true;
+  setTouchEndX(e.touches[0].clientX);
+};
+
 const handleTouchEnd = () => {
+
+  if (!isDragging.current) {
+    setTouchStartX(0);
+    setTouchEndX(0);
+    return;
+  }
 
   const distance = touchStartX - touchEndX;
 
-
-  if (distance > 80) {
-    // next image
-    setCurrentIndex((prev) => {
-      if (prev < images.length - 1) {
-        return prev + 1;
-      }
-      return prev;
-    });
+  if (Math.abs(distance) < 80) {
+    setTouchStartX(0);
+    setTouchEndX(0);
+    return;
   }
 
+  // tera baki swipe code yaha rahega
 
-  if (distance < -80) {
-    // previous image
-    setCurrentIndex((prev) => {
-      if (prev > 0) {
-        return prev - 1;
-      }
-      return prev;
-    });
-  }
-
-
-  setTouchStartX(0);
-  setTouchEndX(0);
-
-};
   
   return (
 
