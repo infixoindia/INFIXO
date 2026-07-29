@@ -188,10 +188,15 @@ export default function WorkPhotos() {
 
       </div>
 
-    ))}
+        ))}
 
   </div>
 
+</div>
+
+</div>
+
+)}
 
     </section>
 
