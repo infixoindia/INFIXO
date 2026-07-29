@@ -25,58 +25,22 @@ const [touchStart, setTouchStart] = useState(null);
 const [touchEnd, setTouchEnd] = useState(null);
   
   
-  const handleSwipe = () => {
-  if (!touchStart || !touchEnd) return;
+ const handleSwipe = () => {
+  if (!touchStart || !touchEnd || !selectedImage) return;
 
   const distance = touchStart - touchEnd;
 
-// Left swipe (next image)
-if (isAnimating || !selectedImage) return;   
-if (distance > 50) {
-
-  if (currentIndex < images.length - 1) {
-
-    setDirection("left");
-    setIsAnimating(true);
-
-    const nextIndex = currentIndex + 1;
-
-    setPreviousImage(selectedImage);
-    
-    setCurrentIndex(nextIndex);
-    setSelectedImage(images[nextIndex]);
-
-    setTimeout(() => {
-  setPreviousImage(null);
-  setIsAnimating(false);
-}, 450);
-    
+  if (distance > 50 && currentIndex < images.length - 1) {
+    const next = currentIndex + 1;
+    setCurrentIndex(next);
+    setSelectedImage(images[next]);
   }
-}
 
-// Right swipe (previous image)
-if (distance < -50) {
-
-  if (currentIndex > 0) {
-
-    setDirection("right");
-
-    setIsAnimating(true);
-
-    const prevIndex = currentIndex - 1;
-
-    setPreviousImage(selectedImage);
-    
-    setCurrentIndex(prevIndex);
-    setSelectedImage(images[prevIndex]);
-
-    setTimeout(() => {
-  setPreviousImage(null);
-  setIsAnimating(false);
-}, 450);
-    
+  if (distance < -50 && currentIndex > 0) {
+    const prev = currentIndex - 1;
+    setCurrentIndex(prev);
+    setSelectedImage(images[prev]);
   }
-}
 
   setTouchStart(null);
   setTouchEnd(null);
@@ -173,16 +137,27 @@ if (distance < -50) {
       </svg>
     </button>
 
-    <div className={styles.imageWrapper}>
+<div
+  className={styles.sliderTrack}
+  style={{
+    transform: `translateX(-${currentIndex * 100}%)`,
+  }}
+>
 
+  {images.map((image, index) => (
+    <div
+      key={index}
+      className={styles.slide}
+    >
       <img
-        key={currentIndex}
-        src={selectedImage}
-        alt="Work Photo"
+        src={image}
+        alt={`Work ${index + 1}`}
         className={styles.viewerImage}
       />
-
     </div>
+  ))}
+
+</div>
   
   </div>
 )}
