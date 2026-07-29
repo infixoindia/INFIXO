@@ -155,9 +155,29 @@ export default function WorkPhotos() {
       className={styles.closeButton}
       onClick={closeViewer}
     >
-      X
+
+<button
+      className={styles.closeButton}
+      onClick={() => setSelectedImage(null)}
+      aria-label="Close"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M6 6L18 18M18 6L6 18"
+          stroke="white"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </button>
 
+            
     <div
   className={styles.sliderViewport}
   onTouchStart={handleTouchStart}
