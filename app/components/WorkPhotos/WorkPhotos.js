@@ -147,7 +147,6 @@ export default function WorkPhotos() {
       </div>
 
 
-      )}
 
     </section>
 
