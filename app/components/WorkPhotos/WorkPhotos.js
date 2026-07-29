@@ -54,38 +54,43 @@ export default function WorkPhotos() {
   };
 
   const handleTouchStart = (e) => {
-
-  touchStartY.current = e.targetTouches[0].clientY;
-
-  setTouchStartX(e.targetTouches[0].clientX);
-
+  setTouchStartX(e.touches[0].clientX);
+  setTouchEndX(e.touches[0].clientX);
 };
   
   const handleTouchMove = (e) => {
-
-    setTouchEndX(e.targetTouches[0].clientX);
-
-  };
+  setTouchEndX(e.touches[0].clientX);
+};
 
   const handleTouchEnd = () => {
 
   const distance = touchStartX - touchEndX;
 
 
-  if (Math.abs(distance) < 100) {
+  if (Math.abs(distance) < 80) {
     setTouchStartX(0);
     setTouchEndX(0);
     return;
   }
 
 
-  if (distance > 100 && currentIndex < images.length - 1) {
-    setCurrentIndex((prev) => prev + 1);
+  // left swipe = next image
+  if (distance > 80) {
+
+    if (currentIndex < images.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
+
   }
 
 
-  if (distance < -100 && currentIndex > 0) {
-    setCurrentIndex((prev) => prev - 1);
+  // right swipe = previous image
+  if (distance < -80) {
+
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
+
   }
 
 
