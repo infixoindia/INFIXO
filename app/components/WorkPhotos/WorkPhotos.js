@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import Link from "next/link";
 
@@ -25,7 +25,6 @@ export default function WorkPhotos() {
 
   const [touchEndX, setTouchEndX] = useState(0);
 
-  const sliderRef = useRef(null);
 
   useEffect(() => {
 
@@ -219,16 +218,18 @@ export default function WorkPhotos() {
           <button
             className={`${styles.arrow} ${styles.leftArrow}`}
             disabled={currentIndex === 0}
+            onClick={() => setCurrentIndex((prev) => prev - 1)}
           >
             ‹
           </button>
 
           <button
-            className={`${styles.arrow} ${styles.rightArrow}`}
-            disabled={currentIndex === images.length - 1}
-          >
-            ›
-          </button>
+           className={`${styles.arrow} ${styles.rightArrow}`}
+           disabled={currentIndex === images.length - 1}
+           onClick={() => setCurrentIndex((prev) => prev + 1)}
+         >
+           ›
+         </button>
 
         </div>
 
