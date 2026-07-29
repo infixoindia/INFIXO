@@ -22,6 +22,8 @@ const images = [
 const [currentIndex, setCurrentIndex] = useState(0);
 const [previousImage, setPreviousImage] = useState(null);
 
+const [isAnimating, setIsAnimating] = useState(false);
+
   
 const [touchStart, setTouchStart] = useState(null); 
 const [touchEnd, setTouchEnd] = useState(null);
@@ -34,11 +36,13 @@ const [direction, setDirection] = useState("");
   const distance = touchStart - touchEnd;
 
 // Left swipe (next image)
+if (isAnimating || !selectedImage) return;   
 if (distance > 50) {
 
   if (currentIndex < images.length - 1) {
 
     setDirection("left");
+    setIsAnimating(true);
 
     const nextIndex = currentIndex + 1;
 
@@ -46,6 +50,12 @@ if (distance > 50) {
     
     setCurrentIndex(nextIndex);
     setSelectedImage(images[nextIndex]);
+
+    setTimeout(() => {
+  setPreviousImage(null);
+  setIsAnimating(false);
+}, 450);
+    
   }
 }
 
@@ -56,12 +66,20 @@ if (distance < -50) {
 
     setDirection("right");
 
+    setIsAnimating(true);
+
     const prevIndex = currentIndex - 1;
 
     setPreviousImage(selectedImage);
     
     setCurrentIndex(prevIndex);
     setSelectedImage(images[prevIndex]);
+
+    setTimeout(() => {
+  setPreviousImage(null);
+  setIsAnimating(false);
+}, 450);
+    
   }
 }
 
