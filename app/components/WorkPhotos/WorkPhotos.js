@@ -257,8 +257,22 @@ const handleTouchEnd = () => {
     }
   }}
   disabled={currentIndex === 0}
+  aria-label="Previous image"
 >
-  &#8249;
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M15 5L8 12L15 19"
+      stroke="currentColor"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 </button>
 
 <button
@@ -269,10 +283,24 @@ const handleTouchEnd = () => {
     }
   }}
   disabled={currentIndex === images.length - 1}
+  aria-label="Next image"
 >
-  &#8250;
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M9 5L16 12L9 19"
+      stroke="currentColor"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 </button>
-
+        
 </div>
 
 )}
