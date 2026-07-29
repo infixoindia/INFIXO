@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-
-const touchStartY = useRef(0);
+import { useState, useEffect } from "react";
 
 import Link from "next/link";
 
@@ -26,8 +24,7 @@ export default function WorkPhotos() {
   const [touchStartX, setTouchStartX] = useState(0);
 
   const [touchEndX, setTouchEndX] = useState(0);
-
-
+  
   useEffect(() => {
 
     if (viewerOpen) {
@@ -72,35 +69,23 @@ export default function WorkPhotos() {
 
   const handleTouchEnd = () => {
 
-  const distanceX = touchStartX - touchEndX;
-
-  const distanceY = Math.abs(
-    touchStartY.current - 0
-  );
+  const distance = touchStartX - touchEndX;
 
 
-  // tap ko ignore karo
-  if (Math.abs(distanceX) < 100) {
-
+  if (Math.abs(distance) < 100) {
     setTouchStartX(0);
     setTouchEndX(0);
-
     return;
-
   }
 
 
-  if (distanceX > 100 && currentIndex < images.length - 1) {
-
-    setCurrentIndex((prev)=>prev + 1);
-
+  if (distance > 100 && currentIndex < images.length - 1) {
+    setCurrentIndex((prev) => prev + 1);
   }
 
 
-  if (distanceX < -100 && currentIndex > 0) {
-
-    setCurrentIndex((prev)=>prev - 1);
-
+  if (distance < -100 && currentIndex > 0) {
+    setCurrentIndex((prev) => prev - 1);
   }
 
 
@@ -108,7 +93,6 @@ export default function WorkPhotos() {
   setTouchEndX(0);
 
 };
-
 
   return (
 
