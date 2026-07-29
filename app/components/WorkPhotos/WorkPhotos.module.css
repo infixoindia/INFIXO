@@ -203,7 +203,9 @@
   align-items:center;
 
   justify-content:center;
-
+  
+  touch-action: pan-x;
+  
 }
 
 
@@ -268,6 +270,8 @@
   -webkit-user-drag:none;
   
   animation:imageOpen .3s ease;
+
+  touch-action: pan-y;
 }
 
 
