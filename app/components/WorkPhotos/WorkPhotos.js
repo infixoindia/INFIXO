@@ -151,61 +151,61 @@ if (distance < -50) {
 
 {selectedImage && (
   <div
-  className={styles.viewer}
-  onTouchStart={(e) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  }}
-  onTouchMove={(e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  }}
-  onTouchEnd={handleSwipe}
->
+    className={styles.viewer}
+    onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
+    onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+    onTouchEnd={handleSwipe}
+  >
 
     <button
-  className={styles.closeButton}
-  onClick={() => setSelectedImage(null)}
-  aria-label="Close"
->
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-  >
-    <path
-      d="M6 6L18 18M18 6L6 18"
-      stroke="white"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-</button>
+      className={styles.closeButton}
+      onClick={() => setSelectedImage(null)}
+      aria-label="Close"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M6 6L18 18M18 6L6 18"
+          stroke="white"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
 
-{previousImage && (
-  <img
-    src={previousImage}
-    alt="Previous Work Photo"
-    className={`${styles.viewerImage} ${
-      direction === "left"
-        ? styles.exitLeft
-        : styles.exitRight
-    }`}
-  />
-)}
+    <div className={styles.imageWrapper}>
 
-<img
-  key={currentIndex}
-  src={selectedImage}
-  alt="Work Photo"
-  className={`${styles.viewerImage} ${
-    previousImage
-      ? direction === "left"
-        ? styles.enterRight
-        : styles.enterLeft
-      : ""
-  }`}
-/>
+      {previousImage && (
+        <img
+          src={previousImage}
+          alt=""
+          className={`${styles.viewerImage} ${
+            direction === "left"
+              ? styles.exitLeft
+              : styles.exitRight
+          }`}
+        />
+      )}
+
+      <img
+        key={currentIndex}
+        src={selectedImage}
+        alt="Work Photo"
+        className={`${styles.viewerImage} ${
+          previousImage
+            ? direction === "left"
+              ? styles.enterRight
+              : styles.enterLeft
+            : ""
+        }`}
+      />
+
+    </div>
   
   </div>
 )}
