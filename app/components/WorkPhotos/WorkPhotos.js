@@ -83,7 +83,6 @@ const handleTouchEnd = () => {
     return;
   }
 
-  // tera baki swipe code yaha rahega
 
   
   return (
