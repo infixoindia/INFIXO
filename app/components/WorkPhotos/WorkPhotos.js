@@ -158,15 +158,41 @@ export default function WorkPhotos() {
       X
     </button>
 
-    <img
-      src={images[currentIndex]}
-      alt="Work Photo"
-      className={styles.viewerImage}
-    />
+    <div
+  className={styles.sliderViewport}
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}
+>
+
+  <div
+    className={styles.sliderTrack}
+    style={{
+      transform:`translateX(-${currentIndex * 100}%)`
+    }}
+  >
+
+    {images.map((image,index)=>(
+
+      <div
+        key={index}
+        className={styles.slide}
+      >
+
+        <img
+          src={image}
+          alt={`Work ${index + 1}`}
+          className={styles.viewerImage}
+          draggable={false}
+        />
+
+      </div>
+
+    ))}
 
   </div>
 
-)}
+</div>
 
     </section>
 
