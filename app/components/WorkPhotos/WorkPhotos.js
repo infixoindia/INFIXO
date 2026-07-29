@@ -68,25 +68,34 @@ export default function WorkPhotos() {
 
   const handleTouchEnd = () => {
 
-    const distance = touchStartX - touchEndX;
+  const distance = touchStartX - touchEndX;
 
-    if (distance > 60 && currentIndex < images.length - 1) {
-
-      setCurrentIndex((prev) => prev + 1);
-
-    }
-
-    if (distance < -60 && currentIndex > 0) {
-
-      setCurrentIndex((prev) => prev - 1);
-
-    }
-
+  // tap ya small movement ignore
+  if (Math.abs(distance) < 80) {
     setTouchStartX(0);
-
     setTouchEndX(0);
+    return;
+  }
 
-  };
+
+  if (distance > 80 && currentIndex < images.length - 1) {
+
+    setCurrentIndex((prev) => prev + 1);
+
+  }
+
+
+  if (distance < -80 && currentIndex > 0) {
+
+    setCurrentIndex((prev) => prev - 1);
+
+  }
+
+
+  setTouchStartX(0);
+  setTouchEndX(0);
+
+};
 
   return (
 
