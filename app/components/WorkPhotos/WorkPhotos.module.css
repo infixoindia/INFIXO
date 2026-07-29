@@ -41,6 +41,7 @@
 
 
 .backLink{
+
   position:absolute;
 
   left:18px;
@@ -48,14 +49,37 @@
 
   transform:translateY(-50%);
 
+  width:42px;
+  height:42px;
+
+  border-radius:50%;
+
+  background:#F5F7FA;
+
   display:flex;
+
   align-items:center;
+
   justify-content:center;
 
-  width:36px;
-  height:36px;
-
   text-decoration:none;
+
+  transition:.2s ease;
+
+}
+
+
+.backLink:hover{
+
+  background:#E5E7EB;
+
+}
+
+
+.backLink:active{
+
+  transform:translateY(-50%) scale(.94);
+
 }
 
 
