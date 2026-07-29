@@ -389,6 +389,23 @@
 
 }
 
+.arrow:focus{
+  outline:none;
+}
+
+.arrow:focus-visible{
+  outline:none;
+}
+
+.arrow:active{
+  transform:translateY(-50%) scale(.94);
+  background:rgba(32,32,32,.72);
+}
+
+.arrow{
+  -webkit-tap-highlight-color:transparent;
+}
+
 .arrow:hover{
   background:#F3F4F6;
 }
