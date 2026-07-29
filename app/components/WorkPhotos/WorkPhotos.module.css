@@ -433,6 +433,35 @@
 
 }
 
+  .imageCounter{
+
+  position:absolute;
+
+  top:22px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  padding:8px 16px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.12);
+
+  backdrop-filter:blur(14px);
+
+  color:#fff;
+
+  font-size:15px;
+
+  font-weight:700;
+
+  z-index:10002;
+
+  user-select:none;
+
+  }
 
 
 /* ========================= */
@@ -489,32 +518,3 @@
 
   }
   
-  .imageCounter{
-
-  position:absolute;
-
-  top:22px;
-
-  left:50%;
-
-  transform:translateX(-50%);
-
-  padding:8px 16px;
-
-  border-radius:999px;
-
-  background:rgba(255,255,255,.12);
-
-  backdrop-filter:blur(14px);
-
-  color:#fff;
-
-  font-size:15px;
-
-  font-weight:700;
-
-  z-index:10002;
-
-  user-select:none;
-
-  }
