@@ -151,10 +151,6 @@ export default function WorkPhotos() {
 
   <div className={styles.viewer}>
 
-    <button
-      className={styles.closeButton}
-      onClick={closeViewer}
-    >
 
 <button
       className={styles.closeButton}
