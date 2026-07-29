@@ -362,12 +362,13 @@
   width:48px;
   height:48px;
 
-  border:none;
+  border:1px solid rgba(0,0,0,.08);
+
   border-radius:50%;
 
-  background:rgba(0,0,0,.45);
+  background:#FFFFFF;
 
-  color:#FFFFFF;
+  color:#111827;
 
   display:flex;
   align-items:center;
@@ -375,6 +376,8 @@
 
   font-size:34px;
   font-weight:700;
+
+  box-shadow:0 8px 24px rgba(0,0,0,.22);
 
   cursor:pointer;
 
@@ -385,7 +388,7 @@
 }
 
 .arrow:hover{
-  background:rgba(0,0,0,.65);
+  background:#F3F4F6;
 }
 
 
@@ -398,7 +401,7 @@
 
 .arrow:disabled{
 
-  opacity:.25;
+  opacity:.28;
 
   cursor:not-allowed;
 
