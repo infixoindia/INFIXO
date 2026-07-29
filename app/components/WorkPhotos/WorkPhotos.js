@@ -20,15 +20,10 @@ const images = [
 ];
 
 const [currentIndex, setCurrentIndex] = useState(0);
-const [previousImage, setPreviousImage] = useState(null);
 
-const [isAnimating, setIsAnimating] = useState(false);
-
-  
 const [touchStart, setTouchStart] = useState(null); 
 const [touchEnd, setTouchEnd] = useState(null);
   
-const [direction, setDirection] = useState(""); 
   
   const handleSwipe = () => {
   if (!touchStart || !touchEnd) return;
@@ -179,14 +174,6 @@ if (distance < -50) {
     </button>
 
     <div className={styles.imageWrapper}>
-
-      {previousImage && (
-        <img
-          src={previousImage}
-          alt=""
-          className={styles.viewerImage}
-        />
-      )}
 
       <img
         key={currentIndex}
