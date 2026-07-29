@@ -187,7 +187,10 @@ const handleTouchEnd = () => {
 
   <div className={styles.viewer}>
 
-
+  <div className={styles.imageCounter}>
+  {currentIndex + 1} / {images.length}
+  </div>
+  
 <button
   className={styles.closeButton}
   onClick={closeViewer}
