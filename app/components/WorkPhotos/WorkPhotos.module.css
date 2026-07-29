@@ -166,9 +166,9 @@
 
   inset:0;
 
-  background:rgba(0,0,0,.92);
+  background:rgba(0,0,0,.75);
 
-  backdrop-filter:blur(6px);
+  backdrop-filter:blur(8px);
 
   display:flex;
 
