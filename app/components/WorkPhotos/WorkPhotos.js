@@ -21,12 +21,6 @@ export default function WorkPhotos() {
 
   const [currentIndex, setCurrentIndex] =  useState(0);
   
-  const [zoomScale, setZoomScale] = useState(1);
-
-  const initialDistance = useRef(null);
-
-  const lastTapTime = useRef(0);
-  
   const [touchStartX, setTouchStartX] = useState(0);
 
   const [touchEndX, setTouchEndX] = useState(0);
@@ -51,8 +45,6 @@ export default function WorkPhotos() {
 
   setCurrentIndex(index);
 
-  setZoomScale(1);
-
   setViewerOpen(true);
 
 };
@@ -65,22 +57,6 @@ export default function WorkPhotos() {
 
   const handleTouchStart = (e) => {
 
-  if (e.touches.length === 2) {
-
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-
-    const distance = Math.hypot(
-      touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
-    );
-
-    initialDistance.current = distance;
-
-    return;
-  }
-
-
   isDragging.current = false;
 
   setTouchStartX(e.touches[0].clientX);
@@ -92,40 +68,6 @@ export default function WorkPhotos() {
 
 const handleTouchMove = (e) => {
 
-  if (e.touches.length === 2 && initialDistance.current) {
-
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
-
-    const distance = Math.hypot(
-      touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
-    );
-
-
-    const scaleChange = distance / initialDistance.current;
-
-
-    let newScale = scaleChange;
-
-
-    if (newScale < 1) {
-      newScale = 1;
-    }
-
-
-    if (newScale > 3) {
-      newScale = 3;
-    }
-
-
-    setZoomScale(newScale);
-
-    return;
-
-  }
-
-
   isDragging.current = true;
 
   setTouchEndX(e.touches[0].clientX);
@@ -135,9 +77,7 @@ const handleTouchMove = (e) => {
 
 const handleTouchEnd = () => {
 
-  initialDistance.current = null;
-
-  if (!isDragging.current) {
+  if(!isDragging.current) {
 
     setTouchStartX(0);
     setTouchEndX(0);
@@ -288,51 +228,30 @@ const handleTouchEnd = () => {
   onTouchEnd={handleTouchEnd}
 >
 
-  <div
-    className={styles.sliderTrack}
-    style={{
-      transform: `translateX(-${currentIndex * 100}%)`
-    }}
-  >
-
-    {images.map((image, index) => (
-
-      <div
-        key={index}
-        className={styles.slide}
-      >
-
-        <img
-  src={image}
-  alt={`Work ${index + 1}`}
-  className={styles.viewerImage}
-  draggable={false}
-  onTouchEnd={() => {
-
-    const now = Date.now();
-
-    if (now - lastTapTime.current < 300) {
-
-      setZoomScale((prev) =>
-        prev > 1 ? 1 : 2
-      );
-
-    }
-
-    lastTapTime.current = now;
-
-  }}
+ <div
+  className={styles.sliderTrack}
   style={{
-    transform:`scale(${zoomScale})`,
-    transition:"transform .25s ease"
+    transform: `translateX(-${currentIndex * 100}%)`
   }}
-/>
+>
 
-      </div>
+  {images.map((image, index) => (
 
-    ))}
+    <div
+      key={index}
+      className={styles.slide}
+    >
 
-  </div>
+      <img
+        src={image}
+        alt={`Work ${index + 1}`}
+        className={styles.viewerImage}
+        draggable={false}
+      />
+
+    </div>
+
+  ))}
 
 </div>
 
@@ -377,13 +296,13 @@ const handleTouchEnd = () => {
     />
   </svg>
 </div>
-        
+
 </div>
 
 )}
 
-    </section>
+</section>
 
-  );
+);
 
 }
