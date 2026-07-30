@@ -36,7 +36,8 @@ export default function WorkPhotos() {
 
   const pinchStartZoom = useRef(1);
 
-
+  const pinchCenter = useRef({ x: 0, y: 0 });
+  
   const lastTapTime = useRef(0);
 
 
@@ -181,7 +182,23 @@ export default function WorkPhotos() {
 
       pinchStartZoom.current = zoom;
 
+      const rect =
+      e.currentTarget.getBoundingClientRect();
 
+      pinchCenter.current = {
+      x:
+     (
+        (e.touches[0].clientX +
+         e.touches[1].clientX) / 2
+      ) - rect.left,
+
+        y:
+       (
+      (e.touches[0].clientY +
+       e.touches[1].clientY) / 2
+    ) - rect.top,
+};
+      
       return;
 
     }
@@ -263,7 +280,36 @@ export default function WorkPhotos() {
 
       setZoom(newZoom);
 
+const rect =
+  e.currentTarget.getBoundingClientRect();
 
+const currentCenter = {
+  x:
+    (
+      (e.touches[0].clientX +
+       e.touches[1].clientX) / 2
+    ) - rect.left,
+
+  y:
+    (
+      (e.touches[0].clientY +
+       e.touches[1].clientY) / 2
+    ) - rect.top,
+};
+
+const dx =
+  currentCenter.x - pinchCenter.current.x;
+
+const dy =
+  currentCenter.y - pinchCenter.current.y;
+
+setPosition({
+  x: dx,
+  y: dy,
+});
+
+setZoom(newZoom);
+      
       return;
 
     }
@@ -575,11 +621,12 @@ export default function WorkPhotos() {
           className={styles.viewerImage}
           draggable={false}
           style={{
-            transform:`
-              translate(${position.x}px, ${position.y}px)
-              scale(${zoom})
-            `
-          }}
+  transformOrigin: `${pinchCenter.current.x}px ${pinchCenter.current.y}px`,
+  transform: `
+    translate(${position.x}px, ${position.y}px)
+    scale(${zoom})
+  `
+}}
         />
 
 
