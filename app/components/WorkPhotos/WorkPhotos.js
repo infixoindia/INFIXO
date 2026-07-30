@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-
 import Link from "next/link";
-
 import styles from "./WorkPhotos.module.css";
 
 export default function WorkPhotos() {
@@ -17,270 +15,421 @@ export default function WorkPhotos() {
     "/images/work6.png",
   ];
 
+
   const [viewerOpen, setViewerOpen] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
+
+  // Zoom system
   const [zoom, setZoom] = useState(1);
 
-const [translate, setTranslate] = useState({
-  x: 0,
-  y: 0,
-});
+  const [position, setPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
-const lastTapRef = useRef(0);
 
-const pinchDistanceRef = useRef(0);
+  // Touch refs
 
-const startZoomRef = useRef(1);
+  const pinchStartDistance = useRef(null);
 
-const dragStartRef = useRef({
-  x: 0,
-  y: 0,
-});
+  const pinchStartZoom = useRef(1);
 
-const translateStartRef = useRef({
-  x: 0,
-  y: 0,
-});
-  
+
+  const lastTapTime = useRef(0);
+
+
+  const dragStart = useRef({
+    x: 0,
+    y: 0,
+  });
+
+
+  const positionStart = useRef({
+    x: 0,
+    y: 0,
+  });
+
+
+  // Swipe
+
   const [touchStartX, setTouchStartX] = useState(0);
 
   const [touchEndX, setTouchEndX] = useState(0);
 
-  const isDragging = useRef(false);
+
+  const isSwiping = useRef(false);
   
-  useEffect(() => {
+    useEffect(() => {
 
     if (viewerOpen) {
+
       document.body.style.overflow = "hidden";
+
     } else {
+
       document.body.style.overflow = "";
+
     }
 
+
     return () => {
+
       document.body.style.overflow = "";
+
     };
 
   }, [viewerOpen]);
 
+
+
   const openViewer = (index) => {
 
-  setCurrentIndex(index);
+    setCurrentIndex(index);
 
-  setZoom(1);
+    setZoom(1);
 
-  setTranslate({
-    x: 0,
-    y: 0,
-  });
+    setPosition({
+      x: 0,
+      y: 0,
+    });
 
-  setViewerOpen(true);
+    pinchStartDistance.current = null;
 
-};
+    setViewerOpen(true);
+
+  };
+
+
 
   const closeViewer = () => {
 
-  setViewerOpen(false);
+    setViewerOpen(false);
 
-  setZoom(1);
+    setZoom(1);
 
-  setTranslate({
-    x: 0,
-    y: 0,
-  });
+    setPosition({
+      x: 0,
+      y: 0,
+    });
 
-};
+    pinchStartDistance.current = null;
 
-  
+  };
+
+  const getDistance = (touches) => {
+
+    const touch1 = touches[0];
+    const touch2 = touches[1];
+
+    return Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+
+  };
+
+
+
   const handleTouchStart = (e) => {
 
-  // Double tap
-  if (e.touches.length === 1) {
 
-    const now = Date.now();
+    // Double tap
 
-    if (now - lastTapRef.current < 250) {
+    if (e.touches.length === 1) {
 
-      if (zoom === 1) {
+      const now = Date.now();
 
-        setZoom(2);
 
-      } else {
+      if (now - lastTapTime.current < 280) {
 
-        setZoom(1);
 
-        setTranslate({
-          x: 0,
-          y: 0,
-        });
+        if (zoom === 1) {
+
+          setZoom(2);
+
+
+        } else {
+
+          setZoom(1);
+
+          setPosition({
+            x:0,
+            y:0
+          });
+
+        }
 
       }
 
+
+      lastTapTime.current = now;
+
     }
 
-    lastTapRef.current = now;
-
-  }
 
 
-  // Pinch Start
-  if (e.touches.length === 2) {
+    // Pinch start
 
-    const t1 = e.touches[0];
+    if (e.touches.length === 2) {
 
-    const t2 = e.touches[1];
 
-    pinchDistanceRef.current = Math.hypot(
-      t2.clientX - t1.clientX,
-      t2.clientY - t1.clientY
+      pinchStartDistance.current =
+        getDistance(e.touches);
+
+
+      pinchStartZoom.current = zoom;
+
+
+      return;
+
+    }
+
+
+
+    // Drag start when zoomed
+
+    if (zoom > 1) {
+
+
+      dragStart.current = {
+
+        x:e.touches[0].clientX,
+
+        y:e.touches[0].clientY,
+
+      };
+
+
+      positionStart.current = {
+
+        x:position.x,
+
+        y:position.y,
+
+      };
+
+
+      return;
+
+    }
+
+
+
+    // Normal swipe start
+
+    isSwiping.current = false;
+
+
+    setTouchStartX(e.touches[0].clientX);
+
+    setTouchEndX(e.touches[0].clientX);
+
+
+  };
+
+  const handleTouchMove = (e) => {
+
+
+    // Pinch Zoom
+
+    if (
+      e.touches.length === 2 &&
+      pinchStartDistance.current
+    ) {
+
+
+      const currentDistance =
+        getDistance(e.touches);
+
+
+
+      let newZoom =
+        pinchStartZoom.current *
+        (
+          currentDistance /
+          pinchStartDistance.current
+        );
+
+
+
+      newZoom = Math.max(
+        1,
+        Math.min(4, newZoom)
+      );
+
+
+
+      setZoom(newZoom);
+
+
+      return;
+
+    }
+
+
+
+    // Drag image when zoomed
+
+    if (
+      zoom > 1 &&
+      e.touches.length === 1
+    ) {
+
+
+      const moveX =
+        e.touches[0].clientX -
+        dragStart.current.x;
+
+
+
+      const moveY =
+        e.touches[0].clientY -
+        dragStart.current.y;
+
+
+
+      setPosition({
+
+        x:
+          positionStart.current.x +
+          moveX,
+
+
+        y:
+          positionStart.current.y +
+          moveY,
+
+      });
+
+
+      return;
+
+    }
+
+
+
+    // Normal swipe
+
+    isSwiping.current = true;
+
+
+    setTouchEndX(
+      e.touches[0].clientX
     );
 
-    startZoomRef.current = zoom;
 
-    return;
+  };
 
-  }
-
-
-  // Drag Start (only when zoomed)
-  if (zoom > 1) {
-
-    dragStartRef.current = {
-      x: e.touches[0].clientX,
-      y: e.touches[0].clientY,
-    };
-
-    translateStartRef.current = {
-      x: translate.x,
-      y: translate.y,
-    };
-
-    return;
-
-  }
+  const handleTouchEnd = () => {
 
 
-  // Gallery Swipe
-  isDragging.current = false;
+    // Pinch finish
 
-  setTouchStartX(e.touches[0].clientX);
+    pinchStartDistance.current = null;
 
-  setTouchEndX(e.touches[0].clientX);
 
-};
 
-  
+    // Zoomed image me swipe disable
 
-const handleTouchMove = (e) => {
+    if (zoom > 1) {
 
-  // Pinch Zoom
-  if (e.touches.length === 2) {
+      isSwiping.current = false;
 
-    const t1 = e.touches[0];
-    const t2 = e.touches[1];
+      return;
 
-    const currentDistance = Math.hypot(
-      t2.clientX - t1.clientX,
-      t2.clientY - t1.clientY
-    );
+    }
 
-    let nextZoom =
-      startZoomRef.current *
-      (currentDistance / pinchDistanceRef.current);
 
-    nextZoom = Math.max(1, Math.min(4, nextZoom));
 
-    setZoom(nextZoom);
+    if (!isSwiping.current) {
 
-    return;
 
-  }
+      setTouchStartX(0);
 
-  // Drag Image
-  if (zoom > 1) {
+      setTouchEndX(0);
 
-    const dx =
-      e.touches[0].clientX - dragStartRef.current.x;
 
-    const dy =
-      e.touches[0].clientY - dragStartRef.current.y;
+      return;
 
-    setTranslate({
-      x: translateStartRef.current.x + dx,
-      y: translateStartRef.current.y + dy,
-    });
+    }
 
-    return;
 
-  }
 
-  // Swipe Gallery
-  isDragging.current = true;
+    const distance =
+      touchStartX - touchEndX;
 
-  setTouchEndX(e.touches[0].clientX);
 
-};
-  
 
-const handleTouchEnd = () => {
+    // Small movement ignore
 
-  pinchDistanceRef.current = 0;
+    if (Math.abs(distance) < 80) {
 
-  // Zoomed image → swipe mat chalao
-  if (zoom > 1) {
-    isDragging.current = false;
-    return;
-  }
 
-  if (!isDragging.current) {
+      setTouchStartX(0);
+
+      setTouchEndX(0);
+
+      isSwiping.current = false;
+
+
+      return;
+
+    }
+
+
+
+    // Left swipe
+
+    if (
+      distance > 80 &&
+      currentIndex < images.length - 1
+    ) {
+
+
+      setCurrentIndex(
+        (prev) => prev + 1
+      );
+
+
+    }
+
+
+
+    // Right swipe
+
+    if (
+      distance < -80 &&
+      currentIndex > 0
+    ) {
+
+
+      setCurrentIndex(
+        (prev) => prev - 1
+      );
+
+
+    }
+
+
 
     setTouchStartX(0);
+
     setTouchEndX(0);
 
-    return;
-  }
-
-  const distance = touchStartX - touchEndX;
-
-  if (Math.abs(distance) < 80) {
-
-    setTouchStartX(0);
-    setTouchEndX(0);
-
-    isDragging.current = false;
-
-    return;
-  }
-
-  // Left swipe
-  if (distance > 80 && currentIndex < images.length - 1) {
-
-    setCurrentIndex((prev) => prev + 1);
-
-  }
-
-  // Right swipe
-  if (distance < -80 && currentIndex > 0) {
-
-    setCurrentIndex((prev) => prev - 1);
-
-  }
-
-  setTouchStartX(0);
-  setTouchEndX(0);
-
-  isDragging.current = false;
-
-};
+    isSwiping.current = false;
 
 
-  
+  };
+
   return (
 
     <section className={styles.wrapper}>
 
+
       <div className={styles.header}>
+
 
         <Link
           href="/"
@@ -292,6 +441,7 @@ const handleTouchEnd = () => {
             viewBox="0 0 24 24"
             fill="none"
           >
+
             <path
               d="M15 5L8 12L15 19"
               stroke="currentColor"
@@ -299,23 +449,38 @@ const handleTouchEnd = () => {
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+
           </svg>
+
 
         </Link>
 
+
+
         <div className={styles.headerText}>
 
-          <h2>Work Gallery</h2>
+          <h2>
+            Work Gallery
+          </h2>
 
-          <p>Professional work photos.</p>
+
+          <p>
+            Professional work photos.
+          </p>
+
 
         </div>
 
+
       </div>
+
+
 
       <div className={styles.gallery}>
 
+
         {images.map((image, index) => (
+
 
           <div
             key={index}
@@ -323,48 +488,62 @@ const handleTouchEnd = () => {
             onClick={() => openViewer(index)}
           >
 
+
             <img
               src={image}
               alt={`Work ${index + 1}`}
             />
 
+
           </div>
 
+
         ))}
+
 
       </div>
 
 
-{viewerOpen && (
 
-  <div className={styles.viewer}>
+      {viewerOpen && (
 
-  <div className={styles.imageCounter}>
-  {currentIndex + 1} / {images.length}
-  </div>
-  
+
+        <div className={styles.viewer}>
+
+
+          <div className={styles.imageCounter}>
+
+            {currentIndex + 1} / {images.length}
+
+          </div>
+
 <button
   className={styles.closeButton}
   onClick={closeViewer}
   aria-label="Close"
 >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
-        <path
-          d="M6 6L18 18M18 6L6 18"
-          stroke="white"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
 
-            
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+
+    <path
+      d="M6 6L18 18M18 6L6 18"
+      stroke="white"
+      strokeWidth="2.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+
+  </svg>
+
+</button>
+
+
+
 <div
   className={styles.sliderViewport}
   onTouchStart={handleTouchStart}
@@ -372,86 +551,112 @@ const handleTouchEnd = () => {
   onTouchEnd={handleTouchEnd}
 >
 
- <div
-  className={styles.sliderTrack}
-  style={{
-    transform: `translateX(-${currentIndex * 100}%)`
-  }}
->
 
-  {images.map((image, index) => (
-
-    <div
-      key={index}
-      className={styles.slide}
-    >
-
-      <img
-  src={image}
-  alt={`Work ${index + 1}`}
-  className={styles.viewerImage}
-  draggable={false}
-  style={{
-    transform: `translate(${translate.x}px, ${translate.y}px) scale(${zoom})`,
-    transition: isDragging.current ? "none" : "transform .25s ease"
-  }}
-/>
-
-    </div>
-
-  ))}
-
-</div>
-
-<div
-  className={`${styles.arrow} ${styles.leftArrow} ${
-    currentIndex === 0 ? styles.disabled : ""
-  }`}
->
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
+  <div
+    className={styles.sliderTrack}
+    style={{
+      transform:`translateX(-${currentIndex * 100}%)`
+    }}
   >
-    <path
-      d="M15 5L8 12L15 19"
-      stroke="currentColor"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
+
+
+    {images.map((image,index)=>(
+
+
+      <div
+        key={index}
+        className={styles.slide}
+      >
+
+
+        <img
+          src={image}
+          alt={`Work ${index + 1}`}
+          className={styles.viewerImage}
+          draggable={false}
+          style={{
+            transform:`
+              translate(${position.x}px, ${position.y}px)
+              scale(${zoom})
+            `
+          }}
+        />
+
+
+      </div>
+
+
+    ))}
+
+
+  </div>
+
+
 </div>
 
-<div
-  className={`${styles.arrow} ${styles.rightArrow} ${
-    currentIndex === images.length - 1 ? styles.disabled : ""
-  }`}
->
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-  >
-    <path
-      d="M9 5L16 12L9 19"
-      stroke="currentColor"
-      strokeWidth="2.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-</div>
+        <div
+          className={`${styles.arrow} ${styles.leftArrow} ${
+            currentIndex === 0 ? styles.disabled : ""
+          }`}
+        >
 
-</div>
-</div>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
 
-)}
+            <path
+              d="M15 5L8 12L15 19"
+              stroke="currentColor"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
 
-</section>
+          </svg>
 
-);
+        </div>
+
+
+
+        <div
+          className={`${styles.arrow} ${styles.rightArrow} ${
+            currentIndex === images.length - 1 ? styles.disabled : ""
+          }`}
+        >
+
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+
+            <path
+              d="M9 5L16 12L9 19"
+              stroke="currentColor"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+
+          </svg>
+
+        </div>
+
+
+      </div>
+
+
+    )}
+
+
+  </section>
+
+
+  );
+
 
 }
