@@ -298,6 +298,7 @@ const handleTouchEnd = () => {
 </div>
 
 </div>
+</div>
 
 )}
 
