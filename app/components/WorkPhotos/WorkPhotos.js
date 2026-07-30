@@ -21,38 +21,6 @@ export default function WorkPhotos() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
 
-  // Zoom system
-  const [zoom, setZoom] = useState(1);
-
-  const [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-  });
-
-
-  // Touch refs
-
-  const pinchStartDistance = useRef(null);
-
-  const pinchStartZoom = useRef(1);
-
-  const pinchCenter = useRef({ x: 0, y: 0 });
-  
-  const lastTapTime = useRef(0);
-
-
-  const dragStart = useRef({
-    x: 0,
-    y: 0,
-  });
-
-
-  const positionStart = useRef({
-    x: 0,
-    y: 0,
-  });
-
-
   // Swipe
 
   const [touchStartX, setTouchStartX] = useState(0);
@@ -89,15 +57,6 @@ export default function WorkPhotos() {
 
     setCurrentIndex(index);
 
-    setZoom(1);
-
-    setPosition({
-      x: 0,
-      y: 0,
-    });
-
-    pinchStartDistance.current = null;
-
     setViewerOpen(true);
 
   };
@@ -108,131 +67,10 @@ export default function WorkPhotos() {
 
     setViewerOpen(false);
 
-    setZoom(1);
-
-    setPosition({
-      x: 0,
-      y: 0,
-    });
-
-    pinchStartDistance.current = null;
-
   };
-
-  const getDistance = (touches) => {
-
-    const touch1 = touches[0];
-    const touch2 = touches[1];
-
-    return Math.hypot(
-      touch2.clientX - touch1.clientX,
-      touch2.clientY - touch1.clientY
-    );
-
-  };
-
 
 
   const handleTouchStart = (e) => {
-
-
-    // Double tap
-
-    if (e.touches.length === 1) {
-
-      const now = Date.now();
-
-
-      if (now - lastTapTime.current < 280) {
-
-
-        if (zoom === 1) {
-
-          setZoom(2);
-
-
-        } else {
-
-          setZoom(1);
-
-          setPosition({
-            x:0,
-            y:0
-          });
-
-        }
-
-      }
-
-
-      lastTapTime.current = now;
-
-    }
-
-
-
-    // Pinch start
-
-    if (e.touches.length === 2) {
-
-
-      pinchStartDistance.current =
-        getDistance(e.touches);
-
-
-      pinchStartZoom.current = zoom;
-
-      const rect =
-      e.currentTarget.getBoundingClientRect();
-
-      pinchCenter.current = {
-      x:
-     (
-        (e.touches[0].clientX +
-         e.touches[1].clientX) / 2
-      ) - rect.left,
-
-        y:
-       (
-      (e.touches[0].clientY +
-       e.touches[1].clientY) / 2
-    ) - rect.top,
-};
-      
-      return;
-
-    }
-
-
-
-    // Drag start when zoomed
-
-    if (zoom > 1) {
-
-
-      dragStart.current = {
-
-        x:e.touches[0].clientX,
-
-        y:e.touches[0].clientY,
-
-      };
-
-
-      positionStart.current = {
-
-        x:position.x,
-
-        y:position.y,
-
-      };
-
-
-      return;
-
-    }
-
-
 
     // Normal swipe start
 
@@ -248,114 +86,6 @@ export default function WorkPhotos() {
 
   const handleTouchMove = (e) => {
 
-
-    // Pinch Zoom
-
-    if (
-      e.touches.length === 2 &&
-      pinchStartDistance.current
-    ) {
-
-
-      const currentDistance =
-        getDistance(e.touches);
-
-
-
-      let newZoom =
-        pinchStartZoom.current *
-        (
-          currentDistance /
-          pinchStartDistance.current
-        );
-
-
-
-      newZoom = Math.max(
-        1,
-        Math.min(4, newZoom)
-      );
-
-
-
-      setZoom(newZoom);
-
-const rect =
-  e.currentTarget.getBoundingClientRect();
-
-const currentCenter = {
-  x:
-    (
-      (e.touches[0].clientX +
-       e.touches[1].clientX) / 2
-    ) - rect.left,
-
-  y:
-    (
-      (e.touches[0].clientY +
-       e.touches[1].clientY) / 2
-    ) - rect.top,
-};
-
-const dx =
-  currentCenter.x - pinchCenter.current.x;
-
-const dy =
-  currentCenter.y - pinchCenter.current.y;
-
-setPosition({
-  x: dx,
-  y: dy,
-});
-
-setZoom(newZoom);
-      
-      return;
-
-    }
-
-
-
-    // Drag image when zoomed
-
-    if (
-      zoom > 1 &&
-      e.touches.length === 1
-    ) {
-
-
-      const moveX =
-        e.touches[0].clientX -
-        dragStart.current.x;
-
-
-
-      const moveY =
-        e.touches[0].clientY -
-        dragStart.current.y;
-
-
-
-      setPosition({
-
-        x:
-          positionStart.current.x +
-          moveX,
-
-
-        y:
-          positionStart.current.y +
-          moveY,
-
-      });
-
-
-      return;
-
-    }
-
-
-
     // Normal swipe
 
     isSwiping.current = true;
@@ -369,24 +99,6 @@ setZoom(newZoom);
   };
 
   const handleTouchEnd = () => {
-
-
-    // Pinch finish
-
-    pinchStartDistance.current = null;
-
-
-
-    // Zoomed image me swipe disable
-
-    if (zoom > 1) {
-
-      isSwiping.current = false;
-
-      return;
-
-    }
-
 
 
     if (!isSwiping.current) {
@@ -616,19 +328,11 @@ setZoom(newZoom);
 
 
         <img
-          src={image}
-          alt={`Work ${index + 1}`}
-          className={styles.viewerImage}
-          draggable={false}
-          style={{
-  transformOrigin: `${pinchCenter.current.x}px ${pinchCenter.current.y}px`,
-  transform: `
-    translate(${position.x}px, ${position.y}px)
-    scale(${zoom})
-  `
-}}
-        />
-
+  src={image}
+  alt={`Work ${index + 1}`}
+  className={styles.viewerImage}
+  draggable={false}
+/>
 
       </div>
 
