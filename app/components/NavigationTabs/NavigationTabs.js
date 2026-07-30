@@ -20,9 +20,12 @@ export default function NavigationTabs() {
   Work Photos
 </Link>
 
-      <button className={`${styles.card} ${styles.purple}`}>
-        Work Videos
-      </button>
+<Link
+  href="/work-videos"
+  className={`${styles.card} ${styles.purple}`}
+>
+  Work Videos
+</Link>
 
     </div>
   );
