@@ -6,7 +6,22 @@ import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
 export default function WorkVideos() {
-
+  
+const videos = [
+  {
+    video: "/videos/work1.mp4",
+  },
+  {
+    video: "/videos/work2.mp4",
+  },
+  {
+    video: "/videos/work3.mp4",
+  },
+  {
+    video: "/videos/work4.mp4",
+  },
+];
+  
 const [viewerOpen, setViewerOpen] = useState(false);
 
 const [currentIndex, setCurrentIndex] = useState(0);
@@ -53,12 +68,12 @@ const closeViewer = () => {
 
                       <div className={styles.gallery}>
 
-        {[1,2,3,4].map((item) => (
+  {videos.map((item, index) => (
 
           <div
-  key={item}
+  key={index}
   className={styles.videoCard}
-  onClick={() => openViewer(item - 1)}
+  onClick={() => openViewer(index)}
 >
 
             <div className={styles.thumbnail}>
