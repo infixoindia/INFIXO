@@ -1,9 +1,25 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
 export default function WorkVideos() {
+
+const [viewerOpen, setViewerOpen] = useState(false);
+
+const [currentIndex, setCurrentIndex] = useState(0);
+
+  const openViewer = (index) => {
+  setCurrentIndex(index);
+  setViewerOpen(true);
+};
+
+const closeViewer = () => {
+  setViewerOpen(false);
+};
+  
   return (
     <section className={styles.wrapper}>
 
@@ -40,9 +56,10 @@ export default function WorkVideos() {
         {[1,2,3,4].map((item) => (
 
           <div
-            key={item}
-            className={styles.videoCard}
-          >
+  key={item}
+  className={styles.videoCard}
+  onClick={() => openViewer(item - 1)}
+>
 
             <div className={styles.thumbnail}>
 
@@ -58,6 +75,51 @@ export default function WorkVideos() {
 
       </div>
 
+
+{viewerOpen && (
+
+  <div className={styles.viewer}>
+
+    <div className={styles.imageCounter}>
+      {currentIndex + 1} / 4
+    </div>
+
+    <button
+      className={styles.closeButton}
+      onClick={closeViewer}
+      aria-label="Close"
+    >
+
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+
+        <path
+          d="M6 6L18 18M18 6L6 18"
+          stroke="white"
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+      </svg>
+
+    </button>
+
+    <div className={styles.viewerBody}>
+
+      VIDEO PLAYER
+
+    </div>
+
+  </div>
+
+)}
+
+  
     </section>
   );
 }
