@@ -23,11 +23,26 @@ export default function WorkPhotos() {
   
   const [zoom, setZoom] = useState(1);
 
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+const [translate, setTranslate] = useState({
+  x: 0,
+  y: 0,
+});
 
-  const pinchStart = useRef(null);
+const lastTapRef = useRef(0);
 
-  const lastTap = useRef(0);
+const pinchDistanceRef = useRef(0);
+
+const startZoomRef = useRef(1);
+
+const dragStartRef = useRef({
+  x: 0,
+  y: 0,
+});
+
+const translateStartRef = useRef({
+  x: 0,
+  y: 0,
+});
   
   const [touchStartX, setTouchStartX] = useState(0);
 
@@ -55,9 +70,10 @@ export default function WorkPhotos() {
 
   setZoom(1);
 
-  setOffset({ x: 0, y: 0 });
-
-  pinchStart.current = null;
+  setTranslate({
+    x: 0,
+    y: 0,
+  });
 
   setViewerOpen(true);
 
@@ -69,32 +85,83 @@ export default function WorkPhotos() {
 
   setZoom(1);
 
-  setOffset({ x: 0, y: 0 });
-
-  pinchStart.current = null;
+  setTranslate({
+    x: 0,
+    y: 0,
+  });
 
 };
 
+  
   const handleTouchStart = (e) => {
 
-  // pinch start
+  // Double tap
+  if (e.touches.length === 1) {
+
+    const now = Date.now();
+
+    if (now - lastTapRef.current < 250) {
+
+      if (zoom === 1) {
+
+        setZoom(2);
+
+      } else {
+
+        setZoom(1);
+
+        setTranslate({
+          x: 0,
+          y: 0,
+        });
+
+      }
+
+    }
+
+    lastTapRef.current = now;
+
+  }
+
+
+  // Pinch Start
   if (e.touches.length === 2) {
 
     const t1 = e.touches[0];
+
     const t2 = e.touches[1];
 
-    pinchStart.current = {
-      distance: Math.hypot(
-        t2.clientX - t1.clientX,
-        t2.clientY - t1.clientY
-      ),
-      zoom
+    pinchDistanceRef.current = Math.hypot(
+      t2.clientX - t1.clientX,
+      t2.clientY - t1.clientY
+    );
+
+    startZoomRef.current = zoom;
+
+    return;
+
+  }
+
+
+  // Drag Start (only when zoomed)
+  if (zoom > 1) {
+
+    dragStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+
+    translateStartRef.current = {
+      x: translate.x,
+      y: translate.y,
     };
 
     return;
+
   }
 
-  // normal swipe
+
+  // Gallery Swipe
   isDragging.current = false;
 
   setTouchStartX(e.touches[0].clientX);
@@ -102,33 +169,53 @@ export default function WorkPhotos() {
   setTouchEndX(e.touches[0].clientX);
 
 };
+
   
 
 const handleTouchMove = (e) => {
 
   // Pinch Zoom
-  if (e.touches.length === 2 && pinchStart.current) {
+  if (e.touches.length === 2) {
 
     const t1 = e.touches[0];
     const t2 = e.touches[1];
 
-    const newDistance = Math.hypot(
+    const currentDistance = Math.hypot(
       t2.clientX - t1.clientX,
       t2.clientY - t1.clientY
     );
 
-    let newZoom =
-      pinchStart.current.zoom *
-      (newDistance / pinchStart.current.distance);
+    let nextZoom =
+      startZoomRef.current *
+      (currentDistance / pinchDistanceRef.current);
 
-    newZoom = Math.max(1, Math.min(4, newZoom));
+    nextZoom = Math.max(1, Math.min(4, nextZoom));
 
-    setZoom(newZoom);
+    setZoom(nextZoom);
 
     return;
+
   }
 
-  // Swipe
+  // Drag Image
+  if (zoom > 1) {
+
+    const dx =
+      e.touches[0].clientX - dragStartRef.current.x;
+
+    const dy =
+      e.touches[0].clientY - dragStartRef.current.y;
+
+    setTranslate({
+      x: translateStartRef.current.x + dx,
+      y: translateStartRef.current.y + dy,
+    });
+
+    return;
+
+  }
+
+  // Swipe Gallery
   isDragging.current = true;
 
   setTouchEndX(e.touches[0].clientX);
@@ -137,10 +224,16 @@ const handleTouchMove = (e) => {
   
 
 const handleTouchEnd = () => {
-  
-  pinchStart.current = null;
-  
-  if(!isDragging.current) {
+
+  pinchDistanceRef.current = 0;
+
+  // Zoomed image → swipe mat chalao
+  if (zoom > 1) {
+    isDragging.current = false;
+    return;
+  }
+
+  if (!isDragging.current) {
 
     setTouchStartX(0);
     setTouchEndX(0);
@@ -148,43 +241,31 @@ const handleTouchEnd = () => {
     return;
   }
 
-
   const distance = touchStartX - touchEndX;
 
-
-  // small movement = tap ignore
   if (Math.abs(distance) < 80) {
 
     setTouchStartX(0);
     setTouchEndX(0);
 
+    isDragging.current = false;
+
     return;
   }
 
+  // Left swipe
+  if (distance > 80 && currentIndex < images.length - 1) {
 
-  // left swipe = next image
-  if (distance > 80) {
-
-    if (currentIndex < images.length - 1) {
-
-      setCurrentIndex((prev) => prev + 1);
-
-    }
+    setCurrentIndex((prev) => prev + 1);
 
   }
 
+  // Right swipe
+  if (distance < -80 && currentIndex > 0) {
 
-  // right swipe = previous image
-  if (distance < -80) {
-
-    if (currentIndex > 0) {
-
-      setCurrentIndex((prev) => prev - 1);
-
-    }
+    setCurrentIndex((prev) => prev - 1);
 
   }
-
 
   setTouchStartX(0);
   setTouchEndX(0);
@@ -306,11 +387,15 @@ const handleTouchEnd = () => {
     >
 
       <img
-        src={image}
-        alt={`Work ${index + 1}`}
-        className={styles.viewerImage}
-        draggable={false}
-      />
+  src={image}
+  alt={`Work ${index + 1}`}
+  className={styles.viewerImage}
+  draggable={false}
+  style={{
+    transform: `translate(${translate.x}px, ${translate.y}px) scale(${zoom})`,
+    transition: isDragging.current ? "none" : "transform .25s ease"
+  }}
+/>
 
     </div>
 
