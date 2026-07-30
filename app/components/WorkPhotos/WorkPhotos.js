@@ -19,7 +19,15 @@ export default function WorkPhotos() {
 
   const [viewerOpen, setViewerOpen] = useState(false);
 
-  const [currentIndex, setCurrentIndex] =  useState(0);
+  const [currentIndex, setCurrentIndex]  useStatte(0);
+  
+  const [zoom, setZoom] = useState(1);
+
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const pinchStart = useRef(null);
+
+  const lastTap = useRef(0);
   
   const [touchStartX, setTouchStartX] = useState(0);
 
@@ -45,18 +53,48 @@ export default function WorkPhotos() {
 
   setCurrentIndex(index);
 
+  setZoom(1);
+
+  setOffset({ x: 0, y: 0 });
+
+  pinchStart.current = null;
+
   setViewerOpen(true);
 
 };
 
   const closeViewer = () => {
 
-    setViewerOpen(false);
+  setViewerOpen(false);
 
-  };
+  setZoom(1);
+
+  setOffset({ x: 0, y: 0 });
+
+  pinchStart.current = null;
+
+};
 
   const handleTouchStart = (e) => {
 
+  // pinch start
+  if (e.touches.length === 2) {
+
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
+
+    pinchStart.current = {
+      distance: Math.hypot(
+        t2.clientX - t1.clientX,
+        t2.clientY - t1.clientY
+      ),
+      zoom
+    };
+
+    return;
+  }
+
+  // normal swipe
   isDragging.current = false;
 
   setTouchStartX(e.touches[0].clientX);
@@ -64,10 +102,33 @@ export default function WorkPhotos() {
   setTouchEndX(e.touches[0].clientX);
 
 };
-
+  
 
 const handleTouchMove = (e) => {
 
+  // Pinch Zoom
+  if (e.touches.length === 2 && pinchStart.current) {
+
+    const t1 = e.touches[0];
+    const t2 = e.touches[1];
+
+    const newDistance = Math.hypot(
+      t2.clientX - t1.clientX,
+      t2.clientY - t1.clientY
+    );
+
+    let newZoom =
+      pinchStart.current.zoom *
+      (newDistance / pinchStart.current.distance);
+
+    newZoom = Math.max(1, Math.min(4, newZoom));
+
+    setZoom(newZoom);
+
+    return;
+  }
+
+  // Swipe
   isDragging.current = true;
 
   setTouchEndX(e.touches[0].clientX);
@@ -76,7 +137,9 @@ const handleTouchMove = (e) => {
   
 
 const handleTouchEnd = () => {
-
+  
+  pinchStart.current = null;
+  
   if(!isDragging.current) {
 
     setTouchStartX(0);
