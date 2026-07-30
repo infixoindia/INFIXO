@@ -35,6 +35,29 @@ export default function WorkVideos() {
 
       </div>
 
+                      <div className={styles.gallery}>
+
+        {[1,2,3,4].map((item) => (
+
+          <div
+            key={item}
+            className={styles.videoCard}
+          >
+
+            <div className={styles.thumbnail}>
+
+              <span className={styles.duration}>
+                00:28
+              </span>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
     </section>
   );
 }
