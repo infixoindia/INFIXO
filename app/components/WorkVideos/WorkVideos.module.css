@@ -186,10 +186,10 @@
 }
 
 .imageCounter{
-
+.imageCounter{
   position:absolute;
 
-  top:22px;
+  top:18px;
 
   left:50%;
 
@@ -210,20 +210,18 @@
   font-weight:700;
 
   z-index:10002;
-
 }
 
 .closeButton{
-
   position:absolute;
 
-  top:24px;
+  top:18px;
 
-  right:24px;
+  right:18px;
 
-  width:52px;
+  width:48px;
 
-  height:52px;
+  height:48px;
 
   border:none;
 
@@ -239,10 +237,11 @@
 
   justify-content:center;
 
-  cursor:pointer;
-
   z-index:10002;
 
+  cursor:pointer;
+
+  padding:0;
 }
 
 .closeButton svg{
