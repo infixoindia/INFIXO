@@ -273,12 +273,6 @@
   
   animation:imageOpen .3s ease;
 
-  touch-action:none;
-
-  will-change: transform;
-  
-  transform-origin: center center;
-  
 }
 
 
