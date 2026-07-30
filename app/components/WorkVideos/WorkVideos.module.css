@@ -186,9 +186,10 @@
 }
 
 .imageCounter{
+
   position:absolute;
 
-  top:18px;
+  top:22px;
 
   left:50%;
 
@@ -209,6 +210,7 @@
   font-weight:700;
 
   z-index:10002;
+
 }
 
 .closeButton{
