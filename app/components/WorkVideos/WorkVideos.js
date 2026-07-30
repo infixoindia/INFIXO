@@ -78,11 +78,17 @@ const closeViewer = () => {
 
             <div className={styles.thumbnail}>
 
-              <span className={styles.duration}>
-                00:28
-              </span>
+  <video
+    src={item.video}
+    muted
+    playsInline
+  />
 
-            </div>
+  <span className={styles.duration}>
+    00:28
+  </span>
+
+</div>
 
           </div>
 
