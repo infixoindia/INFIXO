@@ -132,9 +132,16 @@ const closeViewer = () => {
 
     <div className={styles.viewerBody}>
 
-      VIDEO PLAYER
+  <video
+    className={styles.viewerVideo}
+    src={videos[currentIndex].video}
+    autoPlay
+    muted
+    playsInline
+    controls={false}
+  />
 
-    </div>
+</div>
 
   </div>
 
