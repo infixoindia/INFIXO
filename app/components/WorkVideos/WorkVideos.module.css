@@ -312,7 +312,7 @@
 
   position:absolute;
 
-  bottom:34px;
+  bottom:22px;
 
   left:50%;
 
@@ -328,6 +328,10 @@
 
   justify-content:space-between;
 
+  align-items:center;
+
+  padding:0 10px;
+
   color:white;
 
   font-size:13px;
@@ -340,8 +344,14 @@
 
 .progressBar{
 
-  width:100%;
+  width:calc(100% - 20px);
 
   height:4px;
+
+  display:block;
+
+  margin:0 auto;
+
+  border-radius:999px;
 
 }
