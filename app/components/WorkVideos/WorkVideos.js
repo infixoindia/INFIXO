@@ -178,22 +178,22 @@ const closeViewer = () => {
 
 />
 
-  <div
+ {isPaused && (
+
+<div
   className={styles.centerPlay}
   onClick={()=>{
     if(!videoRef.current) return;
 
-    if(videoRef.current.paused){
-      videoRef.current.play();
-    }else{
-      videoRef.current.pause();
-    }
+    videoRef.current.play();
   }}
 >
 
-  {isPaused ? "▶" : "❚❚"}
+  ▶
 
 </div>
+
+)}
   
 <div className={styles.videoControls}>
 
