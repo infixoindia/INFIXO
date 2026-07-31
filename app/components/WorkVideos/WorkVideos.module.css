@@ -195,7 +195,9 @@
   max-width:420px;
 
   max-height:78vh;
-
+  
+  margin-top: 34px;
+  
   border-radius:22px;
 
   background:#000;
@@ -272,5 +274,36 @@
   width:30px;
 
   height:30px;
+
+}
+
+.videoLoader{
+
+  position:absolute;
+
+  width:42px;
+  height:42px;
+
+  border:4px solid rgba(255,255,255,.25);
+
+  border-top:4px solid #ffffff;
+
+  border-radius:50%;
+
+  animation:spin .8s linear infinite;
+
+  z-index:20;
+
+}
+
+@keyframes spin{
+
+  from{
+    transform:rotate(0deg);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
 
 }
