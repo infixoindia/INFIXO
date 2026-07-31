@@ -139,15 +139,22 @@ const closeViewer = () => {
 
     <div className={styles.viewerBody}>
 
-<video
-  className={styles.viewerVideo}
-  src={videos[currentIndex].video}
-  autoPlay
-  muted
-  playsInline
-  controls={false}
-  onLoadedData={() => setIsLoading(false)}
-/>
+  {isLoading && (
+    <div className={styles.videoLoader}></div>
+  )}
+
+  <video
+    className={styles.viewerVideo}
+    src={videos[currentIndex].video}
+    autoPlay
+    muted
+    playsInline
+    controls={false}
+    onLoadedData={() => setIsLoading(false)}
+    style={{
+      opacity: isLoading ? 0 : 1
+    }}
+  />
 
 </div>
 
