@@ -190,14 +190,13 @@
 
 .viewerVideo{
 
-  width:100%;
-
+  width:90%;
   max-width:420px;
 
-  max-height:78vh;
-  
-  margin-top: 34px;
-  
+  max-height:74vh;
+
+  margin-top:12px;
+
   border-radius:22px;
 
   background:#000;
@@ -312,13 +311,15 @@
 
   position:absolute;
 
-  bottom:22px;
+  bottom:30px;
 
   left:50%;
 
   transform:translateX(-50%);
 
-  width:min(420px,90vw);
+  width:calc(90% - 24px);
+
+  max-width:396px;
 
 }
 
