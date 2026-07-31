@@ -201,7 +201,7 @@
 
   background:#000;
 
-  object-fit:contain;
+  object-fit: fill;
 
   box-shadow:
   0 18px 60px rgba(0,0,0,.45);
