@@ -24,11 +24,18 @@ const videos = [
   
 const [viewerOpen, setViewerOpen] = useState(false);
 
+const [isLoading, setIsLoading] = useState(true);
+  
 const [currentIndex, setCurrentIndex] = useState(0);
 
   const openViewer = (index) => {
+
   setCurrentIndex(index);
+
+  setIsLoading(true);
+
   setViewerOpen(true);
+
 };
 
 const closeViewer = () => {
@@ -132,14 +139,15 @@ const closeViewer = () => {
 
     <div className={styles.viewerBody}>
 
-  <video
-    className={styles.viewerVideo}
-    src={videos[currentIndex].video}
-    autoPlay
-    muted
-    playsInline
-    controls={false}
-  />
+<video
+  className={styles.viewerVideo}
+  src={videos[currentIndex].video}
+  autoPlay
+  muted
+  playsInline
+  controls={false}
+  onLoadedData={() => setIsLoading(false)}
+/>
 
 </div>
 
