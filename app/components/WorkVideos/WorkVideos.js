@@ -224,7 +224,9 @@ const closeViewer = () => {
     
 </div>
 
-  </div>
+</div>
+
+</div>
 
 )}
 
