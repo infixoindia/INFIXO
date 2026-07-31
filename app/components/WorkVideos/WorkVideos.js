@@ -33,7 +33,9 @@ const [currentIndex, setCurrentIndex] = useState(0);
 const [currentTime, setCurrentTime] = useState(0);
 
 const [duration, setDuration] = useState(0);
- 
+
+const [isPaused, setIsPaused] = useState(false);
+  
 const videoRef = useRef(null); 
 
 const openViewer = (index) => {
@@ -146,7 +148,9 @@ const closeViewer = () => {
     </button>
 
     <div className={styles.viewerBody}>
-
+            
+    <div className={styles.videoWrapper}>
+            
   {isLoading && (
     <div className={styles.videoLoader}></div>
   )}
@@ -159,6 +163,8 @@ const closeViewer = () => {
   muted
   playsInline
   controls={false}
+  onPlay={() => setIsPaused(false)}
+  onPause={() => setIsPaused(true)}
   onLoadedData={() => setIsLoading(false)}
   onLoadedMetadata={(e)=>{
     setDuration(e.target.duration);
@@ -169,9 +175,26 @@ const closeViewer = () => {
   style={{
     opacity:isLoading ? 0 : 1
   }}
+
 />
 
-    
+  <div
+  className={styles.centerPlay}
+  onClick={()=>{
+    if(!videoRef.current) return;
+
+    if(videoRef.current.paused){
+      videoRef.current.play();
+    }else{
+      videoRef.current.pause();
+    }
+  }}
+>
+
+  {isPaused ? "▶" : "❚❚"}
+
+</div>
+  
 <div className={styles.videoControls}>
 
   <div className={styles.videoTime}>
