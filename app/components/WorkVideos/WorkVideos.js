@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { useRef } from "react";
+
 import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
@@ -28,7 +30,13 @@ const [isLoading, setIsLoading] = useState(true);
   
 const [currentIndex, setCurrentIndex] = useState(0);
 
-  const openViewer = (index) => {
+const [currentTime, setCurrentTime] = useState(0);
+
+const [duration, setDuration] = useState(0);
+ 
+const videoRef = useRef(null); 
+
+const openViewer = (index) => {
 
   setCurrentIndex(index);
 
@@ -143,19 +151,54 @@ const closeViewer = () => {
     <div className={styles.videoLoader}></div>
   )}
 
-  <video
-    className={styles.viewerVideo}
-    src={videos[currentIndex].video}
-    autoPlay
-    muted
-    playsInline
-    controls={false}
-    onLoadedData={() => setIsLoading(false)}
-    style={{
-      opacity: isLoading ? 0 : 1
-    }}
+<video
+  ref={videoRef}
+  className={styles.viewerVideo}
+  src={videos[currentIndex].video}
+  autoPlay
+  muted
+  playsInline
+  controls={false}
+  onLoadedData={() => setIsLoading(false)}
+  onLoadedMetadata={(e)=>{
+    setDuration(e.target.duration);
+  }}
+  onTimeUpdate={(e)=>{
+    setCurrentTime(e.target.currentTime);
+  }}
+  style={{
+    opacity:isLoading ? 0 : 1
+  }}
+/>
+
+    
+<div className={styles.videoControls}>
+
+  <div className={styles.videoTime}>
+
+    <span>
+      {Math.floor(currentTime / 60)}:
+      {String(Math.floor(currentTime % 60)).padStart(2,"0")}
+    </span>
+
+    <span>
+      {Math.floor(duration / 60)}:
+      {String(Math.floor(duration % 60)).padStart(2,"0")}
+    </span>
+
+  </div>
+
+  <input
+    type="range"
+    min="0"
+    max={duration || 0}
+    value={currentTime}
+    disabled
+    className={styles.progressBar}
   />
 
+</div>
+    
 </div>
 
   </div>
