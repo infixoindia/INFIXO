@@ -184,30 +184,16 @@
 
   justify-content:center;
 
-  padding:24px;
+  padding:12px;
   
-  padding-bottom:30px;
 }
 
 .viewerVideo{
-
   width:100%;
-
-  height:auto;
-  
-  aspect-ratio:9/16;
-
-  object-fit: contain;
-
-  border-radius:28px;
-
+  height:100%;
+  object-fit:contain;
+  border-radius:22px;
   background:#000;
-
-  display:block;
-
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.45);
-
 }
 
 .imageCounter{
@@ -413,14 +399,10 @@
 
   position:relative;
 
-  width:94%;
+  width:100%;
 
-  max-width:430px;
-
-  height:auto;
+  height:100%;
   
-  aspect-ratio:9/16;
-
   display:flex;
 
   justify-content:center;
