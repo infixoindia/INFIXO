@@ -191,21 +191,20 @@
 
 .viewerVideo{
 
-  width:94%;
-  max-width:430px;
+  width:100%;
 
-  max-height:78vh;
+  height:100%;
 
-  margin-top:8px;
+  object-fit:cover;
 
-  border-radius:22px;
+  border-radius:28px;
 
   background:#000;
 
-  object-fit: fill;
+  display:block;
 
   box-shadow:
-  0 18px 60px rgba(0,0,0,.45);
+    0 20px 60px rgba(0,0,0,.45);
 
 }
 
