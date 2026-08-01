@@ -147,9 +147,9 @@ const closeViewer = () => {
 
     </button>
 
-    <div className={styles.viewerBody}>
-            
-    <div className={styles.videoWrapper}>
+    <div className={styles.viewerContent}>
+
+  <div className={styles.videoWrapper}>
             
   {isLoading && (
     <div className={styles.videoLoader}></div>
