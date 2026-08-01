@@ -403,3 +403,37 @@
   transform:translate(-50%,-50%) scale(.92);
 
 }
+
+.videoWrapper{
+
+  position:relative;
+
+  width:94%;
+
+  max-width:430px;
+
+  height:82vh;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+}
+
+.viewerContent{
+
+  width:100%;
+
+  height:100%;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:28px 20px;
+
+}
