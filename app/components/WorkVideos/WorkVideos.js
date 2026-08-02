@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { useRef } from "react";
 
+import { useEffect } from "react";
+
 import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
@@ -37,6 +39,55 @@ const [duration, setDuration] = useState(0);
 const [isPaused, setIsPaused] = useState(false);
   
 const videoRef = useRef(null); 
+
+const trackRef = useRef(null);
+
+const [isDragging, setIsDragging] = useState(false);
+
+const formatTime = (t) => {
+  const safe = isNaN(t) ? 0 : t;
+  return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2,"0")}`;
+};
+
+const seekToClientX = (clientX) => {
+  const track = trackRef.current;
+  const video = videoRef.current;
+  if (!track || !video || !duration) return;
+  const rect = track.getBoundingClientRect();
+  const fraction = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  const newTime = fraction * duration;
+  video.currentTime = newTime;
+  setCurrentTime(newTime);
+};
+
+const handleSeekStart = (e) => {
+  e.preventDefault();
+  setIsDragging(true);
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  seekToClientX(clientX);
+};
+
+useEffect(() => {
+  if (!isDragging) return;
+
+  const handleMove = (e) => {
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    seekToClientX(clientX);
+  };
+  const handleUp = () => setIsDragging(false);
+
+  window.addEventListener("mousemove", handleMove);
+  window.addEventListener("mouseup", handleUp);
+  window.addEventListener("touchmove", handleMove, { passive:false });
+  window.addEventListener("touchend", handleUp);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMove);
+    window.removeEventListener("mouseup", handleUp);
+    window.removeEventListener("touchmove", handleMove);
+    window.removeEventListener("touchend", handleUp);
+  };
+}, [isDragging, duration]);
 
 const openViewer = (index) => {
 
@@ -199,28 +250,38 @@ const closeViewer = () => {
   
 <div className={styles.videoControls}>
 
-  <div className={styles.videoTime}>
+  <span className={styles.timeLabel}>
+    {formatTime(currentTime)}
+  </span>
 
-    <span>
-      {Math.floor(currentTime / 60)}:
-      {String(Math.floor(currentTime % 60)).padStart(2,"0")}
-    </span>
+  <div
+    className={styles.progressTrack}
+    ref={trackRef}
+    onMouseDown={handleSeekStart}
+    onTouchStart={handleSeekStart}
+  >
 
-    <span>
-      {Math.floor(duration / 60)}:
-      {String(Math.floor(duration % 60)).padStart(2,"0")}
-    </span>
+    <div
+      className={styles.progressFill}
+      style={{
+        width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+        transition: isDragging ? "none" : "width .15s linear"
+      }}
+    />
+
+    <div
+      className={styles.progressThumb}
+      style={{
+        left: `${duration ? (currentTime / duration) * 100 : 0}%`,
+        transition: isDragging ? "none" : "left .15s linear"
+      }}
+    />
 
   </div>
 
-  <input
-    type="range"
-    min="0"
-    max={duration || 0}
-    value={currentTime}
-    disabled
-    className={styles.progressBar}
-  />
+  <span className={styles.timeLabel}>
+    {formatTime(duration)}
+  </span>
 
 </div>
     
