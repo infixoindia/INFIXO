@@ -208,17 +208,13 @@
 
   padding:8px 16px;
 
-  border-radius:999px;
-
-  background:rgba(255,255,255,.12);
-
-  backdrop-filter:blur(14px);
-
   color:#fff;
 
   font-size:15px;
 
   font-weight:700;
+
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
 
   z-index:10002;
 
@@ -237,11 +233,9 @@
 
   border:none;
 
-  border-radius:50%;
+  background:transparent;
 
-  background:rgba(255,255,255,.12);
-
-  backdrop-filter:blur(16px);
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));
 
   display:flex;
 
@@ -267,6 +261,12 @@
 .videoLoader{
 
   position:absolute;
+
+  top:50%;
+
+  left:50%;
+
+  transform:translate(-50%,-50%);
 
   width:42px;
   height:42px;
