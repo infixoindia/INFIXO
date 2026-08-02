@@ -295,10 +295,6 @@
 
 }
 
-  z-index:20;
-
-}
-
 @keyframes spin{
 
   from{
@@ -440,3 +436,4 @@
   padding:0;
 
 }
+ 
