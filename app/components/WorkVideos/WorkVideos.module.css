@@ -311,53 +311,89 @@
 
   position:absolute;
 
-  left:18px;
+  left:22px;
 
-  right:18px;
+  right:22px;
 
-  bottom:18px;
+  bottom:26px;
 
   z-index:20;
 
-  background:transparent;
-
-  pointer-events:none;
-
-}
-
-.videoTime{
-
   display:flex;
-
-  justify-content:space-between;
 
   align-items:center;
 
-  color:#fff;
+  gap:12px;
 
-  font-size:15px;
-
-  font-weight:700;
-
-  margin-bottom:10px;
-
-  text-shadow:0 2px 8px rgba(0,0,0,.7);
+  background:transparent;
 
 }
 
-.progressBar{
+.timeLabel{
 
-  width:100%;
+  color:#ffffff;
+
+  font-size:18px;
+
+  font-weight:600;
+
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+
+  flex-shrink:0;
+
+}
+
+.progressTrack{
+
+  position:relative;
+
+  flex:1;
 
   height:4px;
 
-  appearance:none;
+  border-radius:999px;
+
+  background:rgba(255,255,255,.25);
+
+  cursor:pointer;
+
+  touch-action:none;
+
+}
+
+.progressFill{
+
+  position:absolute;
+
+  top:0;
+
+  left:0;
+
+  height:100%;
 
   border-radius:999px;
 
-  background:rgba(255,255,255,.35);
+  background:#2F80FF;
 
-  pointer-events:none;
+}
+
+.progressThumb{
+
+  position:absolute;
+
+  top:50%;
+
+  width:18px;
+
+  height:18px;
+
+  border-radius:50%;
+
+  background:#ffffff;
+
+  box-shadow:0 0 12px rgba(255,255,255,.35);
+
+  transform:translate(-50%,-50%);
 
 }
 
