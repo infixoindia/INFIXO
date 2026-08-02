@@ -37,6 +37,8 @@ const [currentTime, setCurrentTime] = useState(0);
 const [duration, setDuration] = useState(0);
 
 const [isPaused, setIsPaused] = useState(false);
+
+const [isMuted, setIsMuted] = useState(true);
   
 const videoRef = useRef(null); 
 
@@ -89,11 +91,21 @@ useEffect(() => {
   };
 }, [isDragging, duration]);
 
+const toggleMute = () => {
+  setIsMuted(prev => !prev);
+};
+
+useEffect(() => {
+  setIsMuted(true);
+}, [currentIndex]);
+
 const openViewer = (index) => {
 
   setCurrentIndex(index);
 
   setIsLoading(true);
+
+  setIsMuted(true);
 
   setViewerOpen(true);
 
@@ -211,7 +223,7 @@ const closeViewer = () => {
   className={styles.viewerVideo}
   src={videos[currentIndex].video}
   autoPlay
-  muted
+  muted={isMuted}
   playsInline
   controls={false}
   onPlay={() => setIsPaused(false)}
@@ -282,6 +294,24 @@ const closeViewer = () => {
   <span className={styles.timeLabel}>
     {formatTime(duration)}
   </span>
+
+  <button
+    className={styles.muteButton}
+    onClick={toggleMute}
+    aria-label={isMuted ? "Unmute" : "Mute"}
+  >
+    {isMuted ? (
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
+        <path d="M16 9l5 5M21 9l-5 5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ) : (
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
+        <path d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    )}
+  </button>
 
 </div>
     
