@@ -33,6 +33,10 @@ const [isLoading, setIsLoading] = useState(true);
 const [currentIndex, setCurrentIndex] = useState(0);
 
 const [translateX, setTranslateX] = useState(0);
+  
+const [direction, setDirection] = useState(null);
+
+const [isAnimating, setIsAnimating] = useState(false);
 
 const startX = useRef(0);
 
@@ -129,18 +133,29 @@ const handleTouchEnd = () => {
 
   if (Math.abs(delta) > threshold) {
 
-    if (delta < 0 && currentIndex < videos.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    }
+  setIsAnimating(true);
 
-    if (delta > 0 && currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-    }
+  if (delta < 0 && currentIndex < videos.length - 1) {
+
+    setDirection("left");
+
+  } else if (delta > 0 && currentIndex > 0) {
+
+    setDirection("right");
+
+  } else {
+
+    setTranslateX(0);
+
+    setIsAnimating(false);
+
   }
 
-  setTranslateX(0);
-};
+} else {
 
+  setTranslateX(0);
+
+  }
   
 useEffect(() => {
   setIsMuted(true);
@@ -264,12 +279,49 @@ const closeViewer = () => {
   onTouchStart={handleTouchStart}
   onTouchMove={handleTouchMove}
   onTouchEnd={handleTouchEnd}
-  style={{
-    transform: `translateX(${translateX}px)`,
-    transition: isSwiping.current
+
+  onTransitionEnd={() => {
+
+  if (!isAnimating) return;
+
+  if (direction === "left") {
+
+    setCurrentIndex(prev => prev + 1);
+
+  } else if (direction === "right") {
+
+    setCurrentIndex(prev => prev - 1);
+
+  }
+
+  setDirection(null);
+
+  setTranslateX(0);
+
+  setIsAnimating(false);
+
+  setIsPaused(true);
+
+  setCurrentTime(0);
+
+  setDuration(0);
+
+  setIsLoading(true);
+
+}}
+
+ style={{
+  transform: isAnimating
+    ? direction === "left"
+      ? "translateX(-100%)"
+      : "translateX(100%)"
+    : `translateX(${translateX}px)`,
+
+  transition:
+    isSwiping.current
       ? "none"
-      : "transform .28s ease",
-  }}
+      : "transform .30s ease",
+}}
 >
             
   {isLoading && (
