@@ -368,66 +368,63 @@ style={{
       </div>
     )}
 
+    <div className={styles.videoControls}>
+
+      <span className={styles.timeLabel}>
+        {formatTime(currentTime)}
+      </span>
+
+      <div
+        className={styles.progressTrack}
+        ref={trackRef}
+        onMouseDown={handleSeekStart}
+        onTouchStart={handleSeekStart}
+      >
+        <div
+          className={styles.progressFill}
+          style={{
+            width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+            transition: isDragging ? "none" : "width .15s linear",
+          }}
+        />
+
+        <div
+          className={styles.progressThumb}
+          style={{
+            left: `${duration ? (currentTime / duration) * 100 : 0}%`,
+            transition: isDragging ? "none" : "left .15s linear",
+          }}
+        />
+      </div>
+
+      <span className={styles.timeLabel}>
+        {formatTime(duration)}
+      </span>
+
+      <button
+        className={styles.muteButton}
+        onClick={toggleMute}
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? (
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
+            <path d="M16 9l5 5M21 9l-5 5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
+            <path d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        )}
+      </button>
+
+    </div>
+
   </div>
 
   {/* Next */}
   <div className={styles.slide}></div>
-
-</div>
-
-{/* Controls videoSlider ke bahar rahenge */}
-<div className={styles.videoControls}>
-
-  <span className={styles.timeLabel}>
-    {formatTime(currentTime)}
-  </span>
-
-  <div
-    className={styles.progressTrack}
-    ref={trackRef}
-    onMouseDown={handleSeekStart}
-    onTouchStart={handleSeekStart}
-  >
-
-    <div
-      className={styles.progressFill}
-      style={{
-        width: `${duration ? (currentTime / duration) * 100 : 0}%`,
-        transition: isDragging ? "none" : "width .15s linear",
-      }}
-    />
-
-    <div
-      className={styles.progressThumb}
-      style={{
-        left: `${duration ? (currentTime / duration) * 100 : 0}%`,
-        transition: isDragging ? "none" : "left .15s linear",
-      }}
-    />
-
-  </div>
-
-  <span className={styles.timeLabel}>
-    {formatTime(duration)}
-  </span>
-
-  <button
-    className={styles.muteButton}
-    onClick={toggleMute}
-    aria-label={isMuted ? "Unmute" : "Mute"}
-  >
-    {isMuted ? (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
-        <path d="M16 9l5 5M21 9l-5 5" stroke="white" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ) : (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
-        <path d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
-    )}
-  </button>
 
 </div>
     
