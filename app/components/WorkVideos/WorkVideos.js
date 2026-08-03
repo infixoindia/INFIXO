@@ -314,7 +314,13 @@ style={{
     : "transform .30s ease",
 }}
 >
-            
+    <div
+  className={styles.videoSlider}
+  style={{
+    transform: `translateX(calc(-100% + ${translateX}px))`,
+  }}
+>
+
   {isLoading && (
     <div className={styles.videoLoader}></div>
   )}
@@ -416,6 +422,8 @@ style={{
 
 </div>
     
+</div>
+
 </div>
 
 </div>
