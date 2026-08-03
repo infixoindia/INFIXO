@@ -161,29 +161,7 @@ const openViewer = (index) => {
 const closeViewer = () => {
   setViewerOpen(false);
 };
-  
-  const handleTouchStart = (e) => {
-  touchStartX.current = e.touches[0].clientX;
-  touchCurrentX.current = touchStartX.current;
-  isSwiping.current = true;
-};
-
-const handleTouchMove = (e) => {
-  if (!isSwiping.current) return;
-
-  touchCurrentX.current = e.touches[0].clientX;
-
-  const diff = touchCurrentX.current - touchStartX.current;
-
-  setTranslateX(diff);
-};
-
-const handleTouchEnd = () => {
-  isSwiping.current = false;
-
-  setTranslateX(0);
-};
-  
+ 
   return (
     <section className={styles.wrapper}>
 
