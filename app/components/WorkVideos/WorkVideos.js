@@ -29,25 +29,17 @@ const videos = [
 const [viewerOpen, setViewerOpen] = useState(false);
 
 const [isLoading, setIsLoading] = useState(true);
-  
+
 const [currentIndex, setCurrentIndex] = useState(0);
-  
+
 const [translateX, setTranslateX] = useState(0);
 
-const touchStartX = useRef(0);
-  
-const touchCurrentX = useRef(0);
-  
-const isSwiping = useRef(false);
-  
 const startX = useRef(0);
-  
+
 const currentX = useRef(0);
-  
+
 const isSwiping = useRef(false);
 
-const [translateX, setTranslateX] = useState(0);  
-  
 const [currentTime, setCurrentTime] = useState(0);
 
 const [duration, setDuration] = useState(0);
@@ -55,15 +47,15 @@ const [duration, setDuration] = useState(0);
 const [isPaused, setIsPaused] = useState(false);
 
 const [isMuted, setIsMuted] = useState(true);
-  
-const videoRef = useRef(null); 
+
+const videoRef = useRef(null);
 
 const trackRef = useRef(null);
 
 const [isDragging, setIsDragging] = useState(false);
-
+  
 const formatTime = (t) => {
-  const safe = isNaN(t) ? 0 : t;
+const safe = isNaN(t) ? 0 : t;
   return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2,"0")}`;
 };
 
