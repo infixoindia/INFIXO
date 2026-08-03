@@ -157,6 +157,8 @@ const handleTouchEnd = () => {
 
   }
   
+  };
+  
 useEffect(() => {
   setIsMuted(true);
 }, [currentIndex]);
