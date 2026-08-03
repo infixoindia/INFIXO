@@ -31,7 +31,23 @@ const [viewerOpen, setViewerOpen] = useState(false);
 const [isLoading, setIsLoading] = useState(true);
   
 const [currentIndex, setCurrentIndex] = useState(0);
+  
+const [translateX, setTranslateX] = useState(0);
 
+const touchStartX = useRef(0);
+  
+const touchCurrentX = useRef(0);
+  
+const isSwiping = useRef(false);
+  
+const startX = useRef(0);
+  
+const currentX = useRef(0);
+  
+const isSwiping = useRef(false);
+
+const [translateX, setTranslateX] = useState(0);  
+  
 const [currentTime, setCurrentTime] = useState(0);
 
 const [duration, setDuration] = useState(0);
@@ -95,6 +111,45 @@ const toggleMute = () => {
   setIsMuted(prev => !prev);
 };
 
+  
+const handleTouchStart = (e) => {
+  startX.current = e.touches[0].clientX;
+  currentX.current = startX.current;
+  isSwiping.current = true;
+};
+
+const handleTouchMove = (e) => {
+  if (!isSwiping.current) return;
+
+  currentX.current = e.touches[0].clientX;
+  const delta = currentX.current - startX.current;
+
+  setTranslateX(delta);
+};
+
+const handleTouchEnd = () => {
+  if (!isSwiping.current) return;
+
+  isSwiping.current = false;
+
+  const delta = currentX.current - startX.current;
+  const threshold = 80;
+
+  if (Math.abs(delta) > threshold) {
+
+    if (delta < 0 && currentIndex < videos.length - 1) {
+      setCurrentIndex(prev => prev + 1);
+    }
+
+    if (delta > 0 && currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+    }
+  }
+
+  setTranslateX(0);
+};
+
+  
 useEffect(() => {
   setIsMuted(true);
 }, [currentIndex]);
@@ -113,6 +168,28 @@ const openViewer = (index) => {
 
 const closeViewer = () => {
   setViewerOpen(false);
+};
+  
+  const handleTouchStart = (e) => {
+  touchStartX.current = e.touches[0].clientX;
+  touchCurrentX.current = touchStartX.current;
+  isSwiping.current = true;
+};
+
+const handleTouchMove = (e) => {
+  if (!isSwiping.current) return;
+
+  touchCurrentX.current = e.touches[0].clientX;
+
+  const diff = touchCurrentX.current - touchStartX.current;
+
+  setTranslateX(diff);
+};
+
+const handleTouchEnd = () => {
+  isSwiping.current = false;
+
+  setTranslateX(0);
 };
   
   return (
@@ -212,7 +289,18 @@ const closeViewer = () => {
 
     <div className={styles.viewerContent}>
 
-  <div className={styles.videoWrapper}>
+<div
+  className={styles.videoWrapper}
+  onTouchStart={handleTouchStart}
+  onTouchMove={handleTouchMove}
+  onTouchEnd={handleTouchEnd}
+  style={{
+    transform: `translateX(${translateX}px)`,
+    transition: isSwiping.current
+      ? "none"
+      : "transform .28s ease",
+  }}
+>
             
   {isLoading && (
     <div className={styles.videoLoader}></div>
