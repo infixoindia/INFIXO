@@ -320,6 +320,11 @@ style={{
     transform: `translateX(calc(-100% + ${translateX}px))`,
   }}
 >
+  
+<div className={styles.slide}>
+</div>
+
+<div className={styles.slide}>
 
   {isLoading && (
     <div className={styles.videoLoader}></div>
@@ -397,6 +402,12 @@ style={{
     />
 
   </div>
+  
+</div>
+
+<div className={styles.slide}>
+</div>
+
 
   <span className={styles.timeLabel}>
     {formatTime(duration)}
