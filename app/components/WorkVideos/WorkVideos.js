@@ -424,9 +424,9 @@ style={{
   </div>
 
   {/* Next */}
-  <div className={styles.slide}></div>
+  <div className={styles.slide}>
+  </div>
 
-</div>
     
 </div>
 
