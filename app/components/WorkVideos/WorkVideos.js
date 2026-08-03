@@ -285,42 +285,31 @@ const closeViewer = () => {
   if (!isAnimating) return;
 
   if (direction === "left") {
-
     setCurrentIndex(prev => prev + 1);
-
   } else if (direction === "right") {
-
     setCurrentIndex(prev => prev - 1);
-
   }
 
   setDirection(null);
-
   setTranslateX(0);
-
   setIsAnimating(false);
 
   setIsPaused(true);
-
   setCurrentTime(0);
-
   setDuration(0);
-
   setIsLoading(true);
 
 }}
-
- style={{
+style={{
   transform: isAnimating
     ? direction === "left"
       ? "translateX(-100%)"
       : "translateX(100%)"
     : `translateX(${translateX}px)`,
 
-  transition:
-    isSwiping.current
-      ? "none"
-      : "transform .30s ease",
+  transition: isSwiping.current
+    ? "none"
+    : "transform .30s ease",
 }}
 >
             
