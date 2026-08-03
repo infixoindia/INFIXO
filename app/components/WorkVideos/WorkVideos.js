@@ -314,64 +314,68 @@ style={{
     : "transform .30s ease",
 }}
 >
-    <div
+    
+<div
   className={styles.videoSlider}
   style={{
     transform: `translateX(calc(-100% + ${translateX}px))`,
   }}
 >
-  
-<div className={styles.slide}>
+
+  {/* Previous */}
+  <div className={styles.slide}></div>
+
+  {/* Current */}
+  <div className={styles.slide}>
+
+    {isLoading && (
+      <div className={styles.videoLoader}></div>
+    )}
+
+    <video
+      ref={videoRef}
+      className={styles.viewerVideo}
+      src={videos[currentIndex].video}
+      autoPlay
+      muted={isMuted}
+      playsInline
+      controls={false}
+      onPlay={() => setIsPaused(false)}
+      onPause={() => setIsPaused(true)}
+      onLoadedData={() => setIsLoading(false)}
+      onLoadedMetadata={(e) => {
+        setDuration(e.target.duration);
+      }}
+      onTimeUpdate={(e) => {
+        setCurrentTime(e.target.currentTime);
+      }}
+      style={{
+        opacity: isLoading ? 0 : 1,
+      }}
+    />
+
+    {isPaused && (
+      <div
+        className={styles.centerPlay}
+        onClick={() => {
+          if (!videoRef.current) return;
+          videoRef.current.play();
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="white">
+          <path d="M6.5 5v14l11-7z" />
+        </svg>
+      </div>
+    )}
+
+  </div>
+
+  {/* Next */}
+  <div className={styles.slide}></div>
+
 </div>
 
-<div className={styles.slide}>
-
-  {isLoading && (
-    <div className={styles.videoLoader}></div>
-  )}
-
-<video
-  ref={videoRef}
-  className={styles.viewerVideo}
-  src={videos[currentIndex].video}
-  autoPlay
-  muted={isMuted}
-  playsInline
-  controls={false}
-  onPlay={() => setIsPaused(false)}
-  onPause={() => setIsPaused(true)}
-  onLoadedData={() => setIsLoading(false)}
-  onLoadedMetadata={(e)=>{
-    setDuration(e.target.duration);
-  }}
-  onTimeUpdate={(e)=>{
-    setCurrentTime(e.target.currentTime);
-  }}
-  style={{
-    opacity:isLoading ? 0 : 1
-  }}
-
-/>
-
- {isPaused && (
-
-<div
-  className={styles.centerPlay}
-  onClick={()=>{
-    if(!videoRef.current) return;
-
-    videoRef.current.play();
-  }}
->
-
-  <svg viewBox="0 0 24 24" fill="white">
-    <path d="M6.5 5v14l11-7z" />
-  </svg>
-
-</div>
-
-)}
-  
+{/* Controls videoSlider ke bahar rahenge */}
 <div className={styles.videoControls}>
 
   <span className={styles.timeLabel}>
@@ -389,7 +393,7 @@ style={{
       className={styles.progressFill}
       style={{
         width: `${duration ? (currentTime / duration) * 100 : 0}%`,
-        transition: isDragging ? "none" : "width .15s linear"
+        transition: isDragging ? "none" : "width .15s linear",
       }}
     />
 
@@ -397,17 +401,11 @@ style={{
       className={styles.progressThumb}
       style={{
         left: `${duration ? (currentTime / duration) * 100 : 0}%`,
-        transition: isDragging ? "none" : "left .15s linear"
+        transition: isDragging ? "none" : "left .15s linear",
       }}
     />
 
   </div>
-  
-</div>
-
-<div className={styles.slide}>
-</div>
-
 
   <span className={styles.timeLabel}>
     {formatTime(duration)}
