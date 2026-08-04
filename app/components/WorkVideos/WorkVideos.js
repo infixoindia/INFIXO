@@ -22,10 +22,11 @@ export default function WorkVideos() {
   const startX = useRef(0);
   const currentX = useRef(0);
 
-  // Controls & Timer States (Preserved)
+  // Controls, Timer & Playback States
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isEnded, setIsEnded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
   const videoRef = useRef(null);
@@ -85,10 +86,13 @@ export default function WorkVideos() {
     setIsMuted(true);
   }, [currentIndex]);
 
+  // 1. FIRST OPEN: Autoplay (muted) with no play button
   const openViewer = (index) => {
     setCurrentIndex(index);
     setIsLoading(true);
     setIsMuted(true);
+    setIsPaused(false);
+    setIsEnded(false);
     setViewerOpen(true);
   };
 
@@ -96,7 +100,7 @@ export default function WorkVideos() {
     setViewerOpen(false);
   };
 
-  // --- NEW SWIPE HANDLERS ---
+  // --- SWIPE HANDLERS ---
   const handleTouchStart = (e) => {
     startX.current = e.touches[0].clientX;
     currentX.current = startX.current;
@@ -108,12 +112,11 @@ export default function WorkVideos() {
     currentX.current = e.touches[0].clientX;
     let delta = currentX.current - startX.current;
 
-    // Rubber band resistance on first & last items
     const isFirst = currentIndex === 0 && delta > 0;
     const isLast = currentIndex === videos.length - 1 && delta < 0;
 
     if (isFirst || isLast) {
-      delta = delta * 0.3; // Rubber resistance strength
+      delta = delta * 0.3;
     }
 
     setDragOffset(delta);
@@ -124,26 +127,46 @@ export default function WorkVideos() {
     setIsSwiping(false);
 
     const delta = currentX.current - startX.current;
-    const threshold = 70; // Swipe threshold
+    const threshold = 70;
 
     if (delta < -threshold && currentIndex < videos.length - 1) {
-      // Next Video
+      // Next Video: SWIPE state -> Paused + Play button
       setCurrentIndex((prev) => prev + 1);
-      resetVideoState();
+      resetVideoStateForSwipe();
     } else if (delta > threshold && currentIndex > 0) {
-      // Previous Video
+      // Previous Video: SWIPE state -> Paused + Play button
       setCurrentIndex((prev) => prev - 1);
-      resetVideoState();
+      resetVideoStateForSwipe();
     }
 
     setDragOffset(0);
   };
 
-  const resetVideoState = () => {
-    setIsPaused(false);
+  // 2. SWIPE STATE: Must NOT autoplay, start in paused state
+  const resetVideoStateForSwipe = () => {
+    setIsPaused(true);
+    setIsEnded(false);
     setCurrentTime(0);
     setDuration(0);
     setIsLoading(true);
+  };
+
+  // Handle Center Button Click (Play or Restart)
+  const handleCenterButtonClick = () => {
+    if (!videoRef.current) return;
+
+    if (isEnded) {
+      // 3 & 5. RESTART: Restart from 0 and play immediately
+      videoRef.current.currentTime = 0;
+      setCurrentTime(0);
+      setIsEnded(false);
+      setIsPaused(false);
+      videoRef.current.play();
+    } else if (isPaused) {
+      // PLAY: Resume video
+      setIsPaused(false);
+      videoRef.current.play();
+    }
   };
 
   return (
@@ -184,7 +207,6 @@ export default function WorkVideos() {
 
       {viewerOpen && (
         <div className={styles.viewer}>
-          {/* Top Counter & Close Button */}
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {videos.length}
           </div>
@@ -206,7 +228,6 @@ export default function WorkVideos() {
           </button>
 
           <div className={styles.viewerContent}>
-            {/* Touch Swipe Container */}
             <div
               className={styles.videoWrapper}
               onTouchStart={handleTouchStart}
@@ -227,7 +248,9 @@ export default function WorkVideos() {
                   width: "100%",
                   height: "100%",
                   transform: `translateX(calc(-${currentIndex * 100}% + ${dragOffset}px))`,
-                  transition: isSwiping ? "none" : "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+                  transition: isSwiping
+                    ? "none"
+                    : "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               >
                 {videos.map((item, index) => (
@@ -243,7 +266,6 @@ export default function WorkVideos() {
                       justifyContent: "center",
                     }}
                   >
-                    {/* Sirf Current Video Play aur Load hoga Performance optimize rakhne ke liye */}
                     {index === currentIndex && (
                       <>
                         {isLoading && <div className={styles.videoLoader}></div>}
@@ -252,11 +274,14 @@ export default function WorkVideos() {
                           ref={videoRef}
                           className={styles.viewerVideo}
                           src={item.video}
-                          autoPlay
+                          autoPlay={!isPaused}
                           muted={isMuted}
                           playsInline
                           controls={false}
-                          onPlay={() => setIsPaused(false)}
+                          onPlay={() => {
+                            setIsPaused(false);
+                            setIsEnded(false);
+                          }}
                           onPause={() => setIsPaused(true)}
                           onLoadedData={() => setIsLoading(false)}
                           onLoadedMetadata={(e) => {
@@ -265,26 +290,40 @@ export default function WorkVideos() {
                           onTimeUpdate={(e) => {
                             setCurrentTime(e.target.currentTime);
                           }}
+                          // 3. VIDEO ENDS: Show Restart Button
+                          onEnded={() => {
+                            setIsEnded(true);
+                            setIsPaused(true);
+                          }}
                           style={{
                             opacity: isLoading ? 0 : 1,
                           }}
                         />
 
+                        {/* 4. CENTER BUTTON: Play (▶) or Restart (⟳) */}
                         {isPaused && (
                           <div
                             className={styles.centerPlay}
-                            onClick={() => {
-                              if (!videoRef.current) return;
-                              videoRef.current.play();
-                            }}
+                            onClick={handleCenterButtonClick}
                           >
-                            <svg viewBox="0 0 24 24" fill="white">
-                              <path d="M6.5 5v14l11-7z" />
-                            </svg>
+                            {isEnded ? (
+                              /* ⟳ RESTART ICON */
+                              <svg viewBox="0 0 24 24" fill="none" width="40" height="40">
+                                <path
+                                  d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
+                                  fill="white"
+                                />
+                              </svg>
+                            ) : (
+                              /* ▶ PLAY ICON */
+                              <svg viewBox="0 0 24 24" fill="white" width="40" height="40">
+                                <path d="M6.5 5v14l11-7z" />
+                              </svg>
+                            )}
                           </div>
                         )}
 
-                        {/* Unchanged Video Controls */}
+                        {/* Preserved Controls */}
                         <div className={styles.videoControls}>
                           <span className={styles.timeLabel}>
                             {formatTime(currentTime)}
