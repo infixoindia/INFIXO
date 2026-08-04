@@ -5,26 +5,25 @@ import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
 export default function WorkVideos() {
-  // Static dataset: Sabhi videos 10 sec ki hain
   const videos = [
     {
       video: "/videos/work1.mp4",
-      thumbnail: "/images/video-thumb-1.jpg",
+      thumbnail: "/images/video-thumb-1.png",
       duration: "00:10",
     },
     {
       video: "/videos/work2.mp4",
-      thumbnail: "/images/video-thumb-2.jpg",
+      thumbnail: "/images/video-thumb-2.png",
       duration: "00:10",
     },
     {
       video: "/videos/work3.mp4",
-      thumbnail: "/images/video-thumb-3.jpg",
+      thumbnail: "/images/video-thumb-3.png",
       duration: "00:10",
     },
     {
       video: "/videos/work4.mp4",
-      thumbnail: "/images/video-thumb-4.jpg",
+      thumbnail: "/images/video-thumb-4.png",
       duration: "00:10",
     },
   ];
@@ -46,6 +45,10 @@ export default function WorkVideos() {
   const [isEnded, setIsEnded] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
+  // Controls Visibility State (Auto Hide Feature)
+  const [showControls, setShowControls] = useState(true);
+  const controlsTimeoutRef = useRef(null);
+
   const videoRef = useRef(null);
   const trackRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -53,6 +56,45 @@ export default function WorkVideos() {
   const formatTime = (t) => {
     const safe = isNaN(t) ? 0 : t;
     return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2, "0")}`;
+  };
+
+  // --- AUTO HIDE CONTROLS LOGIC ---
+  const resetControlsTimeout = () => {
+    setShowControls(true);
+    if (controlsTimeoutRef.current) {
+      clearTimeout(controlsTimeoutRef.current);
+    }
+    // Agar video chal rahi hai to 3s me hide ho jayega
+    if (!isPaused && !isEnded) {
+      controlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+    }
+  };
+
+  useEffect(() => {
+    if (viewerOpen && !isPaused && !isEnded) {
+      resetControlsTimeout();
+    } else {
+      setShowControls(true);
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    }
+    return () => {
+      if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current);
+    };
+  }, [viewerOpen, isPaused, isEnded, currentIndex]);
+
+  const handleScreenTap = () => {
+    if (!showControls) {
+      setShowControls(true);
+      resetControlsTimeout();
+    } else if (!isPaused && !isEnded) {
+      // Toggle pause/play on tap if controls were already visible
+      if (videoRef.current) {
+        videoRef.current.pause();
+        setIsPaused(true);
+      }
+    }
   };
 
   const seekToClientX = (clientX) => {
@@ -67,8 +109,10 @@ export default function WorkVideos() {
   };
 
   const handleSeekStart = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     setIsDragging(true);
+    resetControlsTimeout();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     seekToClientX(clientX);
   };
@@ -95,8 +139,10 @@ export default function WorkVideos() {
     };
   }, [isDragging, duration]);
 
-  const toggleMute = () => {
+  const toggleMute = (e) => {
+    e.stopPropagation();
     setIsMuted((prev) => !prev);
+    resetControlsTimeout();
   };
 
   useEffect(() => {
@@ -110,6 +156,7 @@ export default function WorkVideos() {
     setIsPaused(false);
     setIsEnded(false);
     setViewerOpen(true);
+    setShowControls(true);
   };
 
   const closeViewer = () => {
@@ -121,6 +168,7 @@ export default function WorkVideos() {
     startX.current = e.touches[0].clientX;
     currentX.current = startX.current;
     setIsSwiping(true);
+    resetControlsTimeout();
   };
 
   const handleTouchMove = (e) => {
@@ -162,9 +210,11 @@ export default function WorkVideos() {
     setCurrentTime(0);
     setDuration(0);
     setIsLoading(true);
+    setShowControls(true);
   };
 
-  const handleCenterButtonClick = () => {
+  const handleCenterButtonClick = (e) => {
+    e.stopPropagation();
     if (!videoRef.current) return;
 
     if (isEnded) {
@@ -176,7 +226,11 @@ export default function WorkVideos() {
     } else if (isPaused) {
       setIsPaused(false);
       videoRef.current.play();
+    } else {
+      videoRef.current.pause();
+      setIsPaused(true);
     }
+    resetControlsTimeout();
   };
 
   return (
@@ -235,12 +289,14 @@ export default function WorkVideos() {
       {/* FULLSCREEN VIEWER */}
       {viewerOpen && (
         <div className={styles.viewer}>
-          <div className={styles.imageCounter}>
+          <div
+            className={`${styles.imageCounter} ${showControls ? styles.controlsVisible : styles.controlsHidden}`}
+          >
             {currentIndex + 1} / {videos.length}
           </div>
 
           <button
-            className={styles.closeButton}
+            className={`${styles.closeButton} ${showControls ? styles.controlsVisible : styles.controlsHidden}`}
             onClick={closeViewer}
             aria-label="Close"
           >
@@ -261,6 +317,7 @@ export default function WorkVideos() {
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
+              onClick={handleScreenTap}
               style={{
                 touchAction: "pan-y",
                 overflow: "hidden",
@@ -313,6 +370,7 @@ export default function WorkVideos() {
                             onPlay={() => {
                               setIsPaused(false);
                               setIsEnded(false);
+                              resetControlsTimeout();
                             }}
                             onPause={() => setIsPaused(true)}
                             onLoadedData={() => setIsLoading(false)}
@@ -325,43 +383,48 @@ export default function WorkVideos() {
                             onEnded={() => {
                               setIsEnded(true);
                               setIsPaused(true);
+                              setShowControls(true);
                             }}
                             style={{
                               opacity: isLoading ? 0 : 1,
                             }}
                           />
 
-                          {isPaused && (
-                            <div
-                              className={styles.centerPlay}
-                              onClick={handleCenterButtonClick}
-                            >
-                              {isEnded ? (
-                                <svg
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  width="40"
-                                  height="40"
-                                >
-                                  <path
-                                    d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
-                                    fill="white"
-                                  />
-                                </svg>
-                              ) : (
-                                <svg
-                                  viewBox="0 0 24 24"
+                          {/* CENTER PREMIUM PLAY / PAUSE / REPLAY BUTTON */}
+                          <div
+                            className={`${styles.centerPlay} ${
+                              showControls ? styles.controlsVisible : styles.controlsHidden
+                            }`}
+                            onClick={handleCenterButtonClick}
+                          >
+                            {isEnded ? (
+                              /* Replay SVG */
+                              <svg viewBox="0 0 24 24" width="34" height="34" fill="none">
+                                <path
+                                  d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
                                   fill="white"
-                                  width="40"
-                                  height="40"
-                                >
-                                  <path d="M6.5 5v14l11-7z" />
-                                </svg>
-                              )}
-                            </div>
-                          )}
+                                />
+                              </svg>
+                            ) : isPaused ? (
+                              /* Premium Play SVG */
+                              <svg viewBox="0 0 24 24" width="34" height="34" fill="white">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            ) : (
+                              /* Premium Pause SVG */
+                              <svg viewBox="0 0 24 24" width="34" height="34" fill="white">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                              </svg>
+                            )}
+                          </div>
 
-                          <div className={styles.videoControls}>
+                          {/* BOTTOM CONTROLS WITH SMOOTH FADE ANIMATION */}
+                          <div
+                            className={`${styles.videoControls} ${
+                              showControls ? styles.controlsVisible : styles.controlsHidden
+                            }`}
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <span className={styles.timeLabel}>
                               {formatTime(currentTime)}
                             </span>
