@@ -16,6 +16,9 @@ export default function WorkVideos() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Auto Thumbnails & Durations State
+  const [videoData, setVideoData] = useState({});
+
   // Swipe State
   const [dragOffset, setDragOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
@@ -37,6 +40,39 @@ export default function WorkVideos() {
     const safe = isNaN(t) ? 0 : t;
     return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2, "0")}`;
   };
+
+  // 1 & 3. AUTO THUMBNAIL & AUTOMATIC DURATION GENERATION
+  useEffect(() => {
+    videos.forEach((item, index) => {
+      const tempVideo = document.createElement("video");
+      tempVideo.src = item.video;
+      tempVideo.crossOrigin = "anonymous";
+      tempVideo.muted = true;
+      tempVideo.playsInline = true;
+
+      tempVideo.onloadedmetadata = () => {
+        // Seek to 1s to capture a good frame (avoiding black first frame)
+        tempVideo.currentTime = Math.min(1, tempVideo.duration / 2);
+      };
+
+      tempVideo.onseeked = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = tempVideo.videoWidth || 300;
+        canvas.height = tempVideo.videoHeight || 500;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+        const thumbnailUrl = canvas.toDataURL("image/jpeg");
+
+        setVideoData((prev) => ({
+          ...prev,
+          [index]: {
+            thumbnail: thumbnailUrl,
+            duration: formatTime(tempVideo.duration),
+          },
+        }));
+      };
+    });
+  }, []);
 
   const seekToClientX = (clientX) => {
     const track = trackRef.current;
@@ -86,7 +122,6 @@ export default function WorkVideos() {
     setIsMuted(true);
   }, [currentIndex]);
 
-  // 1. FIRST OPEN: Autoplay (muted) with no play button
   const openViewer = (index) => {
     setCurrentIndex(index);
     setIsLoading(true);
@@ -130,11 +165,9 @@ export default function WorkVideos() {
     const threshold = 70;
 
     if (delta < -threshold && currentIndex < videos.length - 1) {
-      // Next Video: SWIPE state -> Paused + Play button
       setCurrentIndex((prev) => prev + 1);
       resetVideoStateForSwipe();
     } else if (delta > threshold && currentIndex > 0) {
-      // Previous Video: SWIPE state -> Paused + Play button
       setCurrentIndex((prev) => prev - 1);
       resetVideoStateForSwipe();
     }
@@ -142,7 +175,6 @@ export default function WorkVideos() {
     setDragOffset(0);
   };
 
-  // 2. SWIPE STATE: Must NOT autoplay, start in paused state
   const resetVideoStateForSwipe = () => {
     setIsPaused(true);
     setIsEnded(false);
@@ -151,19 +183,16 @@ export default function WorkVideos() {
     setIsLoading(true);
   };
 
-  // Handle Center Button Click (Play or Restart)
   const handleCenterButtonClick = () => {
     if (!videoRef.current) return;
 
     if (isEnded) {
-      // 3 & 5. RESTART: Restart from 0 and play immediately
       videoRef.current.currentTime = 0;
       setCurrentTime(0);
       setIsEnded(false);
       setIsPaused(false);
       videoRef.current.play();
     } else if (isPaused) {
-      // PLAY: Resume video
       setIsPaused(false);
       videoRef.current.play();
     }
@@ -190,6 +219,7 @@ export default function WorkVideos() {
         </div>
       </div>
 
+      {/* GALLERY GRID */}
       <div className={styles.gallery}>
         {videos.map((item, index) => (
           <div
@@ -198,13 +228,26 @@ export default function WorkVideos() {
             onClick={() => openViewer(index)}
           >
             <div className={styles.thumbnail}>
-              <video src={item.video} muted playsInline />
-              <span className={styles.duration}>00:28</span>
+              {/* Show Generated Thumbnail Image instead of heavy video */}
+              {videoData[index]?.thumbnail ? (
+                <img
+                  src={videoData[index].thumbnail}
+                  alt={`Thumbnail ${index + 1}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <div className={styles.videoLoader} />
+              )}
+              {/* Automatic Detected Duration */}
+              <span className={styles.duration}>
+                {videoData[index]?.duration || "--:--"}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
+      {/* FULLSCREEN VIEWER */}
       {viewerOpen && (
         <div className={styles.viewer}>
           <div className={styles.imageCounter}>
@@ -253,141 +296,181 @@ export default function WorkVideos() {
                     : "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               >
-                {videos.map((item, index) => (
-                  <div
-                    key={index}
-                    className={styles.slide}
-                    style={{
-                      minWidth: "100%",
-                      height: "100%",
-                      position: "relative",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {index === currentIndex && (
-                      <>
-                        {isLoading && <div className={styles.videoLoader}></div>}
+                {videos.map((item, index) => {
+                  // 2. VIDEO PRELOADING LOGIC: Current, Next aur Previous hi memory mein render honge
+                  const isCurrent = index === currentIndex;
+                  const isNext = index === currentIndex + 1;
+                  const isPrev = index === currentIndex - 1;
+                  const shouldRender = isCurrent || isNext || isPrev;
 
-                        <video
-                          ref={videoRef}
-                          className={styles.viewerVideo}
-                          src={item.video}
-                          autoPlay={!isPaused}
-                          muted={isMuted}
-                          playsInline
-                          controls={false}
-                          onPlay={() => {
-                            setIsPaused(false);
-                            setIsEnded(false);
-                          }}
-                          onPause={() => setIsPaused(true)}
-                          onLoadedData={() => setIsLoading(false)}
-                          onLoadedMetadata={(e) => {
-                            setDuration(e.target.duration);
-                          }}
-                          onTimeUpdate={(e) => {
-                            setCurrentTime(e.target.currentTime);
-                          }}
-                          // 3. VIDEO ENDS: Show Restart Button
-                          onEnded={() => {
-                            setIsEnded(true);
-                            setIsPaused(true);
-                          }}
-                          style={{
-                            opacity: isLoading ? 0 : 1,
-                          }}
-                        />
+                  return (
+                    <div
+                      key={index}
+                      className={styles.slide}
+                      style={{
+                        minWidth: "100%",
+                        height: "100%",
+                        position: "relative",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {shouldRender && (
+                        <>
+                          {isCurrent && isLoading && (
+                            <div className={styles.videoLoader}></div>
+                          )}
 
-                        {/* 4. CENTER BUTTON: Play (▶) or Restart (⟳) */}
-                        {isPaused && (
-                          <div
-                            className={styles.centerPlay}
-                            onClick={handleCenterButtonClick}
-                          >
-                            {isEnded ? (
-                              /* ⟳ RESTART ICON */
-                              <svg viewBox="0 0 24 24" fill="none" width="40" height="40">
-                                <path
-                                  d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
-                                  fill="white"
-                                />
-                              </svg>
-                            ) : (
-                              /* ▶ PLAY ICON */
-                              <svg viewBox="0 0 24 24" fill="white" width="40" height="40">
-                                <path d="M6.5 5v14l11-7z" />
-                              </svg>
-                            )}
-                          </div>
-                        )}
+                          <video
+                            ref={isCurrent ? videoRef : null}
+                            className={styles.viewerVideo}
+                            src={item.video}
+                            // Only current active video will play; Preloaded videos remain paused & buffered
+                            autoPlay={isCurrent && !isPaused}
+                            muted={isMuted}
+                            playsInline
+                            controls={false}
+                            preload="auto"
+                            onPlay={() => {
+                              if (isCurrent) {
+                                setIsPaused(false);
+                                setIsEnded(false);
+                              }
+                            }}
+                            onPause={() => {
+                              if (isCurrent) setIsPaused(true);
+                            }}
+                            onLoadedData={() => {
+                              if (isCurrent) setIsLoading(false);
+                            }}
+                            onLoadedMetadata={(e) => {
+                              if (isCurrent) setDuration(e.target.duration);
+                            }}
+                            onTimeUpdate={(e) => {
+                              if (isCurrent) setCurrentTime(e.target.currentTime);
+                            }}
+                            onEnded={() => {
+                              if (isCurrent) {
+                                setIsEnded(true);
+                                setIsPaused(true);
+                              }
+                            }}
+                            style={{
+                              opacity: isCurrent && isLoading ? 0 : 1,
+                            }}
+                          />
 
-                        {/* Preserved Controls */}
-                        <div className={styles.videoControls}>
-                          <span className={styles.timeLabel}>
-                            {formatTime(currentTime)}
-                          </span>
+                          {/* Controls & Center Button only render on Current Active Video */}
+                          {isCurrent && (
+                            <>
+                              {isPaused && (
+                                <div
+                                  className={styles.centerPlay}
+                                  onClick={handleCenterButtonClick}
+                                >
+                                  {isEnded ? (
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      width="40"
+                                      height="40"
+                                    >
+                                      <path
+                                        d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
+                                        fill="white"
+                                      />
+                                    </svg>
+                                  ) : (
+                                    <svg
+                                      viewBox="0 0 24 24"
+                                      fill="white"
+                                      width="40"
+                                      height="40"
+                                    >
+                                      <path d="M6.5 5v14l11-7z" />
+                                    </svg>
+                                  )}
+                                </div>
+                              )}
 
-                          <div
-                            className={styles.progressTrack}
-                            ref={trackRef}
-                            onMouseDown={handleSeekStart}
-                            onTouchStart={handleSeekStart}
-                          >
-                            <div
-                              className={styles.progressFill}
-                              style={{
-                                width: `${duration ? (currentTime / duration) * 100 : 0}%`,
-                                transition: isDragging ? "none" : "width .15s linear",
-                              }}
-                            />
+                              <div className={styles.videoControls}>
+                                <span className={styles.timeLabel}>
+                                  {formatTime(currentTime)}
+                                </span>
 
-                            <div
-                              className={styles.progressThumb}
-                              style={{
-                                left: `${duration ? (currentTime / duration) * 100 : 0}%`,
-                                transition: isDragging ? "none" : "left .15s linear",
-                              }}
-                            />
-                          </div>
+                                <div
+                                  className={styles.progressTrack}
+                                  ref={trackRef}
+                                  onMouseDown={handleSeekStart}
+                                  onTouchStart={handleSeekStart}
+                                >
+                                  <div
+                                    className={styles.progressFill}
+                                    style={{
+                                      width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                                      transition: isDragging
+                                        ? "none"
+                                        : "width .15s linear",
+                                    }}
+                                  />
 
-                          <span className={styles.timeLabel}>
-                            {formatTime(duration)}
-                          </span>
+                                  <div
+                                    className={styles.progressThumb}
+                                    style={{
+                                      left: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                                      transition: isDragging
+                                        ? "none"
+                                        : "left .15s linear",
+                                    }}
+                                  />
+                                </div>
 
-                          <button
-                            className={styles.muteButton}
-                            onClick={toggleMute}
-                            aria-label={isMuted ? "Unmute" : "Mute"}
-                          >
-                            {isMuted ? (
-                              <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
-                                <path
-                                  d="M16 9l5 5M21 9l-5 5"
-                                  stroke="white"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            ) : (
-                              <svg viewBox="0 0 24 24" fill="none">
-                                <path d="M4 9v6h4l5 5V4L8 9H4z" fill="white" />
-                                <path
-                                  d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12"
-                                  stroke="white"
-                                  strokeWidth="1.8"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            )}
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+                                <span className={styles.timeLabel}>
+                                  {formatTime(duration)}
+                                </span>
+
+                                <button
+                                  className={styles.muteButton}
+                                  onClick={toggleMute}
+                                  aria-label={isMuted ? "Unmute" : "Mute"}
+                                >
+                                  {isMuted ? (
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                      <path
+                                        d="M4 9v6h4l5 5V4L8 9H4z"
+                                        fill="white"
+                                      />
+                                      <path
+                                        d="M16 9l5 5M21 9l-5 5"
+                                        stroke="white"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                      />
+                                    </svg>
+                                  ) : (
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                      <path
+                                        d="M4 9v6h4l5 5V4L8 9H4z"
+                                        fill="white"
+                                      />
+                                      <path
+                                        d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12"
+                                        stroke="white"
+                                        strokeWidth="1.8"
+                                        strokeLinecap="round"
+                                      />
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
