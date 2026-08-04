@@ -16,8 +16,8 @@ export default function WorkVideos() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Auto Thumbnails & Durations State
-  const [videoData, setVideoData] = useState({});
+  // Duration store state
+  const [durations, setDurations] = useState({});
 
   // Swipe State
   const [dragOffset, setDragOffset] = useState(0);
@@ -41,38 +41,12 @@ export default function WorkVideos() {
     return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2, "0")}`;
   };
 
-  // 1 & 3. AUTO THUMBNAIL & AUTOMATIC DURATION GENERATION
-  useEffect(() => {
-    videos.forEach((item, index) => {
-      const tempVideo = document.createElement("video");
-      tempVideo.src = item.video;
-      tempVideo.crossOrigin = "anonymous";
-      tempVideo.muted = true;
-      tempVideo.playsInline = true;
-
-      tempVideo.onloadedmetadata = () => {
-        // Seek to 1s to capture a good frame (avoiding black first frame)
-        tempVideo.currentTime = Math.min(1, tempVideo.duration / 2);
-      };
-
-      tempVideo.onseeked = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = tempVideo.videoWidth || 300;
-        canvas.height = tempVideo.videoHeight || 500;
-        const ctx = canvas.getContext("2d");
-        ctx?.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-        const thumbnailUrl = canvas.toDataURL("image/jpeg");
-
-        setVideoData((prev) => ({
-          ...prev,
-          [index]: {
-            thumbnail: thumbnailUrl,
-            duration: formatTime(tempVideo.duration),
-          },
-        }));
-      };
-    });
-  }, []);
+  const handleGalleryMetadata = (index, e) => {
+    setDurations((prev) => ({
+      ...prev,
+      [index]: formatTime(e.target.duration),
+    }));
+  };
 
   const seekToClientX = (clientX) => {
     const track = trackRef.current;
@@ -200,6 +174,19 @@ export default function WorkVideos() {
 
   return (
     <section className={styles.wrapper}>
+      {/* BACKGROUND PRELOADER (FOR INSTANT SWIPING & NO LOADING SPINNER) */}
+      <div style={{ display: "none" }}>
+        {videos.map((item, idx) => (
+          <video
+            key={`preload-${idx}`}
+            src={item.video}
+            preload="auto"
+            muted
+            playsInline
+          />
+        ))}
+      </div>
+
       <div className={styles.header}>
         <Link href="/" className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
@@ -228,19 +215,21 @@ export default function WorkVideos() {
             onClick={() => openViewer(index)}
           >
             <div className={styles.thumbnail}>
-              {/* Show Generated Thumbnail Image instead of heavy video */}
-              {videoData[index]?.thumbnail ? (
-                <img
-                  src={videoData[index].thumbnail}
-                  alt={`Thumbnail ${index + 1}`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <div className={styles.videoLoader} />
-              )}
-              {/* Automatic Detected Duration */}
+              <video
+                src={`${item.video}#t=0.5`}
+                preload="metadata"
+                muted
+                playsInline
+                onLoadedMetadata={(e) => handleGalleryMetadata(index, e)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  pointerEvents: "none",
+                }}
+              />
               <span className={styles.duration}>
-                {videoData[index]?.duration || "--:--"}
+                {durations[index] || "--:--"}
               </span>
             </div>
           </div>
@@ -297,11 +286,7 @@ export default function WorkVideos() {
                 }}
               >
                 {videos.map((item, index) => {
-                  // 2. VIDEO PRELOADING LOGIC: Current, Next aur Previous hi memory mein render honge
                   const isCurrent = index === currentIndex;
-                  const isNext = index === currentIndex + 1;
-                  const isPrev = index === currentIndex - 1;
-                  const shouldRender = isCurrent || isNext || isPrev;
 
                   return (
                     <div
@@ -316,157 +301,150 @@ export default function WorkVideos() {
                         justifyContent: "center",
                       }}
                     >
-                      {shouldRender && (
+                      {isCurrent ? (
                         <>
-                          {isCurrent && isLoading && (
-                            <div className={styles.videoLoader}></div>
-                          )}
+                          {isLoading && <div className={styles.videoLoader}></div>}
 
                           <video
-                            ref={isCurrent ? videoRef : null}
+                            ref={videoRef}
                             className={styles.viewerVideo}
                             src={item.video}
-                            // Only current active video will play; Preloaded videos remain paused & buffered
-                            autoPlay={isCurrent && !isPaused}
+                            autoPlay={!isPaused}
                             muted={isMuted}
                             playsInline
                             controls={false}
                             preload="auto"
                             onPlay={() => {
-                              if (isCurrent) {
-                                setIsPaused(false);
-                                setIsEnded(false);
-                              }
+                              setIsPaused(false);
+                              setIsEnded(false);
                             }}
-                            onPause={() => {
-                              if (isCurrent) setIsPaused(true);
-                            }}
-                            onLoadedData={() => {
-                              if (isCurrent) setIsLoading(false);
-                            }}
+                            onPause={() => setIsPaused(true)}
+                            onLoadedData={() => setIsLoading(false)}
                             onLoadedMetadata={(e) => {
-                              if (isCurrent) setDuration(e.target.duration);
+                              setDuration(e.target.duration);
                             }}
                             onTimeUpdate={(e) => {
-                              if (isCurrent) setCurrentTime(e.target.currentTime);
+                              setCurrentTime(e.target.currentTime);
                             }}
                             onEnded={() => {
-                              if (isCurrent) {
-                                setIsEnded(true);
-                                setIsPaused(true);
-                              }
+                              setIsEnded(true);
+                              setIsPaused(true);
                             }}
                             style={{
-                              opacity: isCurrent && isLoading ? 0 : 1,
+                              opacity: isLoading ? 0 : 1,
                             }}
                           />
 
-                          {/* Controls & Center Button only render on Current Active Video */}
-                          {isCurrent && (
-                            <>
-                              {isPaused && (
-                                <div
-                                  className={styles.centerPlay}
-                                  onClick={handleCenterButtonClick}
+                          {isPaused && (
+                            <div
+                              className={styles.centerPlay}
+                              onClick={handleCenterButtonClick}
+                            >
+                              {isEnded ? (
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  width="40"
+                                  height="40"
                                 >
-                                  {isEnded ? (
-                                    <svg
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      width="40"
-                                      height="40"
-                                    >
-                                      <path
-                                        d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
-                                        fill="white"
-                                      />
-                                    </svg>
-                                  ) : (
-                                    <svg
-                                      viewBox="0 0 24 24"
-                                      fill="white"
-                                      width="40"
-                                      height="40"
-                                    >
-                                      <path d="M6.5 5v14l11-7z" />
-                                    </svg>
-                                  )}
-                                </div>
+                                  <path
+                                    d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 004 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z"
+                                    fill="white"
+                                  />
+                                </svg>
+                              ) : (
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="white"
+                                  width="40"
+                                  height="40"
+                                >
+                                  <path d="M6.5 5v14l11-7z" />
+                                </svg>
                               )}
-
-                              <div className={styles.videoControls}>
-                                <span className={styles.timeLabel}>
-                                  {formatTime(currentTime)}
-                                </span>
-
-                                <div
-                                  className={styles.progressTrack}
-                                  ref={trackRef}
-                                  onMouseDown={handleSeekStart}
-                                  onTouchStart={handleSeekStart}
-                                >
-                                  <div
-                                    className={styles.progressFill}
-                                    style={{
-                                      width: `${duration ? (currentTime / duration) * 100 : 0}%`,
-                                      transition: isDragging
-                                        ? "none"
-                                        : "width .15s linear",
-                                    }}
-                                  />
-
-                                  <div
-                                    className={styles.progressThumb}
-                                    style={{
-                                      left: `${duration ? (currentTime / duration) * 100 : 0}%`,
-                                      transition: isDragging
-                                        ? "none"
-                                        : "left .15s linear",
-                                    }}
-                                  />
-                                </div>
-
-                                <span className={styles.timeLabel}>
-                                  {formatTime(duration)}
-                                </span>
-
-                                <button
-                                  className={styles.muteButton}
-                                  onClick={toggleMute}
-                                  aria-label={isMuted ? "Unmute" : "Mute"}
-                                >
-                                  {isMuted ? (
-                                    <svg viewBox="0 0 24 24" fill="none">
-                                      <path
-                                        d="M4 9v6h4l5 5V4L8 9H4z"
-                                        fill="white"
-                                      />
-                                      <path
-                                        d="M16 9l5 5M21 9l-5 5"
-                                        stroke="white"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                      />
-                                    </svg>
-                                  ) : (
-                                    <svg viewBox="0 0 24 24" fill="none">
-                                      <path
-                                        d="M4 9v6h4l5 5V4L8 9H4z"
-                                        fill="white"
-                                      />
-                                      <path
-                                        d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12"
-                                        stroke="white"
-                                        strokeWidth="1.8"
-                                        strokeLinecap="round"
-                                      />
-                                    </svg>
-                                  )}
-                                </button>
-                              </div>
-                            </>
+                            </div>
                           )}
+
+                          <div className={styles.videoControls}>
+                            <span className={styles.timeLabel}>
+                              {formatTime(currentTime)}
+                            </span>
+
+                            <div
+                              className={styles.progressTrack}
+                              ref={trackRef}
+                              onMouseDown={handleSeekStart}
+                              onTouchStart={handleSeekStart}
+                            >
+                              <div
+                                className={styles.progressFill}
+                                style={{
+                                  width: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                                  transition: isDragging
+                                    ? "none"
+                                    : "width .15s linear",
+                                }}
+                              />
+
+                              <div
+                                className={styles.progressThumb}
+                                style={{
+                                  left: `${duration ? (currentTime / duration) * 100 : 0}%`,
+                                  transition: isDragging
+                                    ? "none"
+                                    : "left .15s linear",
+                                }}
+                              />
+                            </div>
+
+                            <span className={styles.timeLabel}>
+                              {formatTime(duration)}
+                            </span>
+
+                            <button
+                              className={styles.muteButton}
+                              onClick={toggleMute}
+                              aria-label={isMuted ? "Unmute" : "Mute"}
+                            >
+                              {isMuted ? (
+                                <svg viewBox="0 0 24 24" fill="none">
+                                  <path
+                                    d="M4 9v6h4l5 5V4L8 9H4z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M16 9l5 5M21 9l-5 5"
+                                    stroke="white"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                  />
+                                </svg>
+                              ) : (
+                                <svg viewBox="0 0 24 24" fill="none">
+                                  <path
+                                    d="M4 9v6h4l5 5V4L8 9H4z"
+                                    fill="white"
+                                  />
+                                  <path
+                                    d="M16.3 8.5c1.5 1.1 1.5 5.9 0 7M18.8 6c2.6 2.2 2.6 9.8 0 12"
+                                    stroke="white"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                  />
+                                </svg>
+                              )}
+                            </button>
+                          </div>
                         </>
+                      ) : (
+                        /* Preloaded placeholder slide to maintain gallery alignment */
+                        <video
+                          src={item.video}
+                          preload="auto"
+                          muted
+                          playsInline
+                          style={{ width: "100%", height: "100%", objectFit: "contain", opacity: 0 }}
+                        />
                       )}
                     </div>
                   );
