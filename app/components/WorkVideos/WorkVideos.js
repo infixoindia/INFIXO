@@ -5,19 +5,33 @@ import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
 export default function WorkVideos() {
+  // Static dataset: Sabhi videos 10 sec ki hain
   const videos = [
-    { video: "/videos/work1.mp4" },
-    { video: "/videos/work2.mp4" },
-    { video: "/videos/work3.mp4" },
-    { video: "/videos/work4.mp4" },
+    {
+      video: "/videos/work1.mp4",
+      thumbnail: "/images/video-thumb-1.png",
+      duration: "00:10",
+    },
+    {
+      video: "/videos/work2.mp4",
+      thumbnail: "/images/video-thumb-2.png",
+      duration: "00:10",
+    },
+    {
+      video: "/videos/work3.mp4",
+      thumbnail: "/images/video-thumb-3.png",
+      duration: "00:10",
+    },
+    {
+      video: "/videos/work4.mp4",
+      thumbnail: "/images/video-thumb-4.png",
+      duration: "00:10",
+    },
   ];
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Duration store state
-  const [durations, setDurations] = useState({});
 
   // Swipe State
   const [dragOffset, setDragOffset] = useState(0);
@@ -39,13 +53,6 @@ export default function WorkVideos() {
   const formatTime = (t) => {
     const safe = isNaN(t) ? 0 : t;
     return `${Math.floor(safe / 60)}:${String(Math.floor(safe % 60)).padStart(2, "0")}`;
-  };
-
-  const handleGalleryMetadata = (index, e) => {
-    setDurations((prev) => ({
-      ...prev,
-      [index]: formatTime(e.target.duration),
-    }));
   };
 
   const seekToClientX = (clientX) => {
@@ -174,18 +181,17 @@ export default function WorkVideos() {
 
   return (
     <section className={styles.wrapper}>
-      {/* BACKGROUND PRELOADER (FOR INSTANT SWIPING & NO LOADING SPINNER) */}
-      <div style={{ display: "none" }}>
-        {videos.map((item, idx) => (
-          <video
-            key={`preload-${idx}`}
-            src={item.video}
-            preload="auto"
-            muted
-            playsInline
-          />
-        ))}
-      </div>
+      {/* Background Preloader */}
+      {viewerOpen && (
+        <div style={{ display: "none" }}>
+          {currentIndex > 0 && (
+            <video src={videos[currentIndex - 1].video} preload="auto" muted />
+          )}
+          {currentIndex < videos.length - 1 && (
+            <video src={videos[currentIndex + 1].video} preload="auto" muted />
+          )}
+        </div>
+      )}
 
       <div className={styles.header}>
         <Link href="/" className={styles.backLink}>
@@ -215,22 +221,12 @@ export default function WorkVideos() {
             onClick={() => openViewer(index)}
           >
             <div className={styles.thumbnail}>
-              <video
-                src={`${item.video}#t=0.5`}
-                preload="metadata"
-                muted
-                playsInline
-                onLoadedMetadata={(e) => handleGalleryMetadata(index, e)}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  pointerEvents: "none",
-                }}
+              <img
+                src={item.thumbnail}
+                alt={`Video Thumbnail ${index + 1}`}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
-              <span className={styles.duration}>
-                {durations[index] || "--:--"}
-              </span>
+              <span className={styles.duration}>{item.duration}</span>
             </div>
           </div>
         ))}
@@ -301,7 +297,7 @@ export default function WorkVideos() {
                         justifyContent: "center",
                       }}
                     >
-                      {isCurrent ? (
+                      {isCurrent && (
                         <>
                           {isLoading && <div className={styles.videoLoader}></div>}
 
@@ -436,15 +432,6 @@ export default function WorkVideos() {
                             </button>
                           </div>
                         </>
-                      ) : (
-                        /* Preloaded placeholder slide to maintain gallery alignment */
-                        <video
-                          src={item.video}
-                          preload="auto"
-                          muted
-                          playsInline
-                          style={{ width: "100%", height: "100%", objectFit: "contain", opacity: 0 }}
-                        />
                       )}
                     </div>
                   );
