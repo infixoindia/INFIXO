@@ -159,7 +159,22 @@
   font-weight:700;
   text-shadow:0 2px 8px rgba(0,0,0,.7);
   z-index:10002;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
+
+/* Counter jab show/hide hoga to translateX(-50%) hamesha maintain rahega */
+.imageCounter.controlsVisible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0px);
+  pointer-events: auto;
+}
+
+.imageCounter.controlsHidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-12px);
+  pointer-events: none;
+}
+
 
 .closeButton{
   position:absolute;
