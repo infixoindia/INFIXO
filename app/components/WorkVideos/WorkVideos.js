@@ -8,22 +8,22 @@ export default function WorkVideos() {
   const videos = [
     {
       video: "/videos/work1.mp4",
-      thumbnail: "/images/video-thumb-1.png",
+      thumbnail: "/images/video-thumb-1.jpg",
       duration: "00:10",
     },
     {
       video: "/videos/work2.mp4",
-      thumbnail: "/images/video-thumb-2.png",
+      thumbnail: "/images/video-thumb-2.jpg",
       duration: "00:10",
     },
     {
       video: "/videos/work3.mp4",
-      thumbnail: "/images/video-thumb-3.png",
+      thumbnail: "/images/video-thumb-3.jpg",
       duration: "00:10",
     },
     {
       video: "/videos/work4.mp4",
-      thumbnail: "/images/video-thumb-4.png",
+      thumbnail: "/images/video-thumb-4.jpg",
       duration: "00:10",
     },
   ];
