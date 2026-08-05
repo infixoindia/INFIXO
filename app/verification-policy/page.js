@@ -36,8 +36,7 @@ export default function VerificationPolicyPage() {
           {/* BADGE 1: Identity Verified */}
           <section className={`${styles.policySection} ${styles.badgeCard}`}>
             <div className={styles.badgeHeader}>
-              <span className={styles.badgeTag}>Badge 01</span>
-              <h2 className={styles.badgeTitle}>Identity Verified</h2>
+              <h2 className={styles.badgeTitle}>Identity Verified Badge</h2>
             </div>
             
             <p>
@@ -45,7 +44,7 @@ export default function VerificationPolicyPage() {
             </p>
 
             <div className={styles.subBlock}>
-              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <h3 className={styles.subTitle}>✅ What Infixo Verifies</h3>
               <ul className={styles.list}>
                 <li>Submitted government identity documents (such as ID cards, driver’s licenses, or official credentials).</li>
                 <li>Alignment between the worker’s profile name and their submitted identity document.</li>
@@ -53,7 +52,7 @@ export default function VerificationPolicyPage() {
             </div>
 
             <div className={styles.disclaimerBox}>
-              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <h3 className={styles.disclaimerTitle}>⚠️ Important Legal Disclaimer & Limitations</h3>
               <ul className={styles.list}>
                 <li>Infixo does <strong>NOT</strong> perform criminal background verification or record checks.</li>
                 <li>Infixo does <strong>NOT</strong> verify police records or law enforcement filings.</li>
@@ -67,8 +66,7 @@ export default function VerificationPolicyPage() {
           {/* BADGE 2: Address Verified */}
           <section className={`${styles.policySection} ${styles.badgeCard}`}>
             <div className={styles.badgeHeader}>
-              <span className={styles.badgeTag}>Badge 02</span>
-              <h2 className={styles.badgeTitle}>Address Verified</h2>
+              <h2 className={styles.badgeTitle}>Address Verified Badge</h2>
             </div>
 
             <p>
@@ -76,7 +74,7 @@ export default function VerificationPolicyPage() {
             </p>
 
             <div className={styles.subBlock}>
-              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <h3 className={styles.subTitle}>✅ What Infixo Verifies</h3>
               <ul className={styles.list}>
                 <li>Submitted address documentation (such as utility bills, government identity addresses, or local proof).</li>
                 <li>Primary service area locality declared on the worker profile.</li>
@@ -84,7 +82,7 @@ export default function VerificationPolicyPage() {
             </div>
 
             <div className={styles.disclaimerBox}>
-              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <h3 className={styles.disclaimerTitle}>⚠️ Important Legal Disclaimer & Limitations</h3>
               <ul className={styles.list}>
                 <li>Infixo has <strong>NOT</strong> physically visited or audited the worker’s physical address.</li>
                 <li>Address verification is entirely document-based and remotely validated.</li>
@@ -97,8 +95,7 @@ export default function VerificationPolicyPage() {
           {/* BADGE 3: Skill & Work Verified */}
           <section className={`${styles.policySection} ${styles.badgeCard}`}>
             <div className={styles.badgeHeader}>
-              <span className={styles.badgeTag}>Badge 03</span>
-              <h2 className={styles.badgeTitle}>Skill & Work Verified</h2>
+              <h2 className={styles.badgeTitle}>Skill & Work Verified Badge</h2>
             </div>
 
             <p>
@@ -106,7 +103,7 @@ export default function VerificationPolicyPage() {
             </p>
 
             <div className={styles.subBlock}>
-              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <h3 className={styles.subTitle}>✅ What Infixo Verifies</h3>
               <ul className={styles.list}>
                 <li>Review of worker-uploaded work photos showing active or completed projects.</li>
                 <li>Review of work videos highlighting skill execution.</li>
@@ -116,7 +113,7 @@ export default function VerificationPolicyPage() {
             </div>
 
             <div className={styles.disclaimerBox}>
-              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <h3 className={styles.disclaimerTitle}>⚠️ Important Legal Disclaimer & Limitations</h3>
               <ul className={styles.list}>
                 <li>Infixo has <strong>NOT</strong> visited the worker’s physical worksite or job site.</li>
                 <li>Infixo has <strong>NOT</strong> inspected or tested every completed project in person.</li>
@@ -170,6 +167,9 @@ export default function VerificationPolicyPage() {
             </p>
             <p>
               Verification is <strong>NOT</strong> a guarantee, warranty, or insurance policy covering work quality, worker behavior, project pricing, physical safety, future performance, or overall customer satisfaction.
+            </p>
+            <p>
+              Verification badges are intended to increase transparency and help customers make informed decisions. They should not be interpreted as a guarantee, certification, endorsement, warranty, or promise of future work quality.
             </p>
           </section>
 
