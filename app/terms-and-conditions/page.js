@@ -45,7 +45,7 @@ export default function TermsAndConditionsPage() {
               To use Infixo as either a worker or a customer, you must meet the following basic requirements:
             </p>
             <ul className={styles.list}>
-              <li>You must be at least 18 years of age or the legal legal age of majority in your jurisdiction.</li>
+              <li>You must be at least 18 years of age or the legal age of majority in your jurisdiction.</li>
               <li>You must possess the legal authority to enter into a binding agreement.</li>
               <li>All information submitted during profile creation or account setup must be accurate and truthful.</li>
             </ul>
@@ -84,6 +84,9 @@ export default function TermsAndConditionsPage() {
             <p>
               Certain features on Infixo, such as premium profile listings, worker contacts, or specialized platform access, may require fee payments or subscription plans. All charges will be clearly displayed prior to purchase. Fees paid for platform services are non-refundable unless specified otherwise by Infixo.
             </p>
+            <p>
+              Subscription plans, pricing, and platform fees may change in the future at Infixo's discretion. Users will be notified whenever applicable.
+            </p>
           </section>
 
           <section className={styles.policySection}>
@@ -115,6 +118,9 @@ export default function TermsAndConditionsPage() {
             <h2 className={styles.sectionTitle}>11. Limitation of Liability</h2>
             <p>
               Infixo functions as a verification and connection platform connecting independent workers with customers. Infixo is not a direct employer, subcontractor, or agent for any listed worker. Infixo shall not be held liable for disputes, physical damages, direct or indirect financial loss, or quality issues arising from direct work arrangements made between users.
+            </p>
+            <p>
+              Customers are solely responsible for evaluating the suitability of a worker before hiring or engaging in any service. Infixo only provides a verified connection platform and does not supervise or guarantee the outcome of any work performed.
             </p>
           </section>
 
