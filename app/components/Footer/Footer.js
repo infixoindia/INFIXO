@@ -14,6 +14,14 @@ export default function Footer() {
           className={styles.footerImage}
         />
       </div>
+
+      {/* Step 2: Tagline Section */}
+      <div className={styles.taglineWrapper}>
+        <h2 className={styles.taglineText}>
+          Verified Workers<br />
+          Trusted Connections.
+        </h2>
+      </div>
     </footer>
   );
 }
