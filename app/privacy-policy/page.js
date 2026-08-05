@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
 
         {/* Page Title & Subtitle */}
         <h1 className={styles.pageTitle}>Privacy Policy</h1>
-        <p className={styles.lastUpdated}>Last Updated: August 2026</p>
+        <p className={styles.lastUpdated}>Last Updated: 3 August 2026</p>
 
         {/* Content Sections */}
         <div className={styles.contentBody}>
@@ -105,7 +105,6 @@ export default function PrivacyPolicyPage() {
             </p>
           </section>
 
-          {/* New Your Rights Section */}
           <section className={styles.policySection}>
             <h2 className={styles.sectionTitle}>Your Rights</h2>
             <p>Users have the following rights regarding their personal information:</p>
@@ -127,14 +126,14 @@ export default function PrivacyPolicyPage() {
             <h2 className={styles.sectionTitle}>Contact Us</h2>
             <p>If you have any questions or concerns regarding this Privacy Policy, please reach out to us:</p>
             <div className={styles.contactCard}>
-              <p><strong>Email:</strong> <a href="mailto:support@infixo.in" className={styles.contactLink}>support@infixo.in</a></p>
-              <p><strong>Website:</strong> <a href="https://infixo.vercel.app" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>https://infixo.vercel.app</a></p>
+              <p><strong>Email:</strong> Will be available soon</p>
+              <p><strong>Website:</strong> Will be available soon</p>
             </div>
           </section>
 
           {/* Consent Banner Footer */}
           <div className={styles.consentFooter}>
-            <p>By using Infixo, you agree to this Privacy Policy.</p>
+            <p>By accessing or using Infixo, you acknowledge that you have read, understood, and agreed to this Privacy Policy.</p>
           </div>
         </div>
       </div>
