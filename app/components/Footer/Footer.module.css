@@ -1,12 +1,37 @@
-/* Existing container setup unchanged */
+/* Container spacing and setup */
 .footerContainer {
   width: 100%;
-  margin-top: 250px;
+  margin-top: 240px; /* Gap before footer section */
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Existing image wrapper unchanged */
+/* Tagline Wrapper - Left Aligned */
+.taglineSection {
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+/* Choti, bold aur left-aligned tagline like Blinkit */
+.taglineText {
+  text-align: left;
+  font-size: 26px; /* Blinkit style compact heading */
+  font-weight: 800;
+  line-height: 1.25;
+  color: #8E95A2; /* Soft gray color */
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+/* Thin Divider Line */
+.divider {
+  width: calc(100% - 40px);
+  height: 1px;
+  background-color: #E5E7EB;
+  margin: 0 auto 32px auto;
+}
+
+/* Bottom Banner Image */
 .imageWrapper {
   width: 100%;
   margin: 0;
@@ -16,32 +41,10 @@
   justify-content: center;
 }
 
-/* Existing image styles unchanged with multiply blend */
 .footerImage {
   width: 100%;
   height: auto;
   object-fit: contain;
   display: block;
   mix-blend-mode: multiply;
-}
-
-/* Tagline Wrapper - 48px top space & 28px bottom space */
-.taglineWrapper {
-  margin-top: 48px; /* 3rem breathing space illustration ke niche */
-  margin-bottom: 28px; /* 24px–32px gap agle section ke liye */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Tagline Text Styles */
-.taglineText {
-  text-align: center;
-  font-size: 31px; /* 30px–32px range */
-  font-weight: 700;
-  line-height: 1.2;
-  color: #9CA3AF; /* Soft gray color */
-  margin: 0;
-  padding: 0 16px;
 }
