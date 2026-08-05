@@ -139,9 +139,9 @@ export default function VerificationPolicyPage() {
                 <strong>Badge Assignment:</strong> Profiles meeting verification criteria are assigned specific verification badges visible to potential customers.
               </li>
               <li>
-                <strong>Continuous Monitoring:</strong> Badges remain active subject to user feedback, periodic document updates, and ongoing compliance.
+                <strong>Continuous Monitoring:</strong> Badges may remain active based on user feedback, updated information, and compliance with Infixo verification guidelines.
               </li>
-            </ol>
+              </ol>
           </section>
 
           {/* Badge Removal Policy */}
