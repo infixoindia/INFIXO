@@ -1,3 +1,4 @@
+/* Existing container setup unchanged */
 .footerContainer {
   width: 100%;
   margin-top: 250px;
@@ -5,6 +6,7 @@
   box-sizing: border-box;
 }
 
+/* Existing image wrapper unchanged */
 .imageWrapper {
   width: 100%;
   margin: 0;
@@ -14,12 +16,32 @@
   justify-content: center;
 }
 
+/* Existing image styles unchanged with multiply blend */
 .footerImage {
   width: 100%;
   height: auto;
   object-fit: contain;
   display: block;
-  
-  /* YE MAGICAL LINE SABSE PERFECT MATCH KAREGI */
   mix-blend-mode: multiply;
+}
+
+/* Tagline Wrapper - 48px top space & 28px bottom space */
+.taglineWrapper {
+  margin-top: 48px; /* 3rem breathing space illustration ke niche */
+  margin-bottom: 28px; /* 24px–32px gap agle section ke liye */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Tagline Text Styles */
+.taglineText {
+  text-align: center;
+  font-size: 31px; /* 30px–32px range */
+  font-weight: 700;
+  line-height: 1.2;
+  color: #9CA3AF; /* Soft gray color */
+  margin: 0;
+  padding: 0 16px;
 }
