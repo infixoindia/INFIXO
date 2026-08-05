@@ -3,49 +3,190 @@ import styles from './verification-policy.module.css';
 
 export const metadata = {
   title: 'Verification Policy | Infixo',
-  description: 'Learn how Infixo verifies worker profiles for trust and safety.',
+  description: 'Official Verification Policy and Badge Breakdown for Infixo platform',
 };
 
 export default function VerificationPolicyPage() {
   return (
     <div className={styles.mainWrapper}>
-      <div className={styles.breadCrumb}>
-        <Link href="/" className={styles.backLink}>← Home</Link>
-        <span className={styles.breadSeparator}>/</span>
-        <span className={styles.currentBread}>Verification Policy</span>
-      </div>
+      <div className={styles.container}>
+        {/* Navigation Breadcrumb */}
+        <div className={styles.breadCrumb}>
+          <Link href="/" className={styles.backLink}>
+            ← Home
+          </Link>
+          <span className={styles.breadSeparator}>/</span>
+          <span className={styles.currentBread}>Verification Policy</span>
+        </div>
 
-      <h1 className={styles.pageTitle}>Verification Policy</h1>
-      <p className={styles.lastUpdated}>Last Updated: 2026</p>
+        {/* Page Title & Subtitle */}
+        <h1 className={styles.pageTitle}>Verification Policy</h1>
+        <p className={styles.lastUpdated}>Last Updated: 3 August 2026</p>
 
-      <div className={styles.contentBody}>
-        <p className={styles.introText}>
-          At Infixo, trust and safety are our highest priorities. Our Verification Policy outlines the standards and checks required for worker profiles on our platform.
-        </p>
+        {/* Content Sections */}
+        <div className={styles.contentBody}>
+          {/* Introduction */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>Introduction</h2>
+            <p>
+              Infixo is committed to building a trusted, transparent, and safe ecosystem for connecting skilled workers with customers. This Verification Policy explains the exact framework, methodology, and limitations behind the verification badges displayed on worker profiles across the Infixo platform.
+            </p>
+          </section>
 
-        <section className={styles.policySection}>
-          <h2 className={styles.sectionTitle}>1. Identity Verification</h2>
-          <p>
-            All workers listed as verified undergo identity verification using government-issued identification cards (Aadhaar / PAN / Driving License) to ensure authenticity.
-          </p>
-        </section>
+          {/* BADGE 1: Identity Verified */}
+          <section className={`${styles.policySection} ${styles.badgeCard}`}>
+            <div className={styles.badgeHeader}>
+              <span className={styles.badgeTag}>Badge 01</span>
+              <h2 className={styles.badgeTitle}>Identity Verified</h2>
+            </div>
+            
+            <p>
+              The <strong>Identity Verified</strong> badge confirms that the worker has submitted valid government-issued identification documents to confirm their official name and basic identity details.
+            </p>
 
-        <section className={styles.policySection}>
-          <h2 className={styles.sectionTitle}>2. Skill & Work Background Check</h2>
-          <p>
-            We review work history, customer feedback, and past project photos/videos provided by workers to ensure service quality and reliability.
-          </p>
-        </section>
+            <div className={styles.subBlock}>
+              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <ul className={styles.list}>
+                <li>Submitted government identity documents (such as ID cards, driver’s licenses, or official credentials).</li>
+                <li>Alignment between the worker’s profile name and their submitted identity document.</li>
+              </ul>
+            </div>
 
-        <section className={styles.policySection}>
-          <h2 className={styles.sectionTitle}>3. Verified Badge Protocol</h2>
-          <p>
-            Profiles displaying the "VERIFIED BY INFIXO" badge have successfully completed all required safety and background verification steps.
-          </p>
-        </section>
+            <div className={styles.disclaimerBox}>
+              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <ul className={styles.list}>
+                <li>Infixo does <strong>NOT</strong> perform criminal background verification or record checks.</li>
+                <li>Infixo does <strong>NOT</strong> verify police records or law enforcement filings.</li>
+                <li>Infixo does <strong>NOT</strong> guarantee or monitor worker behavior or interpersonal conduct.</li>
+                <li>Infixo does <strong>NOT</strong> guarantee worker moral character or integrity.</li>
+                <li>Infixo only verifies the authenticity of submitted identity documents provided directly by the worker.</li>
+              </ul>
+            </div>
+          </section>
 
-        <div className={styles.contactFooter}>
-          <p>Have questions about worker verification? Email us at verification@infixo.in</p>
+          {/* BADGE 2: Address Verified */}
+          <section className={`${styles.policySection} ${styles.badgeCard}`}>
+            <div className={styles.badgeHeader}>
+              <span className={styles.badgeTag}>Badge 02</span>
+              <h2 className={styles.badgeTitle}>Address Verified</h2>
+            </div>
+
+            <p>
+              The <strong>Address Verified</strong> badge signifies that the worker has provided valid address proof establishing their active operating region or residential locality.
+            </p>
+
+            <div className={styles.subBlock}>
+              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <ul className={styles.list}>
+                <li>Submitted address documentation (such as utility bills, government identity addresses, or local proof).</li>
+                <li>Primary service area locality declared on the worker profile.</li>
+              </ul>
+            </div>
+
+            <div className={styles.disclaimerBox}>
+              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <ul className={styles.list}>
+                <li>Infixo has <strong>NOT</strong> physically visited or audited the worker’s physical address.</li>
+                <li>Address verification is entirely document-based and remotely validated.</li>
+                <li>Future versions of Infixo may introduce physical on-site or field address verification.</li>
+                <li>This badge does <strong>NOT</strong> guarantee worker physical availability, residence stability, or authenticity beyond submitted paperwork.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* BADGE 3: Skill & Work Verified */}
+          <section className={`${styles.policySection} ${styles.badgeCard}`}>
+            <div className={styles.badgeHeader}>
+              <span className={styles.badgeTag}>Badge 03</span>
+              <h2 className={styles.badgeTitle}>Skill & Work Verified</h2>
+            </div>
+
+            <p>
+              The <strong>Skill & Work Verified</strong> badge indicates that the worker has provided verifiable proof of their ongoing trade expertise, completed projects, and technical experience.
+            </p>
+
+            <div className={styles.subBlock}>
+              <h3 className={styles.subTitle}>What Infixo Verifies:</h3>
+              <ul className={styles.list}>
+                <li>Review of worker-uploaded work photos showing active or completed projects.</li>
+                <li>Review of work videos highlighting skill execution.</li>
+                <li>Stated years of experience and declared trade specializations.</li>
+                <li>Basic proof of trade practice submitted during onboarding.</li>
+              </ul>
+            </div>
+
+            <div className={styles.disclaimerBox}>
+              <h3 className={styles.disclaimerTitle}>Important Legal Disclaimer & Limitations:</h3>
+              <ul className={styles.list}>
+                <li>Infixo has <strong>NOT</strong> visited the worker’s physical worksite or job site.</li>
+                <li>Infixo has <strong>NOT</strong> inspected or tested every completed project in person.</li>
+                <li>Work verification is strictly based on submitted media and self-reported information.</li>
+                <li>Infixo does <strong>NOT</strong> guarantee future work quality, project timelines, or workmanship.</li>
+                <li>Infixo does <strong>NOT</strong> guarantee overall customer satisfaction or outcome.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* How Infixo Verification Works */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>How Infixo Verification Works</h2>
+            <p>Our verification process is structured into four sequential steps:</p>
+            <ol className={styles.orderedList}>
+              <li>
+                <strong>Document Submission:</strong> Workers upload official identity, address proof, work photos, and trade history via the Infixo platform.
+              </li>
+              <li>
+                <strong>Review & Audit:</strong> Our verification team reviews the submitted records for legibility, consistency, and alignment with profile details.
+              </li>
+              <li>
+                <strong>Badge Assignment:</strong> Profiles meeting verification criteria are assigned specific verification badges visible to potential customers.
+              </li>
+              <li>
+                <strong>Continuous Monitoring:</strong> Badges remain active subject to user feedback, periodic document updates, and ongoing compliance.
+              </li>
+            </ol>
+          </section>
+
+          {/* Badge Removal Policy */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>Badge Removal Policy</h2>
+            <p>
+              Verification is a privilege, not a permanent guarantee. Infixo maintains a zero-tolerance policy for misrepresentation. Verification badges will be immediately revoked and accounts subject to suspension under the following conditions:
+            </p>
+            <ul className={styles.list}>
+              <li>Submission of fake, forged, or altered identity documents.</li>
+              <li>Provision of fraudulent or invalid address information.</li>
+              <li>Uploading plagiarized, stock, or fake work photos and videos.</li>
+              <li>Providing misleading experience history or false trade qualifications.</li>
+              <li>Any attempt to game, bypass, or abuse the Infixo verification process.</li>
+            </ul>
+          </section>
+
+          {/* Verification Disclaimer */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>Verification Disclaimer</h2>
+            <p>
+              Infixo functions solely as an independent verification and connection platform. While verification badges significantly improve platform trust and transparency, customers are always advised to exercise their own personal judgment and due diligence before hiring or engaging any worker.
+            </p>
+            <p>
+              Verification is <strong>NOT</strong> a guarantee, warranty, or insurance policy covering work quality, worker behavior, project pricing, physical safety, future performance, or overall customer satisfaction.
+            </p>
+          </section>
+
+          {/* Contact Us */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>Contact Us</h2>
+            <p>If you have any questions regarding our verification procedures or badge status, please contact us:</p>
+            <div className={styles.contactCard}>
+              <p><strong>Email:</strong> Will be available soon</p>
+              <p><strong>Website:</strong> Will be available soon</p>
+            </div>
+          </section>
+
+          {/* Consent Banner Footer */}
+          <div className={styles.consentFooter}>
+            <p>By accessing or using Infixo, you acknowledge that you have read, understood, and agreed to this Verification Policy.</p>
+          </div>
         </div>
       </div>
     </div>
