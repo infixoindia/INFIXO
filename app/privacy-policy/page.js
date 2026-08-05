@@ -43,7 +43,7 @@ export default function PrivacyPolicyPage() {
               <li><strong>Work Photos & Videos:</strong> Portfolios and media uploaded to show past work quality.</li>
               <li><strong>Languages:</strong> Languages you speak for better customer communication.</li>
               <li><strong>Experience:</strong> Total years or history of professional work.</li>
-              <li><strong>Verification Documents:</strong> Government IDs or licenses (only if submitted for account verification).</li>
+              <li><strong>Verification Documents:</strong> Government IDs or licenses (only if submitted for account verification). These documents are used only for verification purposes and are never displayed publicly or shared with customers.</li>
             </ul>
           </section>
 
@@ -65,6 +65,7 @@ export default function PrivacyPolicyPage() {
             <ul className={styles.list}>
               <li>We never sell or rent your personal data to third-party advertisers.</li>
               <li>Worker phone numbers are shared only according to defined platform rules when connection requests are initiated.</li>
+              <li>Customer personal information is never shared with workers unless required for providing the requested service.</li>
               <li>Data may be disclosed only if required by applicable legal regulations, law enforcement agencies, or court orders.</li>
             </ul>
           </section>
@@ -104,6 +105,17 @@ export default function PrivacyPolicyPage() {
             </p>
           </section>
 
+          {/* New Your Rights Section */}
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>Your Rights</h2>
+            <p>Users have the following rights regarding their personal information:</p>
+            <ul className={styles.list}>
+              <li>Request correction of incorrect profile information.</li>
+              <li>Request deletion of their account and associated personal data.</li>
+              <li>Contact Infixo support for any privacy-related concerns or questions.</li>
+            </ul>
+          </section>
+
           <section className={styles.policySection}>
             <h2 className={styles.sectionTitle}>Changes to Privacy Policy</h2>
             <p>
@@ -115,8 +127,8 @@ export default function PrivacyPolicyPage() {
             <h2 className={styles.sectionTitle}>Contact Us</h2>
             <p>If you have any questions or concerns regarding this Privacy Policy, please reach out to us:</p>
             <div className={styles.contactCard}>
-              <p><strong>Email:</strong> <a href="mailto:support@infixo.com" className={styles.contactLink}>support@infixo.com</a></p>
-              <p><strong>Website:</strong> <a href="https://infixo.com" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>https://infixo.com</a></p>
+              <p><strong>Email:</strong> <a href="mailto:support@infixo.in" className={styles.contactLink}>support@infixo.in</a></p>
+              <p><strong>Website:</strong> <a href="https://infixo.vercel.app" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>https://infixo.vercel.app</a></p>
             </div>
           </section>
 
