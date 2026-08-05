@@ -139,7 +139,7 @@ export default function VerificationPolicyPage() {
                 <strong>Badge Assignment:</strong> Profiles meeting verification criteria are assigned specific verification badges visible to potential customers.
               </li>
               <li>
-                <strong>Continuous Monitoring:</strong> Badges may remain active based on user feedback, updated information, and compliance with Infixo verification guidelines.
+                <strong>Verification Status Updates:</strong> Badges may remain active based on user feedback, updated information, and compliance with Infixo verification guidelines.
               </li>
               </ol>
           </section>
