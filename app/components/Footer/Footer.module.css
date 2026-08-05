@@ -5,6 +5,7 @@
   box-sizing: border-box;
 }
 
+/* Tagline */
 .taglineSection {
   padding: 0 20px;
   margin-bottom: 16px;
@@ -20,14 +21,53 @@
   letter-spacing: -0.5px;
 }
 
-/* Slightly visible divider */
+/* Thin Divider Line */
 .divider {
   width: calc(100% - 40px);
   height: 1px;
-  background-color: #D1D5DB; 
-  margin: 0 auto 24px auto;
+  background-color: #E5E7EB;
+  margin: 0 auto 16px auto;
 }
 
+/* Legal Links + Copyright Section (Divider ke niche) */
+.legalSection {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px; /* Gap illustration se pehle */
+}
+
+.legalLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.link {
+  color: #8E95A2;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.dot {
+  color: #8E95A2;
+  font-size: 12px;
+}
+
+.copyrightText {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Bottom Banner Image */
 .imageWrapper {
   width: 100%;
   margin: 0;
