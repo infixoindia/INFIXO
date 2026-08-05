@@ -1,1 +1,90 @@
+.mainWrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 20px 60px 20px;
+  box-sizing: border-box;
+  background-color: #FAFAFA;
+  min-height: 100vh;
+}
 
+.breadCrumb {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.backLink {
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.breadSeparator {
+  color: #D1D5DB;
+}
+
+.currentBread {
+  color: #374151;
+  font-weight: 500;
+}
+
+.pageTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.lastUpdated {
+  font-size: 13px;
+  color: #9CA3AF;
+  margin-bottom: 24px;
+}
+
+.contentBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.introText {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4B5563;
+  margin-bottom: 20px;
+}
+
+.policySection {
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.policySection p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4B5563;
+  margin: 0 0 12px 0;
+}
+
+.contactFooter {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+  font-size: 14px;
+  color: #6B7280;
+}
