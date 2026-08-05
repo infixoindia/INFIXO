@@ -16,9 +16,10 @@ export default function Footer() {
       {/* 2. Thin Divider Line */}
       <div className={styles.divider} />
 
-      {/* 3. Legal Links & Copyright */}
+      {/* 3. Legal Links (Stacked Layout) & Copyright */}
       <div className={styles.legalSection}>
-        <div className={styles.legalLinks}>
+        {/* Row 1: Privacy Policy & Terms */}
+        <div className={styles.legalRow}>
           <Link href="/privacy-policy" className={styles.link}>
             Privacy Policy
           </Link>
@@ -26,11 +27,16 @@ export default function Footer() {
           <Link href="/terms-and-conditions" className={styles.link}>
             Terms & Conditions
           </Link>
-          <span className={styles.dot}>•</span>
+        </div>
+
+        {/* Row 2: Verification Policy (Indono ke niche) */}
+        <div className={styles.legalRow}>
           <Link href="/verification-policy" className={styles.link}>
             Verification Policy
           </Link>
         </div>
+
+        {/* Row 3: Copyright Text */}
         <p className={styles.copyrightText}>
           © 2026 Infixo. All rights reserved.
         </p>
