@@ -3,46 +3,150 @@ import styles from './terms-and-conditions.module.css';
 
 export const metadata = {
   title: 'Terms & Conditions | Infixo',
-  description: 'Terms and Conditions for Infixo platform',
+  description: 'Terms and Conditions for Infixo worker verification platform',
 };
 
 export default function TermsAndConditionsPage() {
   return (
     <div className={styles.mainWrapper}>
-      <header className={styles.pageHeader}>
-        <div className={styles.headerContent}>
-          <div className={styles.breadCrumb}>
-            <Link href="/" className={styles.backLink}>Home</Link>
-            <span className={styles.breadSeparator}>/</span>
-            <span className={styles.currentBread}>Terms & Conditions</span>
-          </div>
-          <h1 className={styles.pageTitle}>Terms & Conditions</h1>
-          <p className={styles.lastUpdated}>Last Updated: 2026</p>
+      <div className={styles.container}>
+        {/* Navigation Breadcrumb */}
+        <div className={styles.breadCrumb}>
+          <Link href="/" className={styles.backLink}>
+            ← Home
+          </Link>
+          <span className={styles.breadSeparator}>/</span>
+          <span className={styles.currentBread}>Terms & Conditions</span>
         </div>
-      </header>
 
-      <main className={styles.contentContainer}>
+        {/* Page Title & Subtitle */}
+        <h1 className={styles.pageTitle}>Terms & Conditions</h1>
+        <p className={styles.lastUpdated}>Last Updated: 3 August 2026</p>
+
+        {/* Content Sections */}
         <div className={styles.contentBody}>
-          <p className={styles.introText}>
-            By accessing or using Infixo, you agree to be bound by these Terms and Conditions.
-          </p>
-
           <section className={styles.policySection}>
-            <h2 className={styles.sectionTitle}>1. Terms of Use</h2>
-            <p>Users must provide accurate information and maintain the security of their account credentials.</p>
+            <h2 className={styles.sectionTitle}>1. Introduction</h2>
+            <p>
+              Welcome to Infixo. Infixo operates a platform designed to connect verified skilled workers with customers in need of local services. These Terms & Conditions govern your access to and use of our platform, services, and applications.
+            </p>
           </section>
 
           <section className={styles.policySection}>
-            <h2 className={styles.sectionTitle}>2. Service Agreement</h2>
-            <p>Infixo provides a platform connecting workers and customers. All interactions must strictly adhere to community guidelines.</p>
+            <h2 className={styles.sectionTitle}>2. Acceptance of Terms</h2>
+            <p>
+              By visiting, browsing, registering, or using any part of Infixo, you enter into a legally binding agreement to follow and be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must refrain from using the platform.
+            </p>
           </section>
 
-          <div className={styles.contactFooter}>
-            <p>Questions? Contact us at legal@infixo.in</p>
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>3. User Eligibility</h2>
+            <p>
+              To use Infixo as either a worker or a customer, you must meet the following basic requirements:
+            </p>
+            <ul className={styles.list}>
+              <li>You must be at least 18 years of age or the legal legal age of majority in your jurisdiction.</li>
+              <li>You must possess the legal authority to enter into a binding agreement.</li>
+              <li>All information submitted during profile creation or account setup must be accurate and truthful.</li>
+            </ul>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>4. Worker Responsibilities</h2>
+            <p>Workers listing their services on Infixo agree to uphold professional service standards:</p>
+            <ul className={styles.list}>
+              <li>Provide accurate personal details, experience, skills, service areas, and work media.</li>
+              <li>Maintain appropriate professional conduct and deliver services safely and skillfully.</li>
+              <li>Fulfill customer commitments as agreed upon through mutual communication.</li>
+              <li>Ensure all submitted portfolios and images reflect genuine, past completed work.</li>
+            </ul>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>5. Customer Responsibilities</h2>
+            <p>Customers using Infixo to discover local skilled professionals agree to:</p>
+            <ul className={styles.list}>
+              <li>Treat workers with fairness, dignity, and respect during all interactions.</li>
+              <li>Use provided worker contact details strictly for inquiring about legitimate work opportunities.</li>
+              <li>Clear payments and financial agreements directly with the worker as negotiated.</li>
+            </ul>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>6. Verification Rules</h2>
+            <p>
+              Infixo offers profile verification to enhance trust across the community. Submission of government identity documents or licenses is strictly for account verification. The "Verified" status reflects that basic document checks have been completed; however, Infixo does not guarantee or endorse ongoing performance on individual jobs.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>7. Subscription & Payments</h2>
+            <p>
+              Certain features on Infixo, such as premium profile listings, worker contacts, or specialized platform access, may require fee payments or subscription plans. All charges will be clearly displayed prior to purchase. Fees paid for platform services are non-refundable unless specified otherwise by Infixo.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>8. Contact Unlock Policy</h2>
+            <p>
+              Unlocking worker contact details on Infixo provides direct communication access for potential job bookings. Unlocked contacts are intended strictly for personal or business service inquiries and must not be stored, harvested, or redistributed to third parties.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>9. Prohibited Activities</h2>
+            <p>Users are strictly prohibited from engaging in any of the following activities on Infixo:</p>
+            <ul className={styles.list}>
+              <li>Creating false profiles, uploading fake credentials, or impersonating others.</li>
+              <li>Scraping, harvesting, or extracting user data or phone numbers automatically or manually.</li>
+              <li>Harassing, threatening, or abusing workers, customers, or platform support team members.</li>
+              <li>Using the platform to promote unlawful activities, fraud, or spam services.</li>
+            </ul>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>10. Account Suspension & Termination</h2>
+            <p>
+              Infixo reserves the right to suspend, restrict, or permanently terminate any user account or worker listing without prior notice if a breach of these Terms & Conditions occurs, or if fraudulent activity, abuse, or safety risks are detected.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>11. Limitation of Liability</h2>
+            <p>
+              Infixo functions as a verification and connection platform connecting independent workers with customers. Infixo is not a direct employer, subcontractor, or agent for any listed worker. Infixo shall not be held liable for disputes, physical damages, direct or indirect financial loss, or quality issues arising from direct work arrangements made between users.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>12. Intellectual Property</h2>
+            <p>
+              All branding, logos, website layout, graphics, interface design, and underlying software code belong exclusively to Infixo. Users retain ownership of their personal portfolio media but grant Infixo a non-exclusive license to display this media to facilitate platform services.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>13. Changes to Terms</h2>
+            <p>
+              Infixo reserves the right to update or modify these Terms & Conditions at any given time. Updated terms will become effective immediately upon being published on this page with a revised "Last Updated" date. Continued platform usage indicates acceptance of the updated terms.
+            </p>
+          </section>
+
+          <section className={styles.policySection}>
+            <h2 className={styles.sectionTitle}>14. Contact Us</h2>
+            <p>If you have any questions or require clarification regarding these Terms & Conditions, please contact us:</p>
+            <div className={styles.contactCard}>
+              <p><strong>Email:</strong> Will be available soon</p>
+              <p><strong>Website:</strong> Will be available soon</p>
+            </div>
+          </section>
+
+          {/* Consent Banner Footer */}
+          <div className={styles.consentFooter}>
+            <p>By accessing or using Infixo, you acknowledge that you have read, understood, and agreed to these Terms & Conditions.</p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
-
