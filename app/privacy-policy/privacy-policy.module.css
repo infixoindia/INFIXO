@@ -1,1 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+.mainWrapper {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FFFFFF; /* Pure White Background */
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #111827;
+  padding: 32px 16px 60px 16px;
+  box-sizing: border-box;
+}
+
+/* Center Container with max-width 720px */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb Styling */
+.breadCrumb {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.backLink {
+  color: #6B7280;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.breadSeparator {
+  color: #D1D5DB;
+}
+
+.currentBread {
+  color: #374151;
+}
+
+/* Title & Subtitle */
+.pageTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.6px;
+  line-height: 1.2;
+}
+
+.lastUpdated {
+  font-size: 13px;
+  color: #8E95A2;
+  margin-top: 0;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+/* Content Body & Sections */
+.contentBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.policySection {
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-top: 0;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+}
+
+.policySection p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #4B5563;
+  margin: 0 0 12px 0;
+  font-weight: 400;
+}
+
+/* List Styling */
+.list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4B5563;
+}
+
+.list strong {
+  color: #1F2937;
+  font-weight: 600;
+}
+
+/* Contact Card */
+.contactCard {
+  background-color: #F9FAFB;
+  border: 1px solid #F3F4F6;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contactCard p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.contactLink {
+  color: #2563EB;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contactLink:hover {
+  text-decoration: underline;
+}
+
+/* Consent Bottom Footer */
+.consentFooter {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+  text-align: center;
+}
+
+.consentFooter p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  margin: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .mainWrapper {
+    padding: 24px 16px 48px 16px;
+  }
+
+  .pageTitle {
+    font-size: 28px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+  }
+
+  .policySection p, .list li {
+    font-size: 14px;
+  }
+}
