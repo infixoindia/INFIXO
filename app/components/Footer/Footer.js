@@ -16,7 +16,7 @@ export default function Footer() {
       {/* 2. Thin Divider Line */}
       <div className={styles.divider} />
 
-      {/* 3. Legal Links & Copyright (Divider ke niche) */}
+      {/* 3. Legal Links & Copyright */}
       <div className={styles.legalSection}>
         <div className={styles.legalLinks}>
           <Link href="/privacy-policy" className={styles.link}>
@@ -26,13 +26,17 @@ export default function Footer() {
           <Link href="/terms-and-conditions" className={styles.link}>
             Terms & Conditions
           </Link>
+          <span className={styles.dot}>•</span>
+          <Link href="/verification-policy" className={styles.link}>
+            Verification Policy
+          </Link>
         </div>
         <p className={styles.copyrightText}>
           © 2026 Infixo. All rights reserved.
         </p>
       </div>
 
-      {/* 4. Bottom Illustration Banner (Gap ke baad) */}
+      {/* 4. Bottom Illustration Banner */}
       <div className={styles.imageWrapper}>
         <Image
           src="/images/footer-img.webp"
