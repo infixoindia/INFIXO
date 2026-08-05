@@ -1,37 +1,33 @@
-/* Container spacing and setup */
 .footerContainer {
   width: 100%;
-  margin-top: 240px; /* Gap before footer section */
+  margin-top: 240px;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Tagline Wrapper - Left Aligned */
 .taglineSection {
   padding: 0 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-/* Choti, bold aur left-aligned tagline like Blinkit */
 .taglineText {
   text-align: left;
-  font-size: 26px; /* Blinkit style compact heading */
+  font-size: 28px;
   font-weight: 800;
-  line-height: 1.25;
-  color: #8E95A2; /* Soft gray color */
+  line-height: 1.2;
+  color: #8E95A2;
   margin: 0;
   letter-spacing: -0.5px;
 }
 
-/* Thin Divider Line */
+/* Slightly visible divider */
 .divider {
   width: calc(100% - 40px);
   height: 1px;
-  background-color: #E5E7EB;
-  margin: 0 auto 32px auto;
+  background-color: #D1D5DB; 
+  margin: 0 auto 24px auto;
 }
 
-/* Bottom Banner Image */
 .imageWrapper {
   width: 100%;
   margin: 0;
