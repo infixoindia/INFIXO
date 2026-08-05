@@ -1,12 +1,10 @@
-/* Container me top margin se 220px-280px ka vertical gap create kiya hai */
 .footerContainer {
   width: 100%;
-  margin-top: 250px; /* 220px–280px ka natural vertical gap */
+  margin-top: 250px;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Full screen-to-screen width bina kisi side padding ke */
 .imageWrapper {
   width: 100%;
   margin: 0;
@@ -16,10 +14,12 @@
   justify-content: center;
 }
 
-/* Image responsive rahegi aur crop/stretch nahi hogi */
 .footerImage {
   width: 100%;
   height: auto;
   object-fit: contain;
   display: block;
+  
+  /* YE MAGICAL LINE SABSE PERFECT MATCH KAREGI */
+  mix-blend-mode: multiply;
 }
