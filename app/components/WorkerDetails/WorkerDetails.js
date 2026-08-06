@@ -187,7 +187,7 @@ const [addressOpen, setAddressOpen] = useState(false);
     </ul>
 
 <Link
-  href="/policies/worker-verification"
+  href="/policies/worker-verification#identity-verified"
   className={`${styles.moreInfo} ${styles.moreInfoGreen}`}
 >
   <span className={styles.morePlus}>+</span>
@@ -269,7 +269,7 @@ const [addressOpen, setAddressOpen] = useState(false);
 
 
   <Link
-    href="/policies/worker-verification"
+    href="/policies/worker-verification#work-verified"
     className={`${styles.moreInfo} ${styles.moreInfoBlue}`}
   >
     <span className={styles.morePlus}>+</span>
@@ -352,7 +352,7 @@ const [addressOpen, setAddressOpen] = useState(false);
 
 
   <Link
-    href="/policies/worker-verification"
+    href="/policies/worker-verification#address-verified"
     className={`${styles.moreInfo} ${styles.moreInfoOrange}`}
   >
     <span className={styles.morePlus}>+</span>
