@@ -36,12 +36,21 @@ export default function WorkDetails() {
 
   <div className={styles.value}>
    <div className={styles.primaryBadge}>
-    <svg
+      <svg
     className={styles.skillIcon}
     viewBox="0 0 24 24"
-    fill="currentColor"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    <path d="M18.37 2.63c-.39-.39-1.02-.39-1.41 0L14 5.59 18.41 10l2.95-2.95c.39-.39.39-1.02 0-1.41l-2.99-3.01zM12.59 7L3 16.59V21h4.41L17 11.41 12.59 7z" />
+    {/* Brush Bristles */}
+    <path d="M14 2H6a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" />
+    {/* Metal Ferrule */}
+    <path d="M4 8h10v3H4z" />
+    {/* Brush Handle */}
+    <path d="M9 11v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1" />
   </svg>
   <span>Painter</span>
 </div>
