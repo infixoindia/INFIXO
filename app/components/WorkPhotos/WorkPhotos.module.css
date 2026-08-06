@@ -98,28 +98,23 @@
 }
 
 /* ========================= */
-/* IMAGE VIEWER */
+/* IMAGE VIEWER WITH SHARED ELEMENT ANIMATION */
 /* ========================= */
 
 .viewer {
   position: fixed;
   inset: 0;
-  background: #000000;
+  background: rgba(0, 0, 0, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   z-index: 9999;
-  animation: viewerFade 0.25s ease;
+  transition: background 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@keyframes viewerFade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.viewerClosing {
+  background: rgba(0, 0, 0, 0);
 }
 
 /* ========================= */
@@ -155,7 +150,7 @@
 }
 
 /* ========================= */
-/* FULL IMAGE (UNCROPPED NO CROP FIX) */
+/* FULL IMAGE & TRANSITIONING STATE */
 /* ========================= */
 
 .viewerImage {
@@ -163,12 +158,20 @@
   height: 100%;
   max-width: 100vw;
   max-height: 100vh;
-  object-fit: contain; /* Exact aspect ratio fit without cropping */
+  object-fit: contain;
   border-radius: 0;
   box-shadow: none;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
+  will-change: transform, border-radius, opacity;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+              border-radius 0.3s cubic-bezier(0.32, 0.72, 0, 1),
+              opacity 0.25s ease;
+}
+
+.transitioningImage {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 
 /* ========================= */
@@ -192,6 +195,7 @@
   cursor: pointer;
   z-index: 10001;
   padding: 0;
+  transition: transform 0.2s ease, opacity 0.25s ease;
 }
 
 .closeButton svg {
@@ -201,6 +205,13 @@
 
 .closeButton:active {
   transform: scale(0.92);
+}
+
+.viewerClosing .closeButton,
+.viewerClosing .imageCounter,
+.viewerClosing .arrow {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ========================= */
@@ -221,6 +232,7 @@
   justify-content: center;
   z-index: 10002;
   pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
 .arrow svg {
@@ -254,6 +266,7 @@
   font-weight: 600;
   z-index: 10002;
   user-select: none;
+  transition: opacity 0.25s ease;
 }
 
 /* ========================= */
