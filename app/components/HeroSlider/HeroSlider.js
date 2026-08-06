@@ -1,9 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import styles from './HeroSlider.module.css';
 
-// Fixed slides: Full 100% width coverage (zoom: 1) with clean vertical alignment
+// Lazy load ImagePreview modal for optimal performance
+const ImagePreview = dynamic(() => import('../ImagePreview/ImagePreview'), {
+  ssr: false,
+});
+
 const DEFAULT_SLIDES = [
   {
     image: '/images/worker-1.avif',
@@ -36,7 +41,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -59,13 +64,16 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
     setCurrentIndex((prevIndex) => (prevIndex - 1 + slideList.length) % slideList.length);
   }, [slideList.length]);
 
+  // Pause auto-slide when full screen preview is open
   useEffect(() => {
+    if (isPreviewOpen) return;
+
     const timer = setInterval(() => {
       handleNext();
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [handleNext, currentIndex]);
+  }, [handleNext, currentIndex, isPreviewOpen]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.targetTouches[0].clientX;
@@ -87,9 +95,6 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
     }
   };
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   return (
     <>
       <div
@@ -97,7 +102,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onClick={openModal}
+        onClick={() => setIsPreviewOpen(true)}
       >
         <div
           className={styles.sliderTrack}
@@ -123,19 +128,13 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className={styles.modalOverlay} onClick={closeModal}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.closeBtn} onClick={closeModal} aria-label="Close Preview">
-              ✕
-            </button>
-            <img
-              src={slideList[currentIndex].image}
-              alt={`${workerName} full preview`}
-              className={styles.modalImage}
-            />
-          </div>
-        </div>
+      {isPreviewOpen && (
+        <ImagePreview
+          slides={slideList}
+          initialIndex={currentIndex}
+          workerName={workerName}
+          onClose={() => setIsPreviewOpen(false)}
+        />
       )}
     </>
   );
