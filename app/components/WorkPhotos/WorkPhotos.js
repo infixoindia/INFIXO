@@ -20,7 +20,7 @@ export default function WorkPhotos() {
   // Transition animation state
   const [isOpening, setIsOpening] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [originRect, setOriginRect] = useState(null);
+  const [animStyle, setAnimStyle] = useState({});
 
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
@@ -68,69 +68,67 @@ export default function WorkPhotos() {
     setPosition({ x: 0, y: 0 });
   };
 
-  const openViewer = (index, e) => {
-    let rect = null;
-    const clickedElement = gridItemsRef.current[index];
-    if (clickedElement) {
-      rect = clickedElement.getBoundingClientRect();
-    } else if (e && e.currentTarget) {
-      rect = e.currentTarget.getBoundingClientRect();
-    }
+  const getTargetRectStyle = (index) => {
+    const gridElem = gridItemsRef.current[index];
+    if (!gridElem) return {};
 
+    const rect = gridElem.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const scaleX = rect.width / viewportWidth;
+    const scaleY = rect.height / viewportHeight;
+
+    const translateX = rect.left + rect.width / 2 - viewportWidth / 2;
+    const translateY = rect.top + rect.height / 2 - viewportHeight / 2;
+
+    return {
+      transform: `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scaleX}, ${scaleY})`,
+      borderRadius: "18px",
+      objectFit: "cover",
+    };
+  };
+
+  const openViewer = (index) => {
     setCurrentIndex(index);
-    setOriginRect(rect);
     setViewerOpen(true);
     setIsOpening(true);
     setIsClosing(false);
 
-    // Trigger full screen zoom after initial mounting frame
+    // Initial collapsed position
+    const startStyle = getTargetRectStyle(index);
+    setAnimStyle(startStyle);
+
+    // Trigger frame to animate smoothly to full screen
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setIsOpening(false);
+        setAnimStyle({
+          transform: "translate3d(0px, 0px, 0px) scale(1, 1)",
+          borderRadius: "0px",
+          objectFit: "contain",
+        });
+        setTimeout(() => {
+          setIsOpening(false);
+        }, 320);
       });
     });
   };
 
   const closeViewer = () => {
     resetZoom();
-
-    // Re-calculate target rect for current index in case scrolled
-    const currentGridElem = gridItemsRef.current[currentIndex];
-    if (currentGridElem) {
-      setOriginRect(currentGridElem.getBoundingClientRect());
-    }
-
     setIsClosing(true);
+
+    const endStyle = getTargetRectStyle(currentIndex);
+
+    requestAnimationFrame(() => {
+      setAnimStyle(endStyle);
+    });
 
     setTimeout(() => {
       setViewerOpen(false);
       setIsClosing(false);
-      setOriginRect(null);
-    }, 300); // Duration matches CSS transition
-  };
-
-  // Helper to calculate initial transform style for shared element animation
-  const getSharedTransformStyle = () => {
-    if (!originRect || (!isOpening && !isClosing)) return {};
-
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    const scaleX = originRect.width / viewportWidth;
-    const scaleY = originRect.height / viewportHeight;
-    const targetScale = Math.min(scaleX, scaleY);
-
-    const originCenterX = originRect.left + originRect.width / 2;
-    const originCenterY = originRect.top + originRect.height / 2;
-
-    const translateX = originCenterX - viewportWidth / 2;
-    const translateY = originCenterY - viewportHeight / 2;
-
-    return {
-      transform: `translate3d(${translateX}px, ${translateY}px, 0px) scale(${targetScale})`,
-      borderRadius: "18px",
-      opacity: 0.9,
-    };
+      setIsOpening(false);
+    }, 320);
   };
 
   const clampPosition = (newX, newY, targetScale) => {
@@ -324,7 +322,7 @@ export default function WorkPhotos() {
             key={index}
             ref={(el) => (gridItemsRef.current[index] = el)}
             className={styles.photoItem}
-            onClick={(e) => openViewer(index, e)}
+            onClick={() => openViewer(index)}
           >
             <img src={image} alt={`Work ${index + 1}`} />
           </div>
@@ -332,7 +330,11 @@ export default function WorkPhotos() {
       </div>
 
       {viewerOpen && (
-        <div className={`${styles.viewer} ${isClosing ? styles.viewerClosing : ""}`}>
+        <div
+          className={`${styles.viewer} ${
+            isOpening ? styles.viewerOpening : ""
+          } ${isClosing ? styles.viewerClosing : ""}`}
+        >
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {images.length}
           </div>
@@ -369,8 +371,9 @@ export default function WorkPhotos() {
               {images.map((image, index) => {
                 const isCurrent = index === currentIndex;
                 const isTransitioning = isCurrent && (isOpening || isClosing);
-                const transformStyle = isTransitioning
-                  ? getSharedTransformStyle()
+
+                const inlineStyle = isTransitioning
+                  ? animStyle
                   : isCurrent
                   ? {
                       transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
@@ -387,10 +390,10 @@ export default function WorkPhotos() {
                       src={image}
                       alt={`Work ${index + 1}`}
                       className={`${styles.viewerImage} ${
-                        isTransitioning ? styles.transitioningImage : ""
+                        isTransitioning ? styles.animatingImage : ""
                       }`}
                       draggable={false}
-                      style={transformStyle}
+                      style={inlineStyle}
                     />
                   </div>
                 );
