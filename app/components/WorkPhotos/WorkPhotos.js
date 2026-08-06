@@ -242,6 +242,9 @@ export default function WorkPhotos() {
     }
   };
 
+  // Flag to hide controls during zoom
+  const isZoomed = scale > 1.02;
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
@@ -281,16 +284,22 @@ export default function WorkPhotos() {
             isClosing ? styles.viewerClosing : styles.viewerActive
           }`}
         >
-          <div className={styles.imageCounter}>
+          <div
+            className={`${styles.imageCounter} ${
+              isZoomed ? styles.controlsHidden : ""
+            }`}
+          >
             {currentIndex + 1} / {images.length}
           </div>
 
           <button
-            className={styles.closeButton}
+            className={`${styles.closeButton} ${
+              isZoomed ? styles.controlsHidden : ""
+            }`}
             onClick={closeViewer}
             aria-label="Close"
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M18 6L6 18M6 6L18 18"
                 stroke="#FFFFFF"
@@ -345,10 +354,10 @@ export default function WorkPhotos() {
           <div
             className={`${styles.arrow} ${styles.leftArrow} ${
               currentIndex === 0 ? styles.disabled : ""
-            }`}
+            } ${isZoomed ? styles.controlsHidden : ""}`}
             onClick={() => currentIndex > 0 && setCurrentIndex((p) => p - 1)}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
                 d="M15 19L8 12L15 5"
                 stroke="#FFFFFF"
@@ -362,10 +371,12 @@ export default function WorkPhotos() {
           <div
             className={`${styles.arrow} ${styles.rightArrow} ${
               currentIndex === images.length - 1 ? styles.disabled : ""
-            }`}
-            onClick={() => currentIndex < images.length - 1 && setCurrentIndex((p) => p + 1)}
+            } ${isZoomed ? styles.controlsHidden : ""}`}
+            onClick={() =>
+              currentIndex < images.length - 1 && setCurrentIndex((p) => p + 1)
+            }
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
                 d="M9 5L16 12L9 19"
                 stroke="#FFFFFF"
