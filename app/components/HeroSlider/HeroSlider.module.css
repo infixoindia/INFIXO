@@ -28,13 +28,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transform-origin: center center;
+  transform-origin: center 10%; /* Ensures top padding remains balanced when scaled down */
   transition: transform 0.3s ease;
 }
 
-/* ========================================= */
-/* Full Preview Modal (Black Blurred Overlay)*/
-/* ========================================= */
+/* Modal Styling */
 .modalOverlay {
   position: fixed;
   inset: 0;
