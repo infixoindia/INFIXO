@@ -1,134 +1,170 @@
-.grid {
-  max-width: 380px;
-  margin: 20px auto 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 12px;
-  row-gap: 14px;
-  padding: 0 10px;
+.grid{
+  max-width:340px;
+  margin:32px auto 0;
+
+  display:grid;
+  grid-template-columns:1fr 1fr;
+
+  column-gap:10px;
+  row-gap:16px;
+
 }
 
-/* Glass Card Container */
-.card {
-  height: 70px;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0 10px;
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-  
-  /* NO dark solid border. Soft white glass border + realistic ambient shadow */
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 
-    inset 0px 2px 2px rgba(255, 255, 255, 0.8),
-    inset 0px -2px 4px rgba(0, 0, 0, 0.03),
-    0 10px 25px rgba(0, 0, 0, 0.05);
-    
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  height:76px;
+
+  border:none;
+
+  border-radius:18px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-size:13.5px;
+
+  font-weight:700;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:0 14px;
+
+  box-shadow:0 10px 22px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.4);
+
 }
 
-.card:active {
-  transform: scale(0.96);
-}
+.card::before{
 
-/* Realistic Glass Reflex (Shine) */
-.glassShine {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 52%;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.02) 100%
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:linear-gradient(135deg,
+    rgba(255,255,255,.6) 0%,
+    rgba(255,255,255,.22) 30%,
+    rgba(255,255,255,0) 55%,
+    rgba(255,255,255,0) 100%
   );
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  pointer-events: none;
+
+  pointer-events:none;
+
 }
 
-/* Squircle Icon Box */
-.iconBox {
-  width: 44px;
-  height: 44px;
-  background: #ffffff;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  z-index: 1;
-  box-shadow: 
-    0 4px 10px rgba(0, 0, 0, 0.04),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+.iconBadge{
+
+  position:relative;
+
+  z-index:1;
+
+  flex-shrink:0;
+
+  width:40px;
+
+  height:40px;
+
+  border-radius:12px;
+
+  background:#ffffff;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+
 }
 
-.iconBox svg {
-  width: 22px;
-  height: 22px;
+.iconBadge svg{
+
+  width:22px;
+
+  height:22px;
+
 }
 
-/* Typography */
-.textGroup {
-  display: flex;
-  flex-direction: column;
-  margin-left: 10px;
-  line-height: 1.15;
-  z-index: 1;
+.label{
+
+  position:relative;
+
+  z-index:1;
+
+  line-height:1.25;
+
+  color:#fff;
+
 }
 
-.textGroup span {
-  font-size: 13.5px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+.countBadge{
+
+  position:relative;
+
+  z-index:1;
+
+  margin-left:auto;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:3px;
+
+  padding:4px 8px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.3);
+
+  font-size:11px;
+
+  font-weight:700;
+
+  color:#fff;
+
+  flex-shrink:0;
+
 }
 
-/* Count Pill Badge */
-.badge {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px 7px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(8px);
-  z-index: 1;
+.countBadge svg{
+
+  width:12px;
+
+  height:12px;
+
 }
 
-.badge svg {
-  width: 12px;
-  height: 12px;
+.blue{
+
+background:linear-gradient(135deg,#7CB7FF,#5C88F5);
+
 }
 
-/* ----------------------------------------------------
-   Exact Reference Pastel Glass Gradients
----------------------------------------------------- */
+.orange{
 
-.blue {
-  background: linear-gradient(135deg, #A2C8FF 0%, #6193FB 100%);
-  color: #0F326E;
+background:linear-gradient(135deg,#FFD49C,#FFA04C);
+
 }
 
-.orange {
-  background: linear-gradient(135deg, #FFD0A1 0%, #FF994F 100%);
-  color: #592800;
+.green{
+
+background:linear-gradient(135deg,#A8FFD8,#75F1BF);
+
 }
 
-.green {
-  background: linear-gradient(135deg, #A8FBD8 0%, #5BE3AA 100%);
-  color: #034D32;
-}
+.purple{
 
-.purple {
-  background: linear-gradient(135deg, #F3C3FF 0%, #D07BFF 100%);
-  color: #4A0866;
+background:linear-gradient(135deg,#F0B9FF,#D992FF);
+
 }
