@@ -177,17 +177,17 @@ const [addressOpen, setAddressOpen] = useState(false);
     <ul className={styles.verifyPoints}>
 
       <li>
-        Identity details have been verified by Infixo.
+        Identity details have been verified by Infixo[span_45](start_span)[span_45](end_span).
       </li>
 
       <li>
-        The worker has successfully completed the Infixo verification process. The identity information submitted by the worker has been reviewed and verified before profile approval.
+        The worker has successfully completed the Infixo verification process. The identity information submitted by the worker has been reviewed and verified before profile approval[span_46](start_span)[span_46](end_span).
       </li>
 
     </ul>
 
 <Link
-  href="/policies/worker-verification#identity-verified"
+  href="/verification-policy#identity-verified"
   className={`${styles.moreInfo} ${styles.moreInfoGreen}`}
 >
   <span className={styles.morePlus}>+</span>
@@ -258,18 +258,18 @@ const [addressOpen, setAddressOpen] = useState(false);
   <ul className={styles.verifyPoints}>
 
     <li>
-      Work samples have been reviewed by Infixo.
+      Work samples have been reviewed by Infixo[span_47](start_span)[span_47](end_span).
     </li>
 
     <li>
-      The photos and videos available on this profile have been reviewed to help ensure they represent the worker's submitted work and professional services before profile approval.
+      The photos and videos available on this profile have been reviewed to help ensure they represent the worker's submitted work and professional services before profile approval[span_48](start_span)[span_48](end_span).
     </li>
 
   </ul>
 
 
   <Link
-    href="/policies/worker-verification#work-verified"
+    href="/verification-policy#work-verified"
     className={`${styles.moreInfo} ${styles.moreInfoBlue}`}
   >
     <span className={styles.morePlus}>+</span>
@@ -341,18 +341,18 @@ const [addressOpen, setAddressOpen] = useState(false);
   <ul className={styles.verifyPoints}>
 
     <li>
-      Address details have been verified by Infixo.
+      Address details have been verified by Infixo[span_49](start_span)[span_49](end_span).
     </li>
 
     <li>
-      The address information submitted during registration has been reviewed and verified as part of the Infixo verification process before profile approval.
+      The address information submitted during registration has been reviewed and verified as part of the Infixo verification process before profile approval[span_50](start_span)[span_50](end_span).
     </li>
 
   </ul>
 
 
   <Link
-    href="/policies/worker-verification#address-verified"
+    href="/verification-policy#address-verified"
     className={`${styles.moreInfo} ${styles.moreInfoOrange}`}
   >
     <span className={styles.morePlus}>+</span>
