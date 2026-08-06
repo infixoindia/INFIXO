@@ -9,32 +9,18 @@ const ImagePreview = dynamic(() => import('../ImagePreview/ImagePreview'), {
 });
 
 const DEFAULT_SLIDES = [
-  {
-    image: '/images/worker-1.avif',
-    objectPosition: 'center 10%',
-    zoom: 1,
-  },
-  {
-    image: '/images/worker-2.avif',
-    objectPosition: 'center 10%',
-    zoom: 1,
-  },
-  {
-    image: '/images/worker-3.avif',
-    objectPosition: 'center 10%',
-    zoom: 1,
-  },
+  { image: '/images/worker-1.avif' },
+  { image: '/images/worker-2.avif' },
+  { image: '/images/worker-3.avif' },
 ];
 
 export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
   const slideList = slides.map((slide) => {
     if (typeof slide === 'string') {
-      return { image: slide, objectPosition: 'center 10%', zoom: 1 };
+      return { image: slide };
     }
     return {
       image: slide.image || slide.url,
-      objectPosition: slide.objectPosition || 'center 10%',
-      zoom: slide.zoom ?? 1,
     };
   });
 
@@ -115,10 +101,6 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
                 src={slide.image}
                 alt={`${workerName} image ${index + 1}`}
                 className={styles.slideImage}
-                style={{
-                  objectPosition: slide.objectPosition,
-                  transform: `scale(${slide.zoom})`,
-                }}
                 loading={index === 0 ? 'eager' : 'lazy'}
               />
             </div>
