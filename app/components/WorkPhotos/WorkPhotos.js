@@ -27,6 +27,8 @@ export default function WorkPhotos() {
   const touchStartRef = useRef([]);
   const initialPinchDistRef = useRef(0);
   const initialScaleRef = useRef(1);
+  const pinchCenterRef = useRef({ x: 0, y: 0 });
+  const initialPosRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const posStartRef = useRef({ x: 0, y: 0 });
@@ -119,7 +121,7 @@ export default function WorkPhotos() {
         touchEndX.current = touch.clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zoom Start
+      // Pinch Zoom Start - Calculate exact focal point between two fingers
       isDraggingRef.current = false;
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -127,6 +129,14 @@ export default function WorkPhotos() {
       );
       initialPinchDistRef.current = dist;
       initialScaleRef.current = scale;
+      initialPosRef.current = { ...position };
+
+      if (imageRef.current) {
+        const rect = imageRef.current.getBoundingClientRect();
+        const midX = (touches[0].clientX + touches[1].clientX) / 2 - rect.left;
+        const midY = (touches[0].clientY + touches[1].clientY) / 2 - rect.top;
+        pinchCenterRef.current = { x: midX, y: midY };
+      }
     }
   };
 
@@ -152,23 +162,37 @@ export default function WorkPhotos() {
         touchEndX.current = touches[0].clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zooming
+      // Pinch Zooming relative to fingers center
       e.preventDefault();
       setIsAnimating(false);
+
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
         touches[0].clientY - touches[1].clientY
       );
 
-      if (initialPinchDistRef.current > 0) {
+      if (initialPinchDistRef.current > 0 && imageRef.current) {
         const factor = dist / initialPinchDistRef.current;
         let targetScale = Math.min(Math.max(1, initialScaleRef.current * factor), 3);
-        setScale(targetScale);
 
         if (targetScale === 1) {
+          setScale(1);
           setPosition({ x: 0, y: 0 });
         } else {
-          setPosition((prev) => clampPosition(prev.x, prev.y, targetScale));
+          const rect = imageRef.current.getBoundingClientRect();
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const scaleRatio = targetScale / (initialScaleRef.current || 1);
+          const focalX = pinchCenterRef.current.x;
+          const focalY = pinchCenterRef.current.y;
+
+          const rawX = initialPosRef.current.x + (centerX - focalX) * (scaleRatio - 1);
+          const rawY = initialPosRef.current.y + (centerY - focalY) * (scaleRatio - 1);
+
+          const clamped = clampPosition(rawX, rawY, targetScale);
+          setScale(targetScale);
+          setPosition(clamped);
         }
       }
     }
