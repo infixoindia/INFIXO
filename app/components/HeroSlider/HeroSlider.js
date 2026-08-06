@@ -3,37 +3,56 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './HeroSlider.module.css';
 
-// Future-Ready: Connect with Supabase or props easily
-const DEFAULT_IMAGES = [
-  '/images/worker-1.avif',
-  '/images/worker-2.avif',
-  '/images/worker-3.avif',
+// Default Supabase-compatible image schema with custom positioning & zoom
+const DEFAULT_SLIDES = [
+  {
+    image: '/images/worker-1.avif',
+    objectPosition: '50% 18%',
+    zoom: 1,
+  },
+  {
+    image: '/images/worker-2.avif',
+    objectPosition: '50% 22%',
+    zoom: 1,
+  },
+  {
+    image: '/images/worker-3.avif',
+    objectPosition: '50% 15%',
+    zoom: 1,
+  },
 ];
 
-export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Worker' }) {
-  const slideList = images && images.length > 0 ? images : DEFAULT_IMAGES;
+export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
+  // Normalize input: accepts either string array or object array for backwards compatibility
+  const slideList = slides.map((slide) => {
+    if (typeof slide === 'string') {
+      return { image: slide, objectPosition: '50% 20%', zoom: 1 };
+    }
+    return {
+      image: slide.image || slide.url,
+      objectPosition: slide.objectPosition || '50% 20%',
+      zoom: slide.zoom || 1,
+    };
+  });
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Touch Swipe State
+  // Touch Swipe Refs
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
-  const minSwipeDistance = 40; // Minimum px distance for swipe detection
+  const minSwipeDistance = 40;
 
-  // ----------------------------------------------------
-  // 1. Preloading Next Image for Zero-Flicker Performance
-  // ----------------------------------------------------
+  // 1. Preload Next Image
   useEffect(() => {
+    if (slideList.length <= 1) return;
     const nextIndex = (currentIndex + 1) % slideList.length;
     const img = new Image();
-    img.src = slideList[nextIndex];
+    img.src = slideList[nextIndex].image;
   }, [currentIndex, slideList]);
 
-  // ----------------------------------------------------
-  // 2. Auto-Slide Timer & Infinite Loop Handling
-  // ----------------------------------------------------
+  // 2. Auto-Slide Handling (5 sec)
   const handleNext = useCallback(() => {
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slideList.length);
@@ -45,17 +64,14 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
   }, [slideList.length]);
 
   useEffect(() => {
-    // 5 Seconds Auto-Slide Interval
     const timer = setInterval(() => {
       handleNext();
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [handleNext, currentIndex]); // Reset timer whenever currentIndex changes (manual swipe/click)
+  }, [handleNext, currentIndex]);
 
-  // ----------------------------------------------------
-  // 3. Touch Swipe Handlers (Mobile First)
-  // ----------------------------------------------------
+  // 3. Touch Swipe Handlers
   const handleTouchStart = (e) => {
     touchStartX.current = e.targetTouches[0].clientX;
     touchEndX.current = e.targetTouches[0].clientX;
@@ -69,24 +85,19 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
     const distance = touchStartX.current - touchEndX.current;
     if (Math.abs(distance) > minSwipeDistance) {
       if (distance > 0) {
-        // Swiped Right -> Left (Next Slide)
         handleNext();
       } else {
-        // Swiped Left -> Right (Prev Slide)
         handlePrev();
       }
     }
   };
 
-  // ----------------------------------------------------
-  // 4. Modal Full Preview Handlers
-  // ----------------------------------------------------
+  // 4. Modal Handlers
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   return (
     <>
-      {/* Track Wrapper inside Hero */}
       <div
         className={styles.sliderContainer}
         onTouchStart={handleTouchStart}
@@ -101,12 +112,16 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
             transition: isTransitioning ? 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)' : 'none',
           }}
         >
-          {slideList.map((imgUrl, index) => (
+          {slideList.map((slide, index) => (
             <div key={index} className={styles.slide}>
               <img
-                src={imgUrl}
+                src={slide.image}
                 alt={`${workerName} image ${index + 1}`}
                 className={styles.slideImage}
+                style={{
+                  objectPosition: slide.objectPosition,
+                  transform: `scale(${slide.zoom})`,
+                }}
                 loading={index === 0 ? 'eager' : 'lazy'}
               />
             </div>
@@ -114,7 +129,7 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
         </div>
       </div>
 
-      {/* Full Preview Lightbox Modal */}
+      {/* Lightbox Modal */}
       {isModalOpen && (
         <div className={styles.modalOverlay} onClick={closeModal}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
@@ -122,7 +137,7 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
               ✕
             </button>
             <img
-              src={slideList[currentIndex]}
+              src={slideList[currentIndex].image}
               alt={`${workerName} full preview`}
               className={styles.modalImage}
             />
@@ -132,4 +147,3 @@ export default function HeroSlider({ images = DEFAULT_IMAGES, workerName = 'Work
     </>
   );
 }
-
