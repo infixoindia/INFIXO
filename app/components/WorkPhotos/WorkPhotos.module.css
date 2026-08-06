@@ -93,13 +93,13 @@
 }
 
 /* ========================= */
-/* SIMPLE NO-ANIMATION VIEWER */
+/* VIEWER OVERLAY */
 /* ========================= */
 
 .viewer {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.98);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,46 +163,39 @@
 }
 
 /* ========================= */
-/* CONTROLS & ARROWS */
+/* CONTROLS (EXACTLY LIKE IMAGE 1) */
 /* ========================= */
 
 .closeButton {
   position: absolute;
   top: 24px;
   right: 24px;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #ffffff;
   cursor: pointer;
   z-index: 10001;
   padding: 0;
 }
 
-.closeButton svg {
-  width: 26px;
-  height: 26px;
-}
-
 .closeButton:active {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.55);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -212,12 +205,7 @@
 }
 
 .arrow:active {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.arrow svg {
-  width: 20px;
-  height: 20px;
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .disabled {
@@ -238,12 +226,11 @@
   top: 28px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 15px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 16px;
   font-weight: 600;
   z-index: 10002;
   user-select: none;
@@ -258,20 +245,20 @@
   .closeButton {
     top: 20px;
     right: 20px;
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
   }
 
   .arrow {
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
   }
 
   .leftArrow {
-    left: 8px;
+    left: 10px;
   }
 
   .rightArrow {
-    right: 8px;
+    right: 10px;
   }
 }
