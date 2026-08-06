@@ -16,11 +16,12 @@ export default function WorkPhotos() {
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
 
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isZoomAnimating, setIsZoomAnimating] = useState(false);
 
   // Gesture tracking refs
   const lastTapRef = useRef(0);
@@ -52,7 +53,6 @@ export default function WorkPhotos() {
     };
   }, [viewerOpen]);
 
-  // Reset zoom state on image change
   useEffect(() => {
     resetZoom();
   }, [currentIndex]);
@@ -64,14 +64,20 @@ export default function WorkPhotos() {
 
   const openViewer = (index) => {
     setCurrentIndex(index);
+    resetZoom();
+    setIsClosing(false);
     setViewerOpen(true);
   };
 
   const closeViewer = () => {
-    setViewerOpen(false);
+    resetZoom();
+    setIsClosing(true);
+    setTimeout(() => {
+      setViewerOpen(false);
+      setIsClosing(false);
+    }, 250);
   };
 
-  // Helper to constrain position within bounds
   const clampPosition = (newX, newY, targetScale) => {
     if (!imageRef.current || targetScale <= 1) return { x: 0, y: 0 };
 
@@ -91,7 +97,6 @@ export default function WorkPhotos() {
     return { x: clampedX, y: clampedY };
   };
 
-  // Touch handlers for Pinch, Pan, Swipe & Smart Double Tap
   const handleTouchStart = (e) => {
     const touches = e.touches;
     touchStartRef.current = Array.from(touches);
@@ -101,7 +106,6 @@ export default function WorkPhotos() {
       const touch = touches[0];
       const timeDiff = now - lastTapRef.current;
 
-      // Double Tap (< 300ms)
       if (timeDiff < 300 && timeDiff > 0) {
         e.preventDefault();
         handleDoubleTap(touch);
@@ -120,7 +124,6 @@ export default function WorkPhotos() {
         touchEndX.current = touch.clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zoom Start - Calculate focal point relative to viewport center
       isDraggingRef.current = false;
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -130,7 +133,6 @@ export default function WorkPhotos() {
       initialScaleRef.current = scale;
       initialPosRef.current = { ...position };
 
-      // Mid point of two fingers in screen pixels relative to window center
       const midX = (touches[0].clientX + touches[1].clientX) / 2 - window.innerWidth / 2;
       const midY = (touches[0].clientY + touches[1].clientY) / 2 - window.innerHeight / 2;
       pinchFocalRef.current = { x: midX, y: midY };
@@ -142,9 +144,8 @@ export default function WorkPhotos() {
 
     if (touches.length === 1) {
       if (scale > 1 && isDraggingRef.current) {
-        // Pan image when zoomed
         e.preventDefault();
-        setIsAnimating(false);
+        setIsZoomAnimating(false);
         const deltaX = touches[0].clientX - dragStartRef.current.x;
         const deltaY = touches[0].clientY - dragStartRef.current.y;
 
@@ -154,14 +155,12 @@ export default function WorkPhotos() {
         const clamped = clampPosition(rawX, rawY, scale);
         setPosition(clamped);
       } else if (scale === 1) {
-        // Normal gallery slider swipe
         isSwipingRef.current = true;
         touchEndX.current = touches[0].clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zooming relative to exact touch center
       e.preventDefault();
-      setIsAnimating(false);
+      setIsZoomAnimating(false);
 
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -188,13 +187,13 @@ export default function WorkPhotos() {
     }
   };
 
-  const handleTouchEnd = (e) => {
+  const handleTouchEnd = () => {
     if (isDraggingRef.current) {
       isDraggingRef.current = false;
     }
 
     if (scale < 1.05) {
-      setIsAnimating(true);
+      setIsZoomAnimating(true);
       resetZoom();
     }
 
@@ -215,9 +214,8 @@ export default function WorkPhotos() {
     }
   };
 
-  // Smart Double Tap Logic
   const handleDoubleTap = (touch) => {
-    setIsAnimating(true);
+    setIsZoomAnimating(true);
 
     if (scale > 1.1) {
       resetZoom();
@@ -278,7 +276,11 @@ export default function WorkPhotos() {
       </div>
 
       {viewerOpen && (
-        <div className={styles.viewer}>
+        <div
+          className={`${styles.viewer} ${
+            isClosing ? styles.viewerClosing : styles.viewerActive
+          }`}
+        >
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {images.length}
           </div>
@@ -312,28 +314,31 @@ export default function WorkPhotos() {
                 transform: `translateX(-${currentIndex * 100}%)`,
               }}
             >
-              {images.map((image, index) => (
-                <div key={index} className={styles.slide}>
-                  <img
-                    ref={index === currentIndex ? imageRef : null}
-                    src={image}
-                    alt={`Work ${index + 1}`}
-                    className={styles.viewerImage}
-                    draggable={false}
-                    style={
-                      index === currentIndex
-                        ? {
-                            transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
-                            transition: isAnimating
-                              ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
-                              : "none",
-                            willChange: "transform",
-                          }
-                        : {}
-                    }
-                  />
-                </div>
-              ))}
+              {images.map((image, index) => {
+                const isCurrent = index === currentIndex;
+
+                return (
+                  <div key={index} className={styles.slide}>
+                    <img
+                      ref={isCurrent ? imageRef : null}
+                      src={image}
+                      alt={`Work ${index + 1}`}
+                      className={styles.viewerImage}
+                      draggable={false}
+                      style={
+                        isCurrent
+                          ? {
+                              transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
+                              transition: isZoomAnimating
+                                ? "transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)"
+                                : "none",
+                            }
+                          : {}
+                      }
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -341,6 +346,7 @@ export default function WorkPhotos() {
             className={`${styles.arrow} ${styles.leftArrow} ${
               currentIndex === 0 ? styles.disabled : ""
             }`}
+            onClick={() => currentIndex > 0 && setCurrentIndex((p) => p - 1)}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
@@ -357,6 +363,7 @@ export default function WorkPhotos() {
             className={`${styles.arrow} ${styles.rightArrow} ${
               currentIndex === images.length - 1 ? styles.disabled : ""
             }`}
+            onClick={() => currentIndex < images.length - 1 && setCurrentIndex((p) => p + 1)}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path
