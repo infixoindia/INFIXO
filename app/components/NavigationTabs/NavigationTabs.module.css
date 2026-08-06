@@ -1,62 +1,62 @@
 .grid {
-  max-width: 360px;
+  max-width: 380px;
   margin: 20px auto 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 12px;
   row-gap: 14px;
-  padding: 0 8px;
+  padding: 0 10px;
 }
 
-/* Card Container with Glassmorphism */
+/* Glass Card Container */
 .card {
-  height: 68px;
-  border-radius: 20px;
+  height: 70px;
+  border-radius: 22px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 8px;
+  padding: 0 10px;
   text-decoration: none;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
   
-  /* Inner light reflection & soft outer shadow */
+  /* NO dark solid border. Soft white glass border + realistic ambient shadow */
+  border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 
-    inset 0px 1.5px 2px rgba(255, 255, 255, 0.9),
-    inset 0px -2px 5px rgba(0, 0, 0, 0.05),
-    0 8px 18px rgba(0, 0, 0, 0.06);
+    inset 0px 2px 2px rgba(255, 255, 255, 0.8),
+    inset 0px -2px 4px rgba(0, 0, 0, 0.03),
+    0 10px 25px rgba(0, 0, 0, 0.05);
     
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  transition: transform 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
-/* Glass Surface Reflection */
+/* Realistic Glass Reflex (Shine) */
 .glassShine {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 50%;
+  height: 52%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.45) 0%,
     rgba(255, 255, 255, 0.02) 100%
   );
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   pointer-events: none;
 }
 
-/* Squircle Icon Container */
+/* Squircle Icon Box */
 .iconBox {
-  width: 46px;
-  height: 46px;
-  background-color: #ffffff;
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
   border-radius: 15px;
   display: flex;
   align-items: center;
@@ -64,8 +64,8 @@
   flex-shrink: 0;
   z-index: 1;
   box-shadow: 
-    0 3px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 2px rgba(255, 255, 255, 1);
+    0 4px 10px rgba(0, 0, 0, 0.04),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
 .iconBox svg {
@@ -73,34 +73,34 @@
   height: 22px;
 }
 
-/* Text Container */
+/* Typography */
 .textGroup {
   display: flex;
   flex-direction: column;
-  margin-left: 8px;
+  margin-left: 10px;
   line-height: 1.15;
   z-index: 1;
 }
 
 .textGroup span {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   letter-spacing: -0.2px;
 }
 
-/* Pill Count Badge */
+/* Count Pill Badge */
 .badge {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 3px;
-  padding: 3px 6px;
+  padding: 3px 7px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
-  border: 1px solid currentColor;
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
   z-index: 1;
 }
 
@@ -109,23 +109,26 @@
   height: 12px;
 }
 
-/* Colors & Gradients Matching Reference */
+/* ----------------------------------------------------
+   Exact Reference Pastel Glass Gradients
+---------------------------------------------------- */
+
 .blue {
-  background: linear-gradient(135deg, #74A7FF 0%, #4D81F7 100%);
-  color: #0A2B66;
+  background: linear-gradient(135deg, #A2C8FF 0%, #6193FB 100%);
+  color: #0F326E;
 }
 
 .orange {
-  background: linear-gradient(135deg, #FFC085 0%, #FF8D3D 100%);
-  color: #542200;
+  background: linear-gradient(135deg, #FFD0A1 0%, #FF994F 100%);
+  color: #592800;
 }
 
 .green {
-  background: linear-gradient(135deg, #93FBD3 0%, #4FEAA9 100%);
-  color: #02472E;
+  background: linear-gradient(135deg, #A8FBD8 0%, #5BE3AA 100%);
+  color: #034D32;
 }
 
 .purple {
-  background: linear-gradient(135deg, #E8A8FF 0%, #CA6BFF 100%);
-  color: #42065C;
+  background: linear-gradient(135deg, #F3C3FF 0%, #D07BFF 100%);
+  color: #4A0866;
 }
