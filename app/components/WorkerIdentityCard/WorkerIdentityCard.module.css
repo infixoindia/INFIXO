@@ -5,7 +5,7 @@
   width: 100%;
   max-width: 340px;
   margin: 0 auto;
-  z-index:2
+  z-index: 2;
 }
 
 .hero {
@@ -15,22 +15,15 @@
   background-color: #f3f4f6; /* Image load hone se pehle halka grey background */
 }
 
+/* Overlays click ko block na karein isliye pointer-events: none hai */
 .pattern {
   position: absolute;
   inset: 0;
   z-index: 2;
+  pointer-events: none;
 }
 
-.pattern::before {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 70px;
-  height: 90px;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 1.6px, transparent 1.6px);
-  background-size: 12px 12px;
-}
+/* White decorative dots completely removed */
 
 .pattern::after {
   content: '';
@@ -43,7 +36,7 @@
   background: radial-gradient(circle, rgba(255, 255, 255, 0.20), transparent 70%);
 }
 
-.photo{
+.photo {
   display: none;
 }
 
@@ -54,20 +47,21 @@
   z-index: 1;
 }
 
-.wave{
-  position:absolute;
-  left:0;
-  bottom:-2px;
-  width:100%;
-  height:70px;
-  display:block;
-  z-index:10;
+.wave {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 70px;
+  display: block;
+  z-index: 10;
+  pointer-events: none; /* Taaki wave ke over click karne par bhi image click ho */
 }
 
 .wavePath {
   fill: #ffffff;
 }
-  
+
 .content {
   position: relative;
   z-index: 2;
