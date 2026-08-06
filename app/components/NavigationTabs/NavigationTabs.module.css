@@ -16,11 +16,11 @@
 
   overflow:hidden;
 
-  height:76px;
+  height:78px;
 
   border:none;
 
-  border-radius:18px;
+  border-radius:24px;
 
   color:#fff;
 
@@ -38,26 +38,64 @@
 
   padding:0 14px;
 
-  box-shadow:0 10px 22px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.4);
-
 }
 
+/* soft top highlight + colored ambient glow, per card via variable below */
+.blue{ box-shadow:0 10px 24px rgba(92,136,245,.45), inset 0 1.5px 0 rgba(255,255,255,.65); }
+.orange{ box-shadow:0 10px 24px rgba(255,160,76,.45), inset 0 1.5px 0 rgba(255,255,255,.65); }
+.green{ box-shadow:0 10px 24px rgba(70,220,155,.45), inset 0 1.5px 0 rgba(255,255,255,.65); }
+.purple{ box-shadow:0 10px 24px rgba(200,108,255,.45), inset 0 1.5px 0 rgba(255,255,255,.65); }
+
+/* the actual glossy mirror streak, angled across the card */
 .card::before{
 
   content:"";
 
   position:absolute;
 
-  inset:0;
+  top:-70%;
 
-  background:linear-gradient(135deg,
-    rgba(255,255,255,.6) 0%,
-    rgba(255,255,255,.22) 30%,
-    rgba(255,255,255,0) 55%,
+  left:-30%;
+
+  width:65%;
+
+  height:260%;
+
+  transform:rotate(22deg);
+
+  background:linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.75) 45%,
+    rgba(255,255,255,.25) 58%,
     rgba(255,255,255,0) 100%
   );
 
   pointer-events:none;
+
+  z-index:0;
+
+}
+
+/* soft glare blob top-left, adds glass depth */
+.card::after{
+
+  content:"";
+
+  position:absolute;
+
+  top:-30%;
+
+  left:-10%;
+
+  width:60%;
+
+  height:70%;
+
+  background:radial-gradient(closest-side, rgba(255,255,255,.5), rgba(255,255,255,0) 70%);
+
+  pointer-events:none;
+
+  z-index:0;
 
 }
 
@@ -73,7 +111,7 @@
 
   height:40px;
 
-  border-radius:12px;
+  border-radius:13px;
 
   background:#ffffff;
 
@@ -83,7 +121,7 @@
 
   justify-content:center;
 
-  box-shadow:0 4px 10px rgba(0,0,0,.18);
+  box-shadow:0 4px 10px rgba(0,0,0,.18), inset 0 -2px 3px rgba(0,0,0,.05);
 
 }
 
@@ -105,6 +143,8 @@
 
   color:#fff;
 
+  text-shadow:0 1px 3px rgba(0,0,0,.12);
+
 }
 
 .countBadge{
@@ -125,7 +165,7 @@
 
   border-radius:999px;
 
-  background:rgba(255,255,255,.3);
+  background:rgba(255,255,255,.35);
 
   font-size:11px;
 
@@ -147,24 +187,24 @@
 
 .blue{
 
-background:linear-gradient(135deg,#7CB7FF,#5C88F5);
+background:linear-gradient(135deg,#8FC3FF,#5C88F5);
 
 }
 
 .orange{
 
-background:linear-gradient(135deg,#FFD49C,#FFA04C);
+background:linear-gradient(135deg,#FFDCAE,#FFA04C);
 
 }
 
 .green{
 
-background:linear-gradient(135deg,#A8FFD8,#75F1BF);
+background:linear-gradient(135deg,#B8FFE0,#5CE8AC);
 
 }
 
 .purple{
 
-background:linear-gradient(135deg,#F0B9FF,#D992FF);
+background:linear-gradient(135deg,#F3C6FF,#D992FF);
 
 }
