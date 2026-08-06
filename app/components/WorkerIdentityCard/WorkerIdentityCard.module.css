@@ -12,13 +12,7 @@
   position: relative;
   height: 245px;
   overflow: hidden;
-}
-
-.heroBackground {
-  position: absolute;
-  inset: 0;
-  background: url('/images/test-worker.jpg') center center / cover no-repeat;
-  z-index: 1;
+  background-color: #f3f4f6; /* Image load hone se pehle halka grey background */
 }
 
 .pattern {
