@@ -167,7 +167,6 @@
   position: fixed;
   z-index: 10000;
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   transition: top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
               left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
               width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -179,7 +178,6 @@
 .animatingImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   display: block;
 }
 
