@@ -72,10 +72,11 @@ export default function WorkPhotos() {
   const closeViewer = () => {
     resetZoom();
     setIsClosing(true);
+    // Perfect sync timer for clean closing fade
     setTimeout(() => {
       setViewerOpen(false);
       setIsClosing(false);
-    }, 250);
+    }, 200);
   };
 
   const clampPosition = (newX, newY, targetScale) => {
@@ -330,7 +331,7 @@ export default function WorkPhotos() {
                           ? {
                               transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
                               transition: isZoomAnimating
-                                ? "transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)"
+                                ? "transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)"
                                 : "none",
                             }
                           : {}
