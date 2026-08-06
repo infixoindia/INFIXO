@@ -22,8 +22,6 @@
   pointer-events: none;
 }
 
-/* Dots completely removed */
-
 .pattern::after {
   content: '';
   position: absolute;
@@ -49,7 +47,7 @@
 .wave {
   position: absolute;
   left: 0;
-  bottom: -2px;
+  bottom: -1px;
   width: 100%;
   height: 70px;
   display: block;
