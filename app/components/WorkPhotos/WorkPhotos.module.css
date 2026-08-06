@@ -98,7 +98,7 @@
 }
 
 /* ========================= */
-/* IMAGE VIEWER (FULL SCREEN VIDEO STYLE) */
+/* IMAGE VIEWER */
 /* ========================= */
 
 .viewer {
@@ -155,7 +155,7 @@
 }
 
 /* ========================= */
-/* FULL IMAGE (EDGE TO EDGE) */
+/* FULL IMAGE (UNCROPPED NO CROP FIX) */
 /* ========================= */
 
 .viewerImage {
@@ -163,7 +163,7 @@
   height: 100%;
   max-width: 100vw;
   max-height: 100vh;
-  object-fit: cover;
+  object-fit: contain; /* Exact aspect ratio fit without cropping */
   border-radius: 0;
   box-shadow: none;
   display: block;
@@ -264,7 +264,7 @@
   .viewerImage {
     width: 100vw;
     height: 100vh;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   .closeButton {
