@@ -11,30 +11,30 @@ const ImagePreview = dynamic(() => import('../ImagePreview/ImagePreview'), {
 const DEFAULT_SLIDES = [
   {
     image: '/images/worker-1.avif',
-    objectPosition: 'center 12%',
-    zoom: 0.88,
+    objectPosition: 'center 10%',
+    zoom: 1,
   },
   {
     image: '/images/worker-2.avif',
-    objectPosition: 'center 15%',
-    zoom: 0.88,
+    objectPosition: 'center 10%',
+    zoom: 1,
   },
   {
     image: '/images/worker-3.avif',
     objectPosition: 'center 10%',
-    zoom: 0.88,
+    zoom: 1,
   },
 ];
 
 export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
   const slideList = slides.map((slide) => {
     if (typeof slide === 'string') {
-      return { image: slide, objectPosition: 'center 12%', zoom: 0.88 };
+      return { image: slide, objectPosition: 'center 10%', zoom: 1 };
     }
     return {
       image: slide.image || slide.url,
-      objectPosition: slide.objectPosition || 'center 12%',
-      zoom: slide.zoom ?? 0.88,
+      objectPosition: slide.objectPosition || 'center 10%',
+      zoom: slide.zoom ?? 1,
     };
   });
 
