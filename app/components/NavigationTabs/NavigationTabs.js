@@ -1,63 +1,84 @@
 import Link from "next/link";
 import styles from './NavigationTabs.module.css';
 
-export default function NavigationTabs() {
+export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
   return (
     <div className={styles.grid}>
 
+      {/* Work Details */}
       <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
-        <span className={styles.iconBadge}>
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M6.5 2.5h7l4 4v14a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-17a1 1 0 0 1 1-1z" stroke="#5C88F5" strokeWidth="1.8" strokeLinejoin="round" />
-            <path d="M13.5 2.5v4h4" stroke="#5C88F5" strokeWidth="1.8" strokeLinejoin="round" />
-            <path d="M8.5 13h7M8.5 16.5h7" stroke="#5C88F5" strokeWidth="1.6" strokeLinecap="round" />
+        <div className={styles.glassShine} />
+        <div className={styles.iconBox}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
           </svg>
-        </span>
-        <span className={styles.label}>Work<br />Details</span>
+        </div>
+        <div className={styles.textGroup}>
+          <span>Work</span>
+          <span>Details</span>
+        </div>
       </Link>
 
+      {/* Worker Details */}
       <Link href="/worker-details" className={`${styles.card} ${styles.orange}`}>
-        <span className={styles.iconBadge}>
-          <svg viewBox="0 0 24 24" fill="#FF9A3C">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4.5 20c0-4.4 3.6-7 7.5-7s7.5 2.6 7.5 7" />
+        <div className={styles.glassShine} />
+        <div className={styles.iconBox}>
+          <svg viewBox="0 0 24 24" fill="#EA580C">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
-        </span>
-        <span className={styles.label}>Worker<br />Details</span>
+        </div>
+        <div className={styles.textGroup}>
+          <span>Worker</span>
+          <span>Details</span>
+        </div>
       </Link>
 
+      {/* Work Photos */}
       <Link href="/work-photos" className={`${styles.card} ${styles.green}`}>
-        <span className={styles.iconBadge}>
-          <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="5" width="18" height="14" rx="3" stroke="#22C67D" strokeWidth="1.8" />
-            <circle cx="8.5" cy="10" r="1.6" fill="#22C67D" />
-            <path d="M4.5 17l4.5-4.5 3.5 3.5 3-3 4.5 4.5" stroke="#22C67D" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+        <div className={styles.glassShine} />
+        <div className={styles.iconBox}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3" />
+            <circle cx="8.5" cy="8.5" r="1.5" fill="#059669" />
+            <path d="M21 15l-5-5L5 21" />
           </svg>
-        </span>
-        <span className={styles.label}>Work<br />Photos</span>
-        <span className={styles.countBadge}>
-          15
-          <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="5" width="18" height="14" rx="3" stroke="white" strokeWidth="2" />
-            <circle cx="8.5" cy="10" r="1.8" fill="white" />
-            <path d="M4.5 17l4.5-4.5 3.5 3.5 3-3 4.5 4.5" stroke="white" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        </div>
+        <div className={styles.textGroup}>
+          <span>Work</span>
+          <span>Photos</span>
+        </div>
+        <div className={styles.badge}>
+          <span>{photoCount}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <path d="M21 15l-5-5L5 21" />
           </svg>
-        </span>
+        </div>
       </Link>
 
+      {/* Work Videos */}
       <Link href="/work-videos" className={`${styles.card} ${styles.purple}`}>
-        <span className={styles.iconBadge}>
-          <svg viewBox="0 0 24 24" fill="#C86CFF">
-            <path d="M9 6.5v11l9-5.5z" />
+        <div className={styles.glassShine} />
+        <div className={styles.iconBox}>
+          <svg viewBox="0 0 24 24" fill="#9333EA">
+            <rect x="3" y="3" width="18" height="18" rx="4" />
+            <polygon points="10,8 16,12 10,16" fill="#FFF" />
           </svg>
-        </span>
-        <span className={styles.label}>Work<br />Videos</span>
-        <span className={styles.countBadge}>
-          8
-          <svg viewBox="0 0 24 24" fill="white">
-            <path d="M9 6.5v11l9-5.5z" />
+        </div>
+        <div className={styles.textGroup}>
+          <span>Work</span>
+          <span>Videos</span>
+        </div>
+        <div className={styles.badge}>
+          <span>{videoCount}</span>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
           </svg>
-        </span>
+        </div>
       </Link>
 
     </div>
