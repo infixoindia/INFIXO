@@ -1,12 +1,13 @@
 import Link from "next/link";
 import styles from './NavigationTabs.module.css';
 
-export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
+export default function NavigationTabs({ photoCount = 0, videoCount = 0 }) {
   return (
     <div className={styles.grid}>
 
       {/* Work Details */}
       <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
+        <div className={styles.glossOverlay} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -23,6 +24,7 @@ export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
 
       {/* Worker Details */}
       <Link href="/worker-details" className={`${styles.card} ${styles.orange}`}>
+        <div className={styles.glossOverlay} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#EA580C">
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
@@ -36,6 +38,7 @@ export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
 
       {/* Work Photos */}
       <Link href="/work-photos" className={`${styles.card} ${styles.green}`}>
+        <div className={styles.glossOverlay} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="3" />
@@ -59,6 +62,7 @@ export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
 
       {/* Work Videos */}
       <Link href="/work-videos" className={`${styles.card} ${styles.purple}`}>
+        <div className={styles.glossOverlay} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#9333EA">
             <rect x="3" y="3" width="18" height="18" rx="4" />
