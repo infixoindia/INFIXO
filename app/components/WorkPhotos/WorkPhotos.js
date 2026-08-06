@@ -343,16 +343,16 @@ export default function WorkPhotos() {
             </div>
           </div>
 
-          <div
+                   <div
             className={`${styles.arrow} ${styles.leftArrow} ${
               currentIndex === 0 ? styles.disabled : ""
             }`}
             onClick={() => currentIndex > 0 && setCurrentIndex((p) => p - 1)}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M15 5L8 12L15 19"
-                stroke="currentColor"
+                stroke="white"
                 strokeWidth="2.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -366,16 +366,17 @@ export default function WorkPhotos() {
             }`}
             onClick={() => currentIndex < images.length - 1 && setCurrentIndex((p) => p + 1)}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path
                 d="M9 5L16 12L9 19"
-                stroke="currentColor"
+                stroke="white"
                 strokeWidth="2.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
+
         </div>
       )}
     </section>
