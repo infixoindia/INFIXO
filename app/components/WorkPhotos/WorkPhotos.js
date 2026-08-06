@@ -27,7 +27,7 @@ export default function WorkPhotos() {
   const touchStartRef = useRef([]);
   const initialPinchDistRef = useRef(0);
   const initialScaleRef = useRef(1);
-  const pinchCenterRef = useRef({ x: 0, y: 0 });
+  const pinchFocalRef = useRef({ x: 0, y: 0 });
   const initialPosRef = useRef({ x: 0, y: 0 });
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
@@ -71,7 +71,7 @@ export default function WorkPhotos() {
     setViewerOpen(false);
   };
 
-  // Helper to constrain position within bounds based on container vs scaled image dimensions
+  // Helper to constrain position within bounds
   const clampPosition = (newX, newY, targetScale) => {
     if (!imageRef.current || targetScale <= 1) return { x: 0, y: 0 };
 
@@ -101,7 +101,7 @@ export default function WorkPhotos() {
       const touch = touches[0];
       const timeDiff = now - lastTapRef.current;
 
-      // Check Double Tap (< 300ms)
+      // Double Tap (< 300ms)
       if (timeDiff < 300 && timeDiff > 0) {
         e.preventDefault();
         handleDoubleTap(touch);
@@ -110,7 +110,6 @@ export default function WorkPhotos() {
       }
       lastTapRef.current = now;
 
-      // Setup drag/pan or swipe start
       if (scale > 1) {
         isDraggingRef.current = true;
         dragStartRef.current = { x: touch.clientX, y: touch.clientY };
@@ -121,7 +120,7 @@ export default function WorkPhotos() {
         touchEndX.current = touch.clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zoom Start - Calculate exact focal point between two fingers
+      // Pinch Zoom Start - Calculate focal point relative to viewport center
       isDraggingRef.current = false;
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -131,12 +130,10 @@ export default function WorkPhotos() {
       initialScaleRef.current = scale;
       initialPosRef.current = { ...position };
 
-      if (imageRef.current) {
-        const rect = imageRef.current.getBoundingClientRect();
-        const midX = (touches[0].clientX + touches[1].clientX) / 2 - rect.left;
-        const midY = (touches[0].clientY + touches[1].clientY) / 2 - rect.top;
-        pinchCenterRef.current = { x: midX, y: midY };
-      }
+      // Mid point of two fingers in screen pixels relative to window center
+      const midX = (touches[0].clientX + touches[1].clientX) / 2 - window.innerWidth / 2;
+      const midY = (touches[0].clientY + touches[1].clientY) / 2 - window.innerHeight / 2;
+      pinchFocalRef.current = { x: midX, y: midY };
     }
   };
 
@@ -162,7 +159,7 @@ export default function WorkPhotos() {
         touchEndX.current = touches[0].clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zooming relative to fingers center
+      // Pinch Zooming relative to exact touch center
       e.preventDefault();
       setIsAnimating(false);
 
@@ -171,7 +168,7 @@ export default function WorkPhotos() {
         touches[0].clientY - touches[1].clientY
       );
 
-      if (initialPinchDistRef.current > 0 && imageRef.current) {
+      if (initialPinchDistRef.current > 0) {
         const factor = dist / initialPinchDistRef.current;
         let targetScale = Math.min(Math.max(1, initialScaleRef.current * factor), 3);
 
@@ -179,16 +176,9 @@ export default function WorkPhotos() {
           setScale(1);
           setPosition({ x: 0, y: 0 });
         } else {
-          const rect = imageRef.current.getBoundingClientRect();
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-
-          const scaleRatio = targetScale / (initialScaleRef.current || 1);
-          const focalX = pinchCenterRef.current.x;
-          const focalY = pinchCenterRef.current.y;
-
-          const rawX = initialPosRef.current.x + (centerX - focalX) * (scaleRatio - 1);
-          const rawY = initialPosRef.current.y + (centerY - focalY) * (scaleRatio - 1);
+          const scaleChange = targetScale - initialScaleRef.current;
+          const rawX = initialPosRef.current.x - pinchFocalRef.current.x * (scaleChange / (initialScaleRef.current || 1));
+          const rawY = initialPosRef.current.y - pinchFocalRef.current.y * (scaleChange / (initialScaleRef.current || 1));
 
           const clamped = clampPosition(rawX, rawY, targetScale);
           setScale(targetScale);
@@ -208,7 +198,6 @@ export default function WorkPhotos() {
       resetZoom();
     }
 
-    // Process Gallery Swipe when not zoomed
     if (scale === 1 && isSwipingRef.current) {
       const distance = touchStartX.current - touchEndX.current;
 
@@ -231,10 +220,8 @@ export default function WorkPhotos() {
     setIsAnimating(true);
 
     if (scale > 1.1) {
-      // Reset zoom
       resetZoom();
     } else {
-      // Smart zoom directly onto tapped target point
       const targetScale = 2.5;
 
       if (imageRef.current) {
@@ -242,7 +229,6 @@ export default function WorkPhotos() {
         const tapX = touch.clientX - rect.left;
         const tapY = touch.clientY - rect.top;
 
-        // Calculate offset relative to center of image
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
 
