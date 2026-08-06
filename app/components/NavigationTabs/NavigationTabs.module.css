@@ -121,9 +121,15 @@
 }
 
 .green {
-  background: linear-gradient(135deg, #B2FFDD 0%, #63E8B3 100%);
-  color: #034D33;
+  background: linear-gradient(135deg, #A1FCE3 0%, #63ECC0 100%);
+  color: #02472E;
+  border: none; /* Solid border completely removed */
+  box-shadow: 
+    inset 0px 2px 3px rgba(255, 255, 255, 0.85), /* Top inner light */
+    inset 0px -2px 6px rgba(0, 168, 107, 0.25),   /* Bottom inner glow */
+    0 8px 18px rgba(99, 236, 192, 0.25);         /* Matching soft green drop shadow */
 }
+
 
 .purple {
   background: linear-gradient(135deg, #E8A8FF 0%, #CA6BFF 100%);
