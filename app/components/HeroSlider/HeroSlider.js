@@ -33,6 +33,9 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  // Guard lock to prevent rapid spam-swiping breaking the track index
+  const isAnimatingRef = useRef(false);
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -42,17 +45,23 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
   const activeDotIndex = (currentIndex - 1 + totalOriginal) % totalOriginal;
 
   const handleNext = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
     setIsTransitioning(true);
     setCurrentIndex((prev) => prev + 1);
   }, []);
 
   const handlePrev = useCallback(() => {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
     setIsTransitioning(true);
     setCurrentIndex((prev) => prev - 1);
   }, []);
 
   // Handle seamless infinite reset after transition ends
   const handleTransitionEnd = () => {
+    isAnimatingRef.current = false;
+
     if (currentIndex === extendedSlides.length - 1) {
       // Reached cloned first slide -> jump to real first slide seamlessly
       setIsTransitioning(false);
@@ -99,6 +108,8 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
 
   const handleDotClick = (e, index) => {
     e.stopPropagation();
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
     setIsTransitioning(true);
     setCurrentIndex(index + 1);
   };
