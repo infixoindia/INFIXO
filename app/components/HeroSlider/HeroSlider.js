@@ -64,15 +64,18 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
     }
   };
 
+  // Dynamic timing: First image = 5000ms, Others = 3000ms
   useEffect(() => {
     if (isPreviewOpen || totalOriginal <= 1) return;
 
-    const timer = setInterval(() => {
-      handleNext();
-    }, 5000);
+    const currentSlideDelay = activeDotIndex === 0 ? 5000 : 3000;
 
-    return () => clearInterval(timer);
-  }, [handleNext, isPreviewOpen, totalOriginal]);
+    const timer = setTimeout(() => {
+      handleNext();
+    }, currentSlideDelay);
+
+    return () => clearTimeout(timer);
+  }, [handleNext, isPreviewOpen, totalOriginal, activeDotIndex]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.targetTouches[0].clientX;
