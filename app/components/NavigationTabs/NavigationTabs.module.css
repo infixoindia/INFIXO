@@ -1,69 +1,70 @@
 .grid {
-  max-width: 380px;
-  margin: 24px auto 0;
+  max-width: 360px;
+  margin: 20px auto 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 12px;
   row-gap: 14px;
-  padding: 0 12px;
+  padding: 0 8px;
 }
 
-/* Card Base with Glass Effect */
+/* Card Container with Glassmorphism */
 .card {
-  height: 72px;
-  border-radius: 22px;
+  height: 68px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 10px;
+  padding: 0 8px;
   text-decoration: none;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
   
-  /* Glossy inner light + Soft drop shadow */
+  /* Inner light reflection & soft outer shadow */
   box-shadow: 
-    inset 0px 2px 2px rgba(255, 255, 255, 0.8),
-    inset 0px -2px 4px rgba(0, 0, 0, 0.08),
-    0 10px 20px rgba(0, 0, 0, 0.06);
+    inset 0px 1.5px 2px rgba(255, 255, 255, 0.9),
+    inset 0px -2px 5px rgba(0, 0, 0, 0.05),
+    0 8px 18px rgba(0, 0, 0, 0.06);
     
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.15s ease;
 }
 
 .card:active {
   transform: scale(0.97);
 }
 
-/* Glass Shine Reflection Overlay */
-.glossOverlay {
+/* Glass Surface Reflection */
+.glassShine {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 48%;
+  height: 50%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.05) 100%
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.02) 100%
   );
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
   pointer-events: none;
 }
 
-/* White Floating Icon Container */
+/* Squircle Icon Container */
 .iconBox {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   background-color: #ffffff;
-  border-radius: 14px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   z-index: 1;
   box-shadow: 
-    0 4px 10px rgba(0, 0, 0, 0.06),
+    0 3px 8px rgba(0, 0, 0, 0.04),
     inset 0 1px 2px rgba(255, 255, 255, 1);
 }
 
@@ -72,17 +73,17 @@
   height: 22px;
 }
 
-/* Title Text */
+/* Text Container */
 .textGroup {
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
+  margin-left: 8px;
   line-height: 1.15;
   z-index: 1;
 }
 
 .textGroup span {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: -0.2px;
 }
@@ -92,39 +93,39 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 14px;
+  gap: 3px;
+  padding: 3px 6px;
+  border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
   border: 1px solid currentColor;
   background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(4px);
   z-index: 1;
 }
 
 .badge svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
-/* Theme Gradients Matching Reference */
+/* Colors & Gradients Matching Reference */
 .blue {
-  background: linear-gradient(135deg, #A1CAFF 0%, #6892F8 100%);
-  color: #0D2E6B;
+  background: linear-gradient(135deg, #74A7FF 0%, #4D81F7 100%);
+  color: #0A2B66;
 }
 
 .orange {
-  background: linear-gradient(135deg, #FFD8A8 0%, #FF9E4A 100%);
-  color: #592B00;
+  background: linear-gradient(135deg, #FFC085 0%, #FF8D3D 100%);
+  color: #542200;
 }
 
 .green {
-  background: linear-gradient(135deg, #B2FFDD 0%, #63E8B3 100%);
-  color: #034D33;
+  background: linear-gradient(135deg, #93FBD3 0%, #4FEAA9 100%);
+  color: #02472E;
 }
 
 .purple {
-  background: linear-gradient(135deg, #F6CDFF 0%, #D68AFF 100%);
-  color: #480A61;
+  background: linear-gradient(135deg, #E8A8FF 0%, #CA6BFF 100%);
+  color: #42065C;
 }
