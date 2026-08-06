@@ -12,10 +12,9 @@
   position: relative;
   height: 245px;
   overflow: hidden;
-  background-color: #f3f4f6; /* Image load hone se pehle halka grey background */
+  background-color: #f3f4f6;
 }
 
-/* Overlays click ko block na karein isliye pointer-events: none hai */
 .pattern {
   position: absolute;
   inset: 0;
@@ -23,7 +22,7 @@
   pointer-events: none;
 }
 
-/* White decorative dots completely removed */
+/* Dots completely removed */
 
 .pattern::after {
   content: '';
@@ -55,7 +54,7 @@
   height: 70px;
   display: block;
   z-index: 10;
-  pointer-events: none; /* Taaki wave ke over click karne par bhi image click ho */
+  pointer-events: none;
 }
 
 .wavePath {
