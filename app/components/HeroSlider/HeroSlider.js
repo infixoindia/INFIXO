@@ -15,16 +15,22 @@ const DEFAULT_SLIDES = [
 ];
 
 export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
-  const slideList = slides.map((slide) => {
-    if (typeof slide === 'string') {
-      return { image: slide };
-    }
-    return {
-      image: slide.image || slide.url,
-    };
+  const originalSlides = slides.map((slide) => {
+    if (typeof slide === 'string') return { image: slide };
+    return { image: slide.image || slide.url };
   });
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const totalOriginal = originalSlides.length;
+
+  // Infinite loop cloned array: [Last, ...Originals, First]
+  const extendedSlides = [
+    originalSlides[totalOriginal - 1],
+    ...originalSlides,
+    originalSlides[0],
+  ];
+
+  // Start at index 1 (First real slide)
+  const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
@@ -32,32 +38,41 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
   const touchEndX = useRef(0);
   const minSwipeDistance = 40;
 
-  useEffect(() => {
-    if (slideList.length <= 1) return;
-    const nextIndex = (currentIndex + 1) % slideList.length;
-    const img = new Image();
-    img.src = slideList[nextIndex].image;
-  }, [currentIndex, slideList]);
+  // Real active index for indicators (0, 1, 2)
+  const activeDotIndex = (currentIndex - 1 + totalOriginal) % totalOriginal;
 
   const handleNext = useCallback(() => {
     setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slideList.length);
-  }, [slideList.length]);
+    setCurrentIndex((prev) => prev + 1);
+  }, []);
 
   const handlePrev = useCallback(() => {
     setIsTransitioning(true);
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + slideList.length) % slideList.length);
-  }, [slideList.length]);
+    setCurrentIndex((prev) => prev - 1);
+  }, []);
+
+  // Handle seamless infinite reset after transition ends
+  const handleTransitionEnd = () => {
+    if (currentIndex === extendedSlides.length - 1) {
+      // Reached cloned first slide -> jump to real first slide seamlessly
+      setIsTransitioning(false);
+      setCurrentIndex(1);
+    } else if (currentIndex === 0) {
+      // Reached cloned last slide -> jump to real last slide seamlessly
+      setIsTransitioning(false);
+      setCurrentIndex(totalOriginal);
+    }
+  };
 
   useEffect(() => {
-    if (isPreviewOpen) return;
+    if (isPreviewOpen || totalOriginal <= 1) return;
 
     const timer = setInterval(() => {
       handleNext();
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [handleNext, currentIndex, isPreviewOpen]);
+  }, [handleNext, isPreviewOpen, totalOriginal]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.targetTouches[0].clientX;
@@ -82,7 +97,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
   const handleDotClick = (e, index) => {
     e.stopPropagation();
     setIsTransitioning(true);
-    setCurrentIndex(index);
+    setCurrentIndex(index + 1);
   };
 
   return (
@@ -96,31 +111,32 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
       >
         <div
           className={styles.sliderTrack}
+          onTransitionEnd={handleTransitionEnd}
           style={{
             transform: `translateX(-${currentIndex * 100}%)`,
             transition: isTransitioning ? 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)' : 'none',
           }}
         >
-          {slideList.map((slide, index) => (
+          {extendedSlides.map((slide, index) => (
             <div key={index} className={styles.slide}>
               <img
                 src={slide.image}
-                alt={`${workerName} image ${index + 1}`}
+                alt={`${workerName} image ${index}`}
                 className={styles.slideImage}
-                loading={index === 0 ? 'eager' : 'lazy'}
+                loading={index === 1 ? 'eager' : 'lazy'}
               />
             </div>
           ))}
         </div>
 
-        {/* LIQUID DOT INDICATOR */}
-        {slideList.length > 1 && (
+        {/* FLOATING LIQUID DOT INDICATOR */}
+        {totalOriginal > 1 && (
           <div className={styles.indicatorContainer}>
-            {slideList.map((_, index) => (
+            {originalSlides.map((_, index) => (
               <button
                 key={index}
                 className={`${styles.dot} ${
-                  index === currentIndex ? styles.activeDot : ''
+                  index === activeDotIndex ? styles.activeDot : ''
                 }`}
                 onClick={(e) => handleDotClick(e, index)}
                 aria-label={`Go to slide ${index + 1}`}
@@ -132,8 +148,8 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
 
       {isPreviewOpen && (
         <ImagePreview
-          slides={slideList}
-          initialIndex={currentIndex}
+          slides={originalSlides}
+          initialIndex={activeDotIndex}
           workerName={workerName}
           onClose={() => setIsPreviewOpen(false)}
         />
