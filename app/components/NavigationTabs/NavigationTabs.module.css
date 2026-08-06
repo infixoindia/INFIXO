@@ -8,7 +8,7 @@
   padding: 0 8px;
 }
 
-/* Card Container with Glassmorphism */
+/* Base Card Style */
 .card {
   height: 68px;
   border-radius: 20px;
@@ -21,27 +21,25 @@
   overflow: hidden;
   box-sizing: border-box;
   
-  /* Inner light reflection & soft outer shadow */
+  /* Top Inner White Highlight & Ambient Drop Shadow */
   box-shadow: 
-    inset 0px 1.5px 2px rgba(255, 255, 255, 0.9),
-    inset 0px -2px 5px rgba(0, 0, 0, 0.05),
-    0 8px 18px rgba(0, 0, 0, 0.06);
+    inset 0px 1.5px 2px rgba(255, 255, 255, 0.8),
+    0 8px 20px rgba(0, 0, 0, 0.05);
     
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card:active {
   transform: scale(0.97);
 }
 
-/* Glass Surface Reflection */
+/* Top Gloss Shine Overlay */
 .glassShine {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 50%;
+  height: 48%;
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.5) 0%,
@@ -63,9 +61,7 @@
   justify-content: center;
   flex-shrink: 0;
   z-index: 1;
-  box-shadow: 
-    0 3px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 2px rgba(255, 255, 255, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
 }
 
 .iconBox svg {
@@ -88,7 +84,7 @@
   letter-spacing: -0.2px;
 }
 
-/* Pill Count Badge */
+/* Count Badge */
 .badge {
   margin-left: auto;
   display: flex;
@@ -109,23 +105,34 @@
   height: 12px;
 }
 
-/* Colors & Gradients Matching Reference */
+/* ----------------------------------------------------
+   Specific Colour Borders & Matching Gradients 
+---------------------------------------------------- */
+
+/* Blue Card */
 .blue {
   background: linear-gradient(135deg, #74A7FF 0%, #4D81F7 100%);
   color: #0A2B66;
+  border: 1.5px solid #3B82F6;
 }
 
+/* Orange Card */
 .orange {
   background: linear-gradient(135deg, #FFC085 0%, #FF8D3D 100%);
   color: #542200;
+  border: 1.5px solid #F97316;
 }
 
+/* Green Card */
 .green {
-  background: linear-gradient(135deg, #93FBD3 0%, #4FEAA9 100%);
+  background: linear-gradient(135deg, #B5FEE2 0%, #61F2B5 100%);
   color: #02472E;
+  border: 1.5px solid #10B981;
 }
 
+/* Purple Card */
 .purple {
-  background: linear-gradient(135deg, #E8A8FF 0%, #CA6BFF 100%);
+  background: linear-gradient(135deg, #F1C2FF 0%, #DB8BFF 100%);
   color: #42065C;
+  border: 1.5px solid #C084FC;
 }
