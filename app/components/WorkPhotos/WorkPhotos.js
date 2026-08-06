@@ -77,16 +77,41 @@ export default function WorkPhotos() {
       width: rect.width,
       height: rect.height,
       borderRadius: "18px",
+      objectFit: "cover",
     };
   };
 
-  const getFullScreenBounds = () => {
+  // Calculate exact centered contain bounds (Prevents Double Jump)
+  const getFittedBounds = (index) => {
+    const gridElem = gridItemsRef.current[index];
+    const imgElem = gridElem ? gridElem.querySelector("img") : null;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    let naturalWidth = imgElem?.naturalWidth || 3;
+    let naturalHeight = imgElem?.naturalHeight || 4;
+
+    const imgAspect = naturalWidth / naturalHeight;
+    const screenAspect = vw / vh;
+
+    let targetWidth, targetHeight;
+
+    if (imgAspect > screenAspect) {
+      targetWidth = vw;
+      targetHeight = vw / imgAspect;
+    } else {
+      targetHeight = vh;
+      targetWidth = vh * imgAspect;
+    }
+
     return {
-      top: 0,
-      left: 0,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      top: (vh - targetHeight) / 2,
+      left: (vw - targetWidth) / 2,
+      width: targetWidth,
+      height: targetHeight,
       borderRadius: "0px",
+      objectFit: "cover",
     };
   };
 
@@ -94,7 +119,10 @@ export default function WorkPhotos() {
     const startRect = getElementBounds(index);
     if (!startRect) return;
 
+    // Set index instantly before opening overlay to fix slider track position
     setCurrentIndex(index);
+    resetZoom();
+
     setAnimBounds(startRect);
     setViewerOpen(true);
     setIsOpening(true);
@@ -102,7 +130,7 @@ export default function WorkPhotos() {
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setAnimBounds(getFullScreenBounds());
+        setAnimBounds(getFittedBounds(index));
         setTimeout(() => {
           setIsOpening(false);
         }, 300);
@@ -114,7 +142,7 @@ export default function WorkPhotos() {
     resetZoom();
     setIsClosing(true);
 
-    const targetRect = getElementBounds(currentIndex) || getFullScreenBounds();
+    const targetRect = getElementBounds(currentIndex) || getFittedBounds(currentIndex);
 
     requestAnimationFrame(() => {
       setAnimBounds(targetRect);
@@ -379,6 +407,7 @@ export default function WorkPhotos() {
                   src={images[currentIndex]}
                   alt="Transitioning photo"
                   className={styles.animatingImage}
+                  style={{ objectFit: animBounds.objectFit || "cover" }}
                 />
               </div>
             ) : (
