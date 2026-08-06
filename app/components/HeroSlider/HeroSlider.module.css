@@ -28,11 +28,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transform-origin: center 10%; /* Ensures top padding remains balanced when scaled down */
+  transform-origin: center top;
   transition: transform 0.3s ease;
 }
 
-/* Modal Styling */
+/* Modal Overlay */
 .modalOverlay {
   position: fixed;
   inset: 0;
