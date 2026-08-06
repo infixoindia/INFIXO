@@ -123,7 +123,10 @@
 .green {
   background: linear-gradient(135deg, #93FBD3 0%, #4FEAA9 100%);
   color: #02472E;
+  /* Subtly blended semi-transparent border */
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
 }
+
 
 .purple {
   background: linear-gradient(135deg, #E8A8FF 0%, #CA6BFF 100%);
