@@ -17,6 +17,11 @@ export default function WorkPhotos() {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Transition animation state
+  const [isOpening, setIsOpening] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [originRect, setOriginRect] = useState(null);
+
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -38,6 +43,7 @@ export default function WorkPhotos() {
 
   const containerRef = useRef(null);
   const imageRef = useRef(null);
+  const gridItemsRef = useRef([]);
 
   useEffect(() => {
     if (viewerOpen) {
@@ -62,16 +68,71 @@ export default function WorkPhotos() {
     setPosition({ x: 0, y: 0 });
   };
 
-  const openViewer = (index) => {
+  const openViewer = (index, e) => {
+    let rect = null;
+    const clickedElement = gridItemsRef.current[index];
+    if (clickedElement) {
+      rect = clickedElement.getBoundingClientRect();
+    } else if (e && e.currentTarget) {
+      rect = e.currentTarget.getBoundingClientRect();
+    }
+
     setCurrentIndex(index);
+    setOriginRect(rect);
     setViewerOpen(true);
+    setIsOpening(true);
+    setIsClosing(false);
+
+    // Trigger full screen zoom after initial mounting frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setIsOpening(false);
+      });
+    });
   };
 
   const closeViewer = () => {
-    setViewerOpen(false);
+    resetZoom();
+
+    // Re-calculate target rect for current index in case scrolled
+    const currentGridElem = gridItemsRef.current[currentIndex];
+    if (currentGridElem) {
+      setOriginRect(currentGridElem.getBoundingClientRect());
+    }
+
+    setIsClosing(true);
+
+    setTimeout(() => {
+      setViewerOpen(false);
+      setIsClosing(false);
+      setOriginRect(null);
+    }, 300); // Duration matches CSS transition
   };
 
-  // Helper to constrain position within bounds
+  // Helper to calculate initial transform style for shared element animation
+  const getSharedTransformStyle = () => {
+    if (!originRect || (!isOpening && !isClosing)) return {};
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const scaleX = originRect.width / viewportWidth;
+    const scaleY = originRect.height / viewportHeight;
+    const targetScale = Math.min(scaleX, scaleY);
+
+    const originCenterX = originRect.left + originRect.width / 2;
+    const originCenterY = originRect.top + originRect.height / 2;
+
+    const translateX = originCenterX - viewportWidth / 2;
+    const translateY = originCenterY - viewportHeight / 2;
+
+    return {
+      transform: `translate3d(${translateX}px, ${translateY}px, 0px) scale(${targetScale})`,
+      borderRadius: "18px",
+      opacity: 0.9,
+    };
+  };
+
   const clampPosition = (newX, newY, targetScale) => {
     if (!imageRef.current || targetScale <= 1) return { x: 0, y: 0 };
 
@@ -91,7 +152,6 @@ export default function WorkPhotos() {
     return { x: clampedX, y: clampedY };
   };
 
-  // Touch handlers for Pinch, Pan, Swipe & Smart Double Tap
   const handleTouchStart = (e) => {
     const touches = e.touches;
     touchStartRef.current = Array.from(touches);
@@ -101,7 +161,6 @@ export default function WorkPhotos() {
       const touch = touches[0];
       const timeDiff = now - lastTapRef.current;
 
-      // Double Tap (< 300ms)
       if (timeDiff < 300 && timeDiff > 0) {
         e.preventDefault();
         handleDoubleTap(touch);
@@ -120,7 +179,6 @@ export default function WorkPhotos() {
         touchEndX.current = touch.clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zoom Start - Calculate focal point relative to viewport center
       isDraggingRef.current = false;
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -130,7 +188,6 @@ export default function WorkPhotos() {
       initialScaleRef.current = scale;
       initialPosRef.current = { ...position };
 
-      // Mid point of two fingers in screen pixels relative to window center
       const midX = (touches[0].clientX + touches[1].clientX) / 2 - window.innerWidth / 2;
       const midY = (touches[0].clientY + touches[1].clientY) / 2 - window.innerHeight / 2;
       pinchFocalRef.current = { x: midX, y: midY };
@@ -142,7 +199,6 @@ export default function WorkPhotos() {
 
     if (touches.length === 1) {
       if (scale > 1 && isDraggingRef.current) {
-        // Pan image when zoomed
         e.preventDefault();
         setIsAnimating(false);
         const deltaX = touches[0].clientX - dragStartRef.current.x;
@@ -154,12 +210,10 @@ export default function WorkPhotos() {
         const clamped = clampPosition(rawX, rawY, scale);
         setPosition(clamped);
       } else if (scale === 1) {
-        // Normal gallery slider swipe
         isSwipingRef.current = true;
         touchEndX.current = touches[0].clientX;
       }
     } else if (touches.length === 2) {
-      // Pinch Zooming relative to exact touch center
       e.preventDefault();
       setIsAnimating(false);
 
@@ -215,7 +269,6 @@ export default function WorkPhotos() {
     }
   };
 
-  // Smart Double Tap Logic
   const handleDoubleTap = (touch) => {
     setIsAnimating(true);
 
@@ -269,8 +322,9 @@ export default function WorkPhotos() {
         {images.map((image, index) => (
           <div
             key={index}
+            ref={(el) => (gridItemsRef.current[index] = el)}
             className={styles.photoItem}
-            onClick={() => openViewer(index)}
+            onClick={(e) => openViewer(index, e)}
           >
             <img src={image} alt={`Work ${index + 1}`} />
           </div>
@@ -278,7 +332,7 @@ export default function WorkPhotos() {
       </div>
 
       {viewerOpen && (
-        <div className={styles.viewer}>
+        <div className={`${styles.viewer} ${isClosing ? styles.viewerClosing : ""}`}>
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {images.length}
           </div>
@@ -312,28 +366,35 @@ export default function WorkPhotos() {
                 transform: `translateX(-${currentIndex * 100}%)`,
               }}
             >
-              {images.map((image, index) => (
-                <div key={index} className={styles.slide}>
-                  <img
-                    ref={index === currentIndex ? imageRef : null}
-                    src={image}
-                    alt={`Work ${index + 1}`}
-                    className={styles.viewerImage}
-                    draggable={false}
-                    style={
-                      index === currentIndex
-                        ? {
-                            transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
-                            transition: isAnimating
-                              ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
-                              : "none",
-                            willChange: "transform",
-                          }
-                        : {}
+              {images.map((image, index) => {
+                const isCurrent = index === currentIndex;
+                const isTransitioning = isCurrent && (isOpening || isClosing);
+                const transformStyle = isTransitioning
+                  ? getSharedTransformStyle()
+                  : isCurrent
+                  ? {
+                      transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
+                      transition: isAnimating
+                        ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+                        : "none",
                     }
-                  />
-                </div>
-              ))}
+                  : {};
+
+                return (
+                  <div key={index} className={styles.slide}>
+                    <img
+                      ref={isCurrent ? imageRef : null}
+                      src={image}
+                      alt={`Work ${index + 1}`}
+                      className={`${styles.viewerImage} ${
+                        isTransitioning ? styles.transitioningImage : ""
+                      }`}
+                      draggable={false}
+                      style={transformStyle}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
 
