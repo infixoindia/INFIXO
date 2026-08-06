@@ -32,9 +32,7 @@
   display: block;
 }
 
-/* ========================================= */
-/* FLOATING LIQUID DOT INDICATOR (FIXED VISIBILITY) */
-/* ========================================= */
+/* FLOATING LIQUID DOT INDICATOR */
 
 .indicatorContainer {
   position: absolute;
@@ -45,7 +43,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  z-index: 20; /* High z-index to stay above wave */
+  z-index: 20;
   pointer-events: auto;
   padding: 4px 8px;
 }
@@ -59,7 +57,7 @@
   padding: 0;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); /* Shadow for clear contrast on light images */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
   transition: width 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
               background-color 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
               box-shadow 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
