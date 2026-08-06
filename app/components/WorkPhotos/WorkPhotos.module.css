@@ -81,11 +81,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.22s ease;
-}
-
-.photoItem:hover {
-  transform: scale(0.98);
 }
 
 .photoItem img {
@@ -98,20 +93,33 @@
 }
 
 /* ========================= */
-/* IMAGE VIEWER & MODERN SLIDE ANIMATION */
+/* SIMPLE NO-ANIMATION VIEWER */
 /* ========================= */
 
 .viewer {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.96);
+  background: rgba(0, 0, 0, 0.98);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   z-index: 9999;
-  animation: backdropEnter 0.28s ease forwards;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
+
+.viewerActive {
+  opacity: 1;
+}
+
+.viewerClosing {
+  opacity: 0 !important;
+}
+
+/* ========================= */
+/* SLIDER VIEWPORT & TRACK */
+/* ========================= */
 
 .sliderViewport {
   width: 100%;
@@ -123,61 +131,7 @@
   touch-action: none;
   overscroll-behavior: none;
   position: relative;
-  animation: slideUpEnter 0.32s cubic-bezier(0.32, 1.25, 0.32, 1) forwards;
 }
-
-.viewerClosing {
-  animation: backdropExit 0.22s ease forwards !important;
-}
-
-.viewerClosing .sliderViewport {
-  animation: slideDownExit 0.22s cubic-bezier(0.4, 0, 1, 1) forwards !important;
-}
-
-/* Keyframes for Smooth Card Open & Close */
-@keyframes backdropEnter {
-  0% {
-    background: rgba(0, 0, 0, 0);
-  }
-  100% {
-    background: rgba(0, 0, 0, 0.96);
-  }
-}
-
-@keyframes backdropExit {
-  0% {
-    background: rgba(0, 0, 0, 0.96);
-  }
-  100% {
-    background: rgba(0, 0, 0, 0);
-  }
-}
-
-@keyframes slideUpEnter {
-  0% {
-    opacity: 0;
-    transform: translateY(60px) scale(0.88);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0px) scale(1);
-  }
-}
-
-@keyframes slideDownExit {
-  0% {
-    opacity: 1;
-    transform: translateY(0px) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(40px) scale(0.92);
-  }
-}
-
-/* ========================= */
-/* SLIDER TRACK */
-/* ========================= */
 
 .sliderTrack {
   display: flex;
@@ -229,7 +183,6 @@
   cursor: pointer;
   z-index: 10001;
   padding: 0;
-  transition: transform 0.15s ease;
 }
 
 .closeButton svg {
@@ -238,7 +191,7 @@
 }
 
 .closeButton:active {
-  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .arrow {
@@ -256,11 +209,10 @@
   justify-content: center;
   z-index: 10002;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.15s ease;
 }
 
 .arrow:active {
-  transform: translateY(-50%) scale(0.9);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .arrow svg {
