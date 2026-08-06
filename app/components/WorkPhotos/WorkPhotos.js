@@ -17,15 +17,10 @@ export default function WorkPhotos() {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Transition overlay state
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [animStyles, setAnimStyles] = useState(null);
-
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isZoomAnimating, setIsZoomAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Gesture tracking refs
   const lastTapRef = useRef(0);
@@ -43,7 +38,6 @@ export default function WorkPhotos() {
 
   const containerRef = useRef(null);
   const imageRef = useRef(null);
-  const gridItemsRef = useRef([]);
 
   useEffect(() => {
     if (viewerOpen) {
@@ -58,6 +52,7 @@ export default function WorkPhotos() {
     };
   }, [viewerOpen]);
 
+  // Reset zoom state on image change
   useEffect(() => {
     resetZoom();
   }, [currentIndex]);
@@ -67,126 +62,16 @@ export default function WorkPhotos() {
     setPosition({ x: 0, y: 0 });
   };
 
-  // Get exact thumbnail pixel bounds in viewport
-  const getGridBounds = (index) => {
-    const elem = gridItemsRef.current[index];
-    if (!elem) return null;
-    const rect = elem.getBoundingClientRect();
-    return {
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
-      borderRadius: "18px",
-    };
-  };
-
-  // Get centered aspect-fit pixel bounds for full screen
-  const getTargetFullBounds = (index) => {
-    const elem = gridItemsRef.current[index];
-    const img = elem ? elem.querySelector("img") : null;
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    let nw = img?.naturalWidth || 3;
-    let nh = img?.naturalHeight || 4;
-
-    const aspect = nw / nh;
-    const screenAspect = vw / vh;
-
-    let targetW, targetH;
-    if (aspect > screenAspect) {
-      targetW = vw;
-      targetH = vw / aspect;
-    } else {
-      targetH = vh;
-      targetW = vh * aspect;
-    }
-
-    return {
-      top: (vh - targetH) / 2,
-      left: (vw - targetW) / 2,
-      width: targetW,
-      height: targetH,
-      borderRadius: "0px",
-    };
-  };
-
   const openViewer = (index) => {
-    const startRect = getGridBounds(index);
-    if (!startRect) return;
-
     setCurrentIndex(index);
-    resetZoom();
-
-    // Start overlay at exact grid thumbnail position
-    setAnimStyles({
-      top: `${startRect.top}px`,
-      left: `${startRect.left}px`,
-      width: `${startRect.width}px`,
-      height: `${startRect.height}px`,
-      borderRadius: startRect.borderRadius,
-      transition: "none",
-    });
-
     setViewerOpen(true);
-    setIsAnimating(true);
-    setIsClosing(false);
-
-    // Smoothly animate to fitted fullscreen target bounds
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const targetRect = getTargetFullBounds(index);
-        setAnimStyles({
-          top: `${targetRect.top}px`,
-          left: `${targetRect.left}px`,
-          width: `${targetRect.width}px`,
-          height: `${targetRect.height}px`,
-          borderRadius: targetRect.borderRadius,
-          transition: "all 0.32s cubic-bezier(0.2, 0.9, 0.1, 1)",
-        });
-
-        setTimeout(() => {
-          setIsAnimating(false);
-        }, 320);
-      });
-    });
   };
 
   const closeViewer = () => {
-    resetZoom();
-    setIsClosing(true);
-    setIsAnimating(true);
-
-    const targetGridRect = getGridBounds(currentIndex) || {
-      top: window.innerHeight / 2,
-      left: window.innerWidth / 2,
-      width: 0,
-      height: 0,
-      borderRadius: "18px",
-    };
-
-    // Animate overlay back from screen center to card slot
-    requestAnimationFrame(() => {
-      setAnimStyles({
-        top: `${targetGridRect.top}px`,
-        left: `${targetGridRect.left}px`,
-        width: `${targetGridRect.width}px`,
-        height: `${targetGridRect.height}px`,
-        borderRadius: targetGridRect.borderRadius,
-        transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
-      });
-    });
-
-    setTimeout(() => {
-      setViewerOpen(false);
-      setIsClosing(false);
-      setIsAnimating(false);
-      setAnimStyles(null);
-    }, 300);
+    setViewerOpen(false);
   };
 
+  // Helper to constrain position within bounds
   const clampPosition = (newX, newY, targetScale) => {
     if (!imageRef.current || targetScale <= 1) return { x: 0, y: 0 };
 
@@ -206,8 +91,8 @@ export default function WorkPhotos() {
     return { x: clampedX, y: clampedY };
   };
 
+  // Touch handlers for Pinch, Pan, Swipe & Smart Double Tap
   const handleTouchStart = (e) => {
-    if (isAnimating) return;
     const touches = e.touches;
     touchStartRef.current = Array.from(touches);
 
@@ -216,6 +101,7 @@ export default function WorkPhotos() {
       const touch = touches[0];
       const timeDiff = now - lastTapRef.current;
 
+      // Double Tap (< 300ms)
       if (timeDiff < 300 && timeDiff > 0) {
         e.preventDefault();
         handleDoubleTap(touch);
@@ -234,6 +120,7 @@ export default function WorkPhotos() {
         touchEndX.current = touch.clientX;
       }
     } else if (touches.length === 2) {
+      // Pinch Zoom Start - Calculate focal point relative to viewport center
       isDraggingRef.current = false;
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -243,6 +130,7 @@ export default function WorkPhotos() {
       initialScaleRef.current = scale;
       initialPosRef.current = { ...position };
 
+      // Mid point of two fingers in screen pixels relative to window center
       const midX = (touches[0].clientX + touches[1].clientX) / 2 - window.innerWidth / 2;
       const midY = (touches[0].clientY + touches[1].clientY) / 2 - window.innerHeight / 2;
       pinchFocalRef.current = { x: midX, y: midY };
@@ -250,13 +138,13 @@ export default function WorkPhotos() {
   };
 
   const handleTouchMove = (e) => {
-    if (isAnimating) return;
     const touches = e.touches;
 
     if (touches.length === 1) {
       if (scale > 1 && isDraggingRef.current) {
+        // Pan image when zoomed
         e.preventDefault();
-        setIsZoomAnimating(false);
+        setIsAnimating(false);
         const deltaX = touches[0].clientX - dragStartRef.current.x;
         const deltaY = touches[0].clientY - dragStartRef.current.y;
 
@@ -266,12 +154,14 @@ export default function WorkPhotos() {
         const clamped = clampPosition(rawX, rawY, scale);
         setPosition(clamped);
       } else if (scale === 1) {
+        // Normal gallery slider swipe
         isSwipingRef.current = true;
         touchEndX.current = touches[0].clientX;
       }
     } else if (touches.length === 2) {
+      // Pinch Zooming relative to exact touch center
       e.preventDefault();
-      setIsZoomAnimating(false);
+      setIsAnimating(false);
 
       const dist = Math.hypot(
         touches[0].clientX - touches[1].clientX,
@@ -298,14 +188,13 @@ export default function WorkPhotos() {
     }
   };
 
-  const handleTouchEnd = () => {
-    if (isAnimating) return;
+  const handleTouchEnd = (e) => {
     if (isDraggingRef.current) {
       isDraggingRef.current = false;
     }
 
     if (scale < 1.05) {
-      setIsZoomAnimating(true);
+      setIsAnimating(true);
       resetZoom();
     }
 
@@ -326,8 +215,9 @@ export default function WorkPhotos() {
     }
   };
 
+  // Smart Double Tap Logic
   const handleDoubleTap = (touch) => {
-    setIsZoomAnimating(true);
+    setIsAnimating(true);
 
     if (scale > 1.1) {
       resetZoom();
@@ -379,7 +269,6 @@ export default function WorkPhotos() {
         {images.map((image, index) => (
           <div
             key={index}
-            ref={(el) => (gridItemsRef.current[index] = el)}
             className={styles.photoItem}
             onClick={() => openViewer(index)}
           >
@@ -389,11 +278,7 @@ export default function WorkPhotos() {
       </div>
 
       {viewerOpen && (
-        <div
-          className={`${styles.viewer} ${
-            isClosing ? styles.viewerClosing : styles.viewerActive
-          }`}
-        >
+        <div className={styles.viewer}>
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {images.length}
           </div>
@@ -421,50 +306,35 @@ export default function WorkPhotos() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Transition Overlay Element */}
-            {isAnimating && animStyles ? (
-              <div className={styles.transitionWrapper} style={animStyles}>
-                <img
-                  src={images[currentIndex]}
-                  alt="Transition photo"
-                  className={styles.transitionImage}
-                />
-              </div>
-            ) : (
-              /* Fullscreen Gallery Slider Track */
-              <div
-                className={styles.sliderTrack}
-                style={{
-                  transform: `translateX(-${currentIndex * 100}%)`,
-                }}
-              >
-                {images.map((image, index) => {
-                  const isCurrent = index === currentIndex;
-
-                  return (
-                    <div key={index} className={styles.slide}>
-                      <img
-                        ref={isCurrent ? imageRef : null}
-                        src={image}
-                        alt={`Work ${index + 1}`}
-                        className={styles.viewerImage}
-                        draggable={false}
-                        style={
-                          isCurrent
-                            ? {
-                                transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
-                                transition: isZoomAnimating
-                                  ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
-                                  : "none",
-                              }
-                            : {}
-                        }
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <div
+              className={styles.sliderTrack}
+              style={{
+                transform: `translateX(-${currentIndex * 100}%)`,
+              }}
+            >
+              {images.map((image, index) => (
+                <div key={index} className={styles.slide}>
+                  <img
+                    ref={index === currentIndex ? imageRef : null}
+                    src={image}
+                    alt={`Work ${index + 1}`}
+                    className={styles.viewerImage}
+                    draggable={false}
+                    style={
+                      index === currentIndex
+                        ? {
+                            transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
+                            transition: isAnimating
+                              ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+                              : "none",
+                            willChange: "transform",
+                          }
+                        : {}
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div
