@@ -17,10 +17,10 @@ export default function WorkPhotos() {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Transition animation state
-  const [isAnimatingTransition, setIsAnimatingTransition] = useState(false);
+  // Transition overlay state
+  const [isAnimating, setIsAnimating] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [transformStyle, setTransformStyle] = useState({});
+  const [animStyles, setAnimStyles] = useState(null);
 
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
@@ -67,72 +67,88 @@ export default function WorkPhotos() {
     setPosition({ x: 0, y: 0 });
   };
 
-  // FLIP Transform calculation relative to centered viewer image
-  const getTransformData = (index) => {
-    const gridElem = gridItemsRef.current[index];
-    if (!gridElem) return null;
+  // Get exact thumbnail pixel bounds in viewport
+  const getGridBounds = (index) => {
+    const elem = gridItemsRef.current[index];
+    if (!elem) return null;
+    const rect = elem.getBoundingClientRect();
+    return {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+      borderRadius: "18px",
+    };
+  };
 
-    const thumbRect = gridElem.getBoundingClientRect();
+  // Get centered aspect-fit pixel bounds for full screen
+  const getTargetFullBounds = (index) => {
+    const elem = gridItemsRef.current[index];
+    const img = elem ? elem.querySelector("img") : null;
+
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
-    // Standard photo aspect ratio (3/4 from gallery grid)
-    const imgAspect = thumbRect.width / thumbRect.height;
+    let nw = img?.naturalWidth || 3;
+    let nh = img?.naturalHeight || 4;
+
+    const aspect = nw / nh;
     const screenAspect = vw / vh;
 
-    let fullWidth, fullHeight;
-    if (imgAspect > screenAspect) {
-      fullWidth = vw;
-      fullHeight = vw / imgAspect;
+    let targetW, targetH;
+    if (aspect > screenAspect) {
+      targetW = vw;
+      targetH = vw / aspect;
     } else {
-      fullHeight = vh;
-      fullWidth = vh * imgAspect;
+      targetH = vh;
+      targetW = vh * aspect;
     }
 
-    const fullLeft = (vw - fullWidth) / 2;
-    const fullTop = (vh - fullHeight) / 2;
-
-    const scaleX = thumbRect.width / fullWidth;
-    const scaleY = thumbRect.height / fullHeight;
-
-    const translateX = thumbRect.left - fullLeft;
-    const translateY = thumbRect.top - fullTop;
-
     return {
-      collapsedTransform: `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scaleX}, ${scaleY})`,
-      expandedTransform: `translate3d(0px, 0px, 0px) scale(1, 1)`,
+      top: (vh - targetH) / 2,
+      left: (vw - targetW) / 2,
+      width: targetW,
+      height: targetH,
+      borderRadius: "0px",
     };
   };
 
   const openViewer = (index) => {
-    const tf = getTransformData(index);
-    if (!tf) return;
+    const startRect = getGridBounds(index);
+    if (!startRect) return;
 
     setCurrentIndex(index);
     resetZoom();
-    setViewerOpen(true);
-    setIsAnimatingTransition(true);
-    setIsClosing(false);
 
-    // Initial state: aligned directly over thumbnail grid photo
-    setTransformStyle({
-      transform: tf.collapsedTransform,
-      borderRadius: "18px",
+    // Start overlay at exact grid thumbnail position
+    setAnimStyles({
+      top: `${startRect.top}px`,
+      left: `${startRect.left}px`,
+      width: `${startRect.width}px`,
+      height: `${startRect.height}px`,
+      borderRadius: startRect.borderRadius,
       transition: "none",
     });
 
-    // Trigger GPU transition on next paint frame
+    setViewerOpen(true);
+    setIsAnimating(true);
+    setIsClosing(false);
+
+    // Smoothly animate to fitted fullscreen target bounds
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setTransformStyle({
-          transform: tf.expandedTransform,
-          borderRadius: "0px",
-          transition: "transform 0.32s cubic-bezier(0.2, 0.9, 0.1, 1), border-radius 0.32s cubic-bezier(0.2, 0.9, 0.1, 1)",
+        const targetRect = getTargetFullBounds(index);
+        setAnimStyles({
+          top: `${targetRect.top}px`,
+          left: `${targetRect.left}px`,
+          width: `${targetRect.width}px`,
+          height: `${targetRect.height}px`,
+          borderRadius: targetRect.borderRadius,
+          transition: "all 0.32s cubic-bezier(0.2, 0.9, 0.1, 1)",
         });
 
         setTimeout(() => {
-          setIsAnimatingTransition(false);
-          setTransformStyle({});
+          setIsAnimating(false);
         }, 320);
       });
     });
@@ -141,23 +157,33 @@ export default function WorkPhotos() {
   const closeViewer = () => {
     resetZoom();
     setIsClosing(true);
-    setIsAnimatingTransition(true);
+    setIsAnimating(true);
 
-    const tf = getTransformData(currentIndex);
+    const targetGridRect = getGridBounds(currentIndex) || {
+      top: window.innerHeight / 2,
+      left: window.innerWidth / 2,
+      width: 0,
+      height: 0,
+      borderRadius: "18px",
+    };
 
+    // Animate overlay back from screen center to card slot
     requestAnimationFrame(() => {
-      setTransformStyle({
-        transform: tf ? tf.collapsedTransform : `scale(0.8)`,
-        borderRadius: "18px",
-        transition: "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-radius 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
+      setAnimStyles({
+        top: `${targetGridRect.top}px`,
+        left: `${targetGridRect.left}px`,
+        width: `${targetGridRect.width}px`,
+        height: `${targetGridRect.height}px`,
+        borderRadius: targetGridRect.borderRadius,
+        transition: "all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)",
       });
     });
 
     setTimeout(() => {
       setViewerOpen(false);
       setIsClosing(false);
-      setIsAnimatingTransition(false);
-      setTransformStyle({});
+      setIsAnimating(false);
+      setAnimStyles(null);
     }, 300);
   };
 
@@ -181,7 +207,7 @@ export default function WorkPhotos() {
   };
 
   const handleTouchStart = (e) => {
-    if (isAnimatingTransition) return;
+    if (isAnimating) return;
     const touches = e.touches;
     touchStartRef.current = Array.from(touches);
 
@@ -224,7 +250,7 @@ export default function WorkPhotos() {
   };
 
   const handleTouchMove = (e) => {
-    if (isAnimatingTransition) return;
+    if (isAnimating) return;
     const touches = e.touches;
 
     if (touches.length === 1) {
@@ -273,7 +299,7 @@ export default function WorkPhotos() {
   };
 
   const handleTouchEnd = () => {
-    if (isAnimatingTransition) return;
+    if (isAnimating) return;
     if (isDraggingRef.current) {
       isDraggingRef.current = false;
     }
@@ -395,44 +421,50 @@ export default function WorkPhotos() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <div
-              className={styles.sliderTrack}
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-                transition: isAnimatingTransition ? "none" : "transform 0.35s ease-out",
-              }}
-            >
-              {images.map((image, index) => {
-                const isCurrent = index === currentIndex;
+            {/* Transition Overlay Element */}
+            {isAnimating && animStyles ? (
+              <div className={styles.transitionWrapper} style={animStyles}>
+                <img
+                  src={images[currentIndex]}
+                  alt="Transition photo"
+                  className={styles.transitionImage}
+                />
+              </div>
+            ) : (
+              /* Fullscreen Gallery Slider Track */
+              <div
+                className={styles.sliderTrack}
+                style={{
+                  transform: `translateX(-${currentIndex * 100}%)`,
+                }}
+              >
+                {images.map((image, index) => {
+                  const isCurrent = index === currentIndex;
 
-                let imgStyle = {};
-                if (isCurrent) {
-                  if (isAnimatingTransition) {
-                    imgStyle = transformStyle;
-                  } else {
-                    imgStyle = {
-                      transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
-                      transition: isZoomAnimating
-                        ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
-                        : "none",
-                    };
-                  }
-                }
-
-                return (
-                  <div key={index} className={styles.slide}>
-                    <img
-                      ref={isCurrent ? imageRef : null}
-                      src={image}
-                      alt={`Work ${index + 1}`}
-                      className={styles.viewerImage}
-                      draggable={false}
-                      style={imgStyle}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div key={index} className={styles.slide}>
+                      <img
+                        ref={isCurrent ? imageRef : null}
+                        src={image}
+                        alt={`Work ${index + 1}`}
+                        className={styles.viewerImage}
+                        draggable={false}
+                        style={
+                          isCurrent
+                            ? {
+                                transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
+                                transition: isZoomAnimating
+                                  ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+                                  : "none",
+                              }
+                            : {}
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div
