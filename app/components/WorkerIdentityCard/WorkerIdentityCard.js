@@ -11,19 +11,16 @@ export default function WorkerIdentityCard({ worker }) {
     experience,
     serviceArea,
     isVerified,
-    // Optional: Pass custom image array from worker if present
-    sliderImages, 
+    heroSlides, // Pass Array of Objects from worker data
   } = worker;
 
   return (
     <section className={styles.card}>
-
       {/* ================= HERO ================= */}
       <div className={styles.hero}>
-        {/* Dynamic Production Hero Slider */}
-        <HeroSlider images={sliderImages} workerName={fullName} />
+        {/* Dynamic Object-Positioned Slider */}
+        <HeroSlider slides={heroSlides} workerName={fullName} />
 
-        {/* Unchanged Wave & Pattern Overlay */}
         <div className={styles.pattern}></div>
 
         <svg
@@ -73,12 +70,8 @@ Z"
               </span>
 
               <span className={styles.infoText}>
-                <span className={styles.infoValue}>
-                  {experience}+ Years
-                </span>
-                <span className={styles.infoLabel}>
-                  Experience
-                </span>
+                <span className={styles.infoValue}>{experience}+ Years</span>
+                <span className={styles.infoLabel}>Experience</span>
               </span>
             </div>
 
@@ -100,12 +93,8 @@ Z"
               </span>
 
               <span className={styles.infoText}>
-                <span className={styles.infoValue}>
-                  {serviceArea.join(', ')}
-                </span>
-                <span className={styles.infoLabel}>
-                  Service Area
-                </span>
+                <span className={styles.infoValue}>{serviceArea.join(', ')}</span>
+                <span className={styles.infoLabel}>Service Area</span>
               </span>
             </div>
           </div>
