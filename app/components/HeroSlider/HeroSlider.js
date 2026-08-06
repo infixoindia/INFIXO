@@ -79,6 +79,12 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
     }
   };
 
+  const handleDotClick = (e, index) => {
+    e.stopPropagation();
+    setIsTransitioning(true);
+    setCurrentIndex(index);
+  };
+
   return (
     <>
       <div
@@ -106,6 +112,22 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
             </div>
           ))}
         </div>
+
+        {/* LIQUID DOT INDICATOR */}
+        {slideList.length > 1 && (
+          <div className={styles.indicatorContainer}>
+            {slideList.map((_, index) => (
+              <button
+                key={index}
+                className={`${styles.dot} ${
+                  index === currentIndex ? styles.activeDot : ''
+                }`}
+                onClick={(e) => handleDotClick(e, index)}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {isPreviewOpen && (
