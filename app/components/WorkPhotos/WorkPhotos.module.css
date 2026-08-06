@@ -98,7 +98,7 @@
 }
 
 /* ========================= */
-/* IMAGE VIEWER WITH SHARED ELEMENT ANIMATION */
+/* IMAGE VIEWER */
 /* ========================= */
 
 .viewer {
@@ -110,11 +110,24 @@
   justify-content: center;
   overflow: hidden;
   z-index: 9999;
-  transition: background 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: background 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.viewerOpening {
+  animation: bgFadeIn 0.32s forwards;
 }
 
 .viewerClosing {
-  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0) !important;
+}
+
+@keyframes bgFadeIn {
+  from {
+    background: rgba(0, 0, 0, 0);
+  }
+  to {
+    background: rgba(0, 0, 0, 1);
+  }
 }
 
 /* ========================= */
@@ -150,7 +163,7 @@
 }
 
 /* ========================= */
-/* FULL IMAGE & TRANSITIONING STATE */
+/* VIEWER IMAGE & SMOOTH TRANSITION */
 /* ========================= */
 
 .viewerImage {
@@ -160,22 +173,19 @@
   max-height: 100vh;
   object-fit: contain;
   border-radius: 0;
-  box-shadow: none;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
-  will-change: transform, border-radius, opacity;
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-              border-radius 0.3s cubic-bezier(0.32, 0.72, 0, 1),
-              opacity 0.25s ease;
+  will-change: transform, border-radius, object-fit;
 }
 
-.transitioningImage {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+.animatingImage {
+  transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.1, 1),
+              border-radius 0.32s cubic-bezier(0.2, 0.9, 0.1, 1);
 }
 
 /* ========================= */
-/* CLOSE BUTTON */
+/* CLOSE BUTTON & CONTROLS */
 /* ========================= */
 
 .closeButton {
@@ -195,7 +205,7 @@
   cursor: pointer;
   z-index: 10001;
   padding: 0;
-  transition: transform 0.2s ease, opacity 0.25s ease;
+  transition: opacity 0.25s ease;
 }
 
 .closeButton svg {
@@ -209,7 +219,10 @@
 
 .viewerClosing .closeButton,
 .viewerClosing .imageCounter,
-.viewerClosing .arrow {
+.viewerClosing .arrow,
+.viewerOpening .closeButton,
+.viewerOpening .imageCounter,
+.viewerOpening .arrow {
   opacity: 0;
   pointer-events: none;
 }
@@ -277,7 +290,6 @@
   .viewerImage {
     width: 100vw;
     height: 100vh;
-    object-fit: contain;
   }
 
   .closeButton {
