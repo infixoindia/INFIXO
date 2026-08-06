@@ -1,61 +1,99 @@
-.grid{
-  max-width:340px;
-  margin:32px auto 0;
-
-  display:grid;
-  grid-template-columns:1fr 1fr;
-
-  column-gap:10px;
-  row-gap:16px;
-  
+.grid {
+  max-width: 380px;
+  margin: 24px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 14px;
+  padding: 0 12px;
 }
 
-.card{
-
-  height:70px;
-
-  border:none;
-
-  border-radius:16px;
-
-  color:#fff;
-
-  font-size:13.5px;
-
-  font-weight:700;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  box-shadow:0 10px 22px rgba(0,0,0,.12);
-
+.card {
+  height: 72px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 10px;
+  text-decoration: none;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.15s ease;
 }
 
-.blue{
-
-background:linear-gradient(135deg,#7CB7FF,#5C88F5);
-
+.card:active {
+  transform: scale(0.98);
 }
 
-.orange{
-
-background:linear-gradient(135deg,#FFD49C,#FFA04C);
-
+/* White Icon Box */
+.iconBox {
+  width: 44px;
+  height: 44px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.green{
-
-background:linear-gradient(135deg,#A8FFD8,#75F1BF);
-
-color:#063;
-
+.iconBox svg {
+  width: 22px;
+  height: 22px;
 }
 
-.purple{
+/* Text Styling */
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  line-height: 1.15;
+}
 
-background:linear-gradient(135deg,#F0B9FF,#D992FF);
+.textGroup span {
+  font-size: 13px;
+  font-weight: 700;
+}
 
+/* Count Badge for Photos and Videos */
+.badge {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid currentColor;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+}
+
+.badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Card Theme Gradients */
+.blue {
+  background: linear-gradient(135deg, #7CB7FF 0%, #5B89F7 100%);
+  color: #0F2D6B;
+}
+
+.orange {
+  background: linear-gradient(135deg, #FFD099 0%, #FFA24D 100%);
+  color: #5C2A00;
+}
+
+.green {
+  background: linear-gradient(135deg, #A8FFD8 0%, #6EEBBB 100%);
+  color: #044D34;
+}
+
+.purple {
+  background: linear-gradient(135deg, #F3C4FF 0%, #D891FF 100%);
+  color: #4C0A66;
 }
