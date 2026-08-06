@@ -37,21 +37,22 @@ export default function WorkDetails() {
   <div className={styles.value}>
    <div className={styles.primaryBadge}>
           <svg
-    className={styles.skillIcon}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    {/* Roller Head */}
-    <rect x="4" y="3" width="16" height="5" rx="1.5" />
-    {/* Metal Bracket */}
-    <path d="M4 5.5H2v5a2 2 0 0 0 2 2h8v3" />
-    {/* Handle */}
-    <path d="M12 15.5v5" strokeWidth="2.8" />
-  </svg>
+  className={styles.skillIcon}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+  {/* Roller Head */}
+  <rect x="4" y="3" width="16" height="5" rx="1.5" />
+  {/* Metal Bracket (Flipped Right) */}
+  <path d="M20 5.5h2v5a2 2 0 0 1-2 2h-8v3" />
+  {/* Handle */}
+  <path d="M12 15.5v5" strokeWidth="2.8" />
+</svg>
+
   <span>Painter</span>
 </div>
 </div>
