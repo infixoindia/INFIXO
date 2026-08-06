@@ -20,7 +20,7 @@ export default function WorkPhotos() {
   // Transition animation state
   const [isOpening, setIsOpening] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [animStyle, setAnimStyle] = useState({});
+  const [animBounds, setAnimBounds] = useState(null);
 
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
@@ -58,7 +58,6 @@ export default function WorkPhotos() {
     };
   }, [viewerOpen]);
 
-  // Reset zoom state on image change
   useEffect(() => {
     resetZoom();
   }, [currentIndex]);
@@ -68,48 +67,45 @@ export default function WorkPhotos() {
     setPosition({ x: 0, y: 0 });
   };
 
-  const getTargetRectStyle = (index) => {
+  const getElementBounds = (index) => {
     const gridElem = gridItemsRef.current[index];
-    if (!gridElem) return {};
-
+    if (!gridElem) return null;
     const rect = gridElem.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    const scaleX = rect.width / viewportWidth;
-    const scaleY = rect.height / viewportHeight;
-
-    const translateX = rect.left + rect.width / 2 - viewportWidth / 2;
-    const translateY = rect.top + rect.height / 2 - viewportHeight / 2;
-
     return {
-      transform: `translate3d(${translateX}px, ${translateY}px, 0px) scale(${scaleX}, ${scaleY})`,
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
       borderRadius: "18px",
-      objectFit: "cover",
+    };
+  };
+
+  const getFullScreenBounds = () => {
+    return {
+      top: 0,
+      left: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      borderRadius: "0px",
     };
   };
 
   const openViewer = (index) => {
+    const startRect = getElementBounds(index);
+    if (!startRect) return;
+
     setCurrentIndex(index);
+    setAnimBounds(startRect);
     setViewerOpen(true);
     setIsOpening(true);
     setIsClosing(false);
 
-    // Initial collapsed position
-    const startStyle = getTargetRectStyle(index);
-    setAnimStyle(startStyle);
-
-    // Trigger frame to animate smoothly to full screen
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        setAnimStyle({
-          transform: "translate3d(0px, 0px, 0px) scale(1, 1)",
-          borderRadius: "0px",
-          objectFit: "contain",
-        });
+        setAnimBounds(getFullScreenBounds());
         setTimeout(() => {
           setIsOpening(false);
-        }, 320);
+        }, 300);
       });
     });
   };
@@ -118,17 +114,18 @@ export default function WorkPhotos() {
     resetZoom();
     setIsClosing(true);
 
-    const endStyle = getTargetRectStyle(currentIndex);
+    const targetRect = getElementBounds(currentIndex) || getFullScreenBounds();
 
     requestAnimationFrame(() => {
-      setAnimStyle(endStyle);
+      setAnimBounds(targetRect);
     });
 
     setTimeout(() => {
       setViewerOpen(false);
       setIsClosing(false);
       setIsOpening(false);
-    }, 320);
+      setAnimBounds(null);
+    }, 300);
   };
 
   const clampPosition = (newX, newY, targetScale) => {
@@ -151,6 +148,7 @@ export default function WorkPhotos() {
   };
 
   const handleTouchStart = (e) => {
+    if (isOpening || isClosing) return;
     const touches = e.touches;
     touchStartRef.current = Array.from(touches);
 
@@ -193,6 +191,7 @@ export default function WorkPhotos() {
   };
 
   const handleTouchMove = (e) => {
+    if (isOpening || isClosing) return;
     const touches = e.touches;
 
     if (touches.length === 1) {
@@ -240,7 +239,8 @@ export default function WorkPhotos() {
     }
   };
 
-  const handleTouchEnd = (e) => {
+  const handleTouchEnd = () => {
+    if (isOpening || isClosing) return;
     if (isDraggingRef.current) {
       isDraggingRef.current = false;
     }
@@ -295,6 +295,8 @@ export default function WorkPhotos() {
     }
   };
 
+  const isTransitioning = isOpening || isClosing;
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
@@ -332,8 +334,8 @@ export default function WorkPhotos() {
       {viewerOpen && (
         <div
           className={`${styles.viewer} ${
-            isOpening ? styles.viewerOpening : ""
-          } ${isClosing ? styles.viewerClosing : ""}`}
+            isClosing ? styles.viewerClosing : ""
+          } ${isOpening ? styles.viewerOpening : ""}`}
         >
           <div className={styles.imageCounter}>
             {currentIndex + 1} / {images.length}
@@ -362,43 +364,57 @@ export default function WorkPhotos() {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <div
-              className={styles.sliderTrack}
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {images.map((image, index) => {
-                const isCurrent = index === currentIndex;
-                const isTransitioning = isCurrent && (isOpening || isClosing);
+            {isTransitioning && animBounds ? (
+              <div
+                className={styles.animatingWrapper}
+                style={{
+                  top: `${animBounds.top}px`,
+                  left: `${animBounds.left}px`,
+                  width: `${animBounds.width}px`,
+                  height: `${animBounds.height}px`,
+                  borderRadius: animBounds.borderRadius,
+                }}
+              >
+                <img
+                  src={images[currentIndex]}
+                  alt="Transitioning photo"
+                  className={styles.animatingImage}
+                />
+              </div>
+            ) : (
+              <div
+                className={styles.sliderTrack}
+                style={{
+                  transform: `translateX(-${currentIndex * 100}%)`,
+                }}
+              >
+                {images.map((image, index) => {
+                  const isCurrent = index === currentIndex;
 
-                const inlineStyle = isTransitioning
-                  ? animStyle
-                  : isCurrent
-                  ? {
-                      transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
-                      transition: isAnimating
-                        ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
-                        : "none",
-                    }
-                  : {};
-
-                return (
-                  <div key={index} className={styles.slide}>
-                    <img
-                      ref={isCurrent ? imageRef : null}
-                      src={image}
-                      alt={`Work ${index + 1}`}
-                      className={`${styles.viewerImage} ${
-                        isTransitioning ? styles.animatingImage : ""
-                      }`}
-                      draggable={false}
-                      style={inlineStyle}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div key={index} className={styles.slide}>
+                      <img
+                        ref={isCurrent ? imageRef : null}
+                        src={image}
+                        alt={`Work ${index + 1}`}
+                        className={styles.viewerImage}
+                        draggable={false}
+                        style={
+                          isCurrent
+                            ? {
+                                transform: `translate3d(${position.x}px, ${position.y}px, 0px) scale(${scale})`,
+                                transition: isAnimating
+                                  ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+                                  : "none",
+                              }
+                            : {}
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div
