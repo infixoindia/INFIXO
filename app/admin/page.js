@@ -10,6 +10,7 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('profile');
 
   const [profile, setProfile] = useState({
+    id: 1,
     name: '',
     profession: '',
     experience: '',
@@ -40,8 +41,10 @@ export default function AdminPanel() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data: profData } = await supabase.from('worker_profile').select('*').single();
-    if (profData) setProfile(profData);
+    const { data: profData } = await supabase.from('worker_profile').select('*').limit(1);
+    if (profData && profData.length > 0) {
+      setProfile(profData[0]);
+    }
 
     const { data: pData } = await supabase.from('work_photos').select('*').order('id', { ascending: false });
     const { data: vData } = await supabase.from('work_videos').select('*').order('id', { ascending: false });
@@ -64,15 +67,20 @@ export default function AdminPanel() {
 
   const handleProfileSave = async () => {
     setSaving(true);
+    
+    // id ko payload se separate kar diya taaki Supabase identity conflict na kare
+    const { id, ...updateData } = profile;
+
     const { error } = await supabase
       .from('worker_profile')
-      .update(profile)
-      .eq('id', profile.id || 1);
+      .update(updateData)
+      .eq('id', id || 1);
 
     if (error) {
       alert('Error saving profile: ' + error.message);
     } else {
       alert('Profile details updated successfully! 🎉');
+      fetchData();
     }
     setSaving(false);
   };
