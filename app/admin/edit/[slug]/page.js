@@ -2,7 +2,8 @@
 
 import { use, useEffect, useState } from 'react';
 import WorkerMasterProfile from '../../../components/WorkerMasterProfile/WorkerMasterProfile';
-import { supabase } from '../../../../lib/supabase';
+import { supabase } from '../../../lib/supabase';
+
 
 export default function EditWorkerPage({ params }) {
   const { slug } = use(params);
