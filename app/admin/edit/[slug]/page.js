@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import WorkerMasterProfile from '../../../components/WorkerMasterProfile/WorkerMasterProfile';
-import { supabase } from '../../../../lib/supabase';
+import { supabase } from '../../../../lib/supabaseClient';
 
 
 export default function EditWorkerPage({ params }) {
