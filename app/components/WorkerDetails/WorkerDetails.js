@@ -3,12 +3,28 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
+import EditableText from "../components/EditableText/EditableText"; // Apne path ke anusar check karein
 
 export default function WorkerDetails() {
   const [workerOpen, setWorkerOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
-  
+
+  const [details, setDetails] = useState({
+    fullName: "Rahul Sharma",
+    gender: "Male",
+    age: "28 Years",
+    address: "Indore, Madhya Pradesh",
+    languages: "Hindi, English",
+    aboutP1: "Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.",
+    aboutP2: "He pays close attention to every detail and ensures every project is completed with care and a premium finish.",
+    aboutP3: "His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.",
+  });
+
+  const updateDetail = (key, val) => {
+    setDetails((prev) => ({ ...prev, [key]: val }));
+  };
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
@@ -21,6 +37,7 @@ export default function WorkerDetails() {
         <p>Everything about the worker.</p>
       </div>
 
+      {/* Professional Details */}
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <h3>Professional Details</h3>
@@ -29,39 +46,67 @@ export default function WorkerDetails() {
         <div className={styles.detailsBody}>
           <div className={styles.detailRow}>
             <div className={styles.label}>Full Name</div>
-            <div className={styles.value}><span className={styles.detailText}>Rahul Sharma</span></div>
+            <div className={styles.value}>
+              <span className={styles.detailText}>
+                <EditableText value={details.fullName} onSave={(val) => updateDetail("fullName", val)} />
+              </span>
+            </div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Gender</div>
-            <div className={styles.value}><span className={styles.detailText}>Male</span></div>
+            <div className={styles.value}>
+              <span className={styles.detailText}>
+                <EditableText value={details.gender} onSave={(val) => updateDetail("gender", val)} />
+              </span>
+            </div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Age</div>
-            <div className={styles.value}><span className={styles.detailText}>28 Years</span></div>
+            <div className={styles.value}>
+              <span className={styles.detailText}>
+                <EditableText value={details.age} onSave={(val) => updateDetail("age", val)} />
+              </span>
+            </div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Address</div>
-            <div className={styles.value}><span className={styles.detailText}>Indore, Madhya Pradesh</span></div>
+            <div className={styles.value}>
+              <span className={styles.detailText}>
+                <EditableText value={details.address} onSave={(val) => updateDetail("address", val)} />
+              </span>
+            </div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Languages</div>
-            <div className={styles.value}><span className={styles.detailText}>Hindi, English</span></div>
+            <div className={styles.value}>
+              <span className={styles.detailText}>
+                <EditableText value={details.languages} onSave={(val) => updateDetail("languages", val)} />
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* About Me */}
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <h3>About Me</h3>
           <p>A short introduction about the worker.</p>
         </div>
         <div className={styles.aboutBody}>
-          <p>Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.</p>
-          <p>He pays close attention to every detail and ensures every project is completed with care and a premium finish.</p>
-          <p>His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.</p>
+          <p>
+            <EditableText value={details.aboutP1} onSave={(val) => updateDetail("aboutP1", val)} multiline={true} />
+          </p>
+          <p>
+            <EditableText value={details.aboutP2} onSave={(val) => updateDetail("aboutP2", val)} multiline={true} />
+          </p>
+          <p>
+            <EditableText value={details.aboutP3} onSave={(val) => updateDetail("aboutP3", val)} multiline={true} />
+          </p>
         </div>
       </div>
 
+      {/* Verification Details */}
       <div className={styles.card}>
         <div className={styles.verificationHeader}>
           <h3>Infixo Verification</h3>
@@ -70,7 +115,6 @@ export default function WorkerDetails() {
 
         <div className={styles.verificationContent}>
           <div className={styles.verifyList}>
-            
             {/* Worker Verified */}
             <div className={`${styles.verifyBadge} ${styles.green}`} onClick={() => setWorkerOpen(!workerOpen)}>
               <div className={styles.verifyIconOuter}>
@@ -94,7 +138,7 @@ export default function WorkerDetails() {
             <div className={`${styles.verifyInfo} ${workerOpen ? styles.verifyInfoOpen : ""}`}>
               <ul className={styles.verifyPoints}>
                 <li>Identity details have been verified by Infixo.</li>
-                <li>The worker has successfully completed the Infixo verification process. The identity information submitted by the worker has been reviewed and verified before profile approval.</li>
+                <li>The worker has successfully completed the Infixo verification process.</li>
               </ul>
               <Link href="/verification-policy#identity-verified" className={`${styles.moreInfo} ${styles.moreInfoGreen}`}>
                 <span className={styles.morePlus}>+</span>
@@ -125,7 +169,6 @@ export default function WorkerDetails() {
             <div className={`${styles.verifyInfo} ${workOpen ? styles.verifyInfoOpen : ""}`}>
               <ul className={styles.verifyPoints}>
                 <li>Work samples have been reviewed by Infixo.</li>
-                <li>The photos and videos available on this profile have been reviewed to help ensure they represent the worker's submitted work and professional services before profile approval.</li>
               </ul>
               <Link href="/verification-policy#work-verified" className={`${styles.moreInfo} ${styles.moreInfoBlue}`}>
                 <span className={styles.morePlus}>+</span>
@@ -156,14 +199,12 @@ export default function WorkerDetails() {
             <div className={`${styles.verifyInfo} ${addressOpen ? styles.verifyInfoOpen : ""}`}>
               <ul className={styles.verifyPoints}>
                 <li>Address details have been verified by Infixo.</li>
-                <li>The address information submitted during registration has been reviewed and verified as part of the Infixo verification process before profile approval.</li>
               </ul>
               <Link href="/verification-policy#address-verified" className={`${styles.moreInfo} ${styles.moreInfoOrange}`}>
                 <span className={styles.morePlus}>+</span>
                 <span>More Information</span>
               </Link>
             </div>
-
           </div>
         </div>
       </div>
