@@ -4,15 +4,22 @@ import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
 
-export default function WorkerIdentityCard({ worker }) {
+export default function WorkerIdentityCard({ worker = {} }) {
   const {
-    fullName,
-    profession,
-    experience,
-    serviceArea,
-    isVerified,
-    heroSlides, // Pass Array of Objects from worker data
+    fullName = 'Worker Name',
+    profession = 'Profession',
+    experience = 0,
+    serviceArea = [],
+    isVerified = false,
+    heroSlides = [], // Pass Array of Objects from worker data
   } = worker;
+
+  // Safe service area formatting
+  const formattedServiceArea = Array.isArray(serviceArea)
+    ? serviceArea.join(', ')
+    : typeof serviceArea === 'string'
+    ? serviceArea
+    : 'Indore';
 
   return (
     <section className={styles.card}>
@@ -93,7 +100,7 @@ Z"
               </span>
 
               <span className={styles.infoText}>
-                <span className={styles.infoValue}>{serviceArea.join(', ')}</span>
+                <span className={styles.infoValue}>{formattedServiceArea}</span>
                 <span className={styles.infoLabel}>Service Area</span>
               </span>
             </div>
