@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -38,14 +40,14 @@
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid #ECEEF5;
-  box-shadow: 0 8px 22px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
   margin: 22px 0 36px;
   width: 100%;
 }
 
 .cardHeader {
   padding: 18px;
-  background: linear-gradient(180deg,#F8FBFF 0%,#EEF5FF 100%);
+  background: linear-gradient(180deg, #F8FBFF 0%, #EEF5FF 100%);
   border-bottom: 1px solid #E5E7EB;
 }
 
@@ -76,7 +78,7 @@
   border-radius: 22px;
   overflow: hidden;
   border: 1px solid #ECEEF5;
-  box-shadow: 0 6px 18px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.03);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.03);
   width: 100%;
 }
 
@@ -155,6 +157,10 @@
   color: #6B7280;
 }
 
+.verificationContent {
+  width: 100%;
+}
+
 .verifyList {
   display: flex;
   flex-direction: column;
@@ -172,9 +178,9 @@
   justify-content: flex-start;
   padding: 10px 20px 10px 12px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,250,253,0.95) 100%);
-  border: 1px solid rgba(255,255,255,0.6);
-  box-shadow: 0 10px 22px rgba(17,24,39,0.10), 0 2px 6px rgba(17,24,39,0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 253, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 22px rgba(17, 24, 39, 0.10), 0 2px 6px rgba(17, 24, 39, 0.06);
   cursor: pointer;
 }
 
@@ -183,6 +189,12 @@
   height: 22px;
   background: #E5E7EB;
   flex-shrink: 0;
+}
+
+.verifyIconOuter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .verifyIcon {
@@ -217,17 +229,26 @@
 .green .verifyIcon {
   background: linear-gradient(135deg, #22C55E, #16A34A);
 }
-.green span { color: #16A34A; }
+
+.green span {
+  color: #16A34A;
+}
 
 .blue .verifyIcon {
   background: linear-gradient(135deg, #3B82F6, #002D97);
 }
-.blue span { color: #002D97; }
+
+.blue span {
+  color: #002D97;
+}
 
 .orange .verifyIcon {
   background: linear-gradient(135deg, #FDBB70, #FD7901);
 }
-.orange span { color: #FD7901; }
+
+.orange span {
+  color: #FD7901;
+}
 
 .verifyArrow {
   display: flex;
@@ -237,7 +258,12 @@
   height: 20px;
   color: #6B7280;
   flex-shrink: 0;
-  transition: transform .25s ease;
+  transition: transform 0.25s ease;
+}
+
+.arrowIcon {
+  width: 16px;
+  height: 16px;
 }
 
 .arrowOpen {
@@ -252,7 +278,7 @@
   background: #F5F7FA;
   border-radius: 18px;
   margin-top: 0;
-  transition: max-height .45s ease, opacity .30s ease, padding .35s ease, margin-top .35s ease;
+  transition: max-height 0.45s ease, opacity 0.30s ease, padding 0.35s ease, margin-top 0.35s ease;
 }
 
 .verifyInfoOpen {
@@ -278,6 +304,22 @@
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
+}
+
+.morePlus {
+  font-size: 16px;
+}
+
+.moreInfoGreen {
+  color: #16A34A;
+}
+
+.moreInfoBlue {
+  color: #002D97;
+}
+
+.moreInfoOrange {
+  color: #FD7901;
 }
 
 .backLink {
