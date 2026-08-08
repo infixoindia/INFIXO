@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
-import EditableText from "../components/EditableText/EditableText"; // Apne path ke anusar check karein
+import EditableText from "@/app/components/EditableText/EditableText";
+
 
 export default function WorkerDetails() {
   const [workerOpen, setWorkerOpen] = useState(false);
