@@ -1,6 +1,10 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .card {
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg, 24px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0,0,0,0.08));
   overflow: hidden;
   width: 100%;
   max-width: 340px;
@@ -20,21 +24,6 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-}
-
-.pattern::after {
-  content: '';
-  position: absolute;
-  right: -45px;
-  bottom: 30px;
-  width: 170px;
-  height: 170px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.20), transparent 70%);
-}
-
-.photo {
-  display: none;
 }
 
 .whitePanel {
@@ -67,21 +56,24 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 100%;
 }
 
 .name {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.15;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #111827);
+  width: 100%;
 }
 
 .profession {
   margin-top: 8px;
   font-size: 1.28rem;
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary, #2563eb);
   letter-spacing: 0.2px;
+  width: 100%;
 }
 
 .divider {
@@ -104,7 +96,7 @@
 
 .divider span {
   font-size: 15px;
-  color: var(--color-primary);
+  color: var(--color-primary, #2563eb);
   line-height: 1;
 }
 
@@ -112,12 +104,12 @@
   display: flex;
   align-items: center;
   width: 100%;
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-3) var(--space-3);
-  gap: var(--space-2);
+  background: var(--color-card, #FFFFFF);
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0,0,0,0.04));
+  padding: 12px;
+  gap: 8px;
 }
 
 .infoItem {
@@ -142,7 +134,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-primary);
+  color: var(--color-primary, #2563eb);
   flex-shrink: 0;
 }
 
@@ -155,20 +147,21 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 100%;
 }
 
 .infoValue {
   font-size: .98rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #111827);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .infoLabel {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
+  font-size: 12px;
+  color: var(--color-text-secondary, #6B7280);
   white-space: nowrap;
 }
 
