@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./WorkDetails.module.css";
-import EditableText from "../../EditableText/EditableText";
+import EditableText from "../EditableText/EditableText";
 
 
 
