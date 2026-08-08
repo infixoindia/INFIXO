@@ -1,7 +1,8 @@
 'use client';
 
 import WorkerMasterProfile from '../../components/WorkerMasterProfile/WorkerMasterProfile';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../lib/supabase';
+
 import { useRouter } from 'next/navigation';
 
 export default function CreateWorkerPage() {
