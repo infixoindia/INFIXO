@@ -1,20 +1,21 @@
 'use client';
 
+export const dynamic = 'force-dynamic'; // Prerendering bypass karne ke liye
+
 import WorkerMasterProfile from '@/app/components/WorkerMasterProfile/WorkerMasterProfile';
-import { supabase } from '@/lib/supabaseClient'; // Sahi file name
+import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
 export default function CreateWorkerPage() {
   const router = useRouter();
 
-  // Sabhi required initial properties baseline setup karo
   const emptyWorker = {
     full_name: '',
     profession: '',
     experience: '',
     service_area: [],
     working_shift: ['Day', 'Night'],
-    image: '', // Undefined image error fix karne ke liye
+    image: '',
     images: [],
     skills: [],
     portfolio: [],
