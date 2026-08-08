@@ -10,33 +10,53 @@ import { supabase } from "../lib/supabaseClient";
 export default function HomePage() {
   const [workerData, setWorkerData] = useState(dummyWorker);
 
-  // 1. Data Fetch karne ka function
-  async function getProfile() {
-    const { data } = await supabase.from('worker_profile').select('*').limit(1);
-    if (data && data.length > 0) {
-      setWorkerData(prev => ({ ...prev, ...data[0] }));
+  // Database se live profile fetch karne ka function
+  async function fetchWorkerProfile() {
+    try {
+      const { data, error } = await supabase
+        .from('worker_profile')
+        .select('*')
+        .limit(1);
+
+      if (data && data.length > 0) {
+        const dbData = data[0];
+        setWorkerData((prev) => ({
+          ...prev,
+          name: dbData.name || prev.name,
+          profession: dbData.profession || prev.profession,
+          experience: dbData.experience || prev.experience,
+          serviceArea: dbData.service_area || prev.serviceArea,
+          gender: dbData.gender || prev.gender,
+          age: dbData.age || prev.age,
+          languages: dbData.languages || prev.languages,
+          primarySkill: dbData.primary_skill || prev.primarySkill,
+          workingHours: dbData.working_hours || prev.workingHours,
+          workingShift: dbData.working_shift || prev.workingShift,
+          aboutMe: dbData.about_me || prev.aboutMe,
+          profilePic: dbData.profile_pic || prev.profilePic
+        }));
+      }
+    } catch (err) {
+      console.error("Error fetching worker profile:", err);
     }
   }
 
   useEffect(() => {
-    // Pehle baar data load karo
-    getProfile();
+    // 1. Initial Data Fetch
+    fetchWorkerProfile();
 
-    // 2. Realtime Listener: Jaise hi DB change hoga, ye trigger hoga
+    // 2. Realtime Listener: Database mein change aate hi UI update kar dega
     const channel = supabase
-      .channel('schema-db-changes')
+      .channel('realtime_worker_profile')
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'worker_profile' },
-        (payload) => {
-          console.log('Change detected!', payload);
-          // New data update karo
-          setWorkerData(prev => ({ ...prev, ...payload.new }));
+        { event: '*', schema: 'public', table: 'worker_profile' },
+        () => {
+          fetchWorkerProfile();
         }
       )
       .subscribe();
 
-    // Cleanup: Memory bachane ke liye
     return () => {
       supabase.removeChannel(channel);
     };
@@ -45,10 +65,12 @@ export default function HomePage() {
   return (
     <main>
       <Header />
+
       <div style={{ padding: "2rem 1rem 0 1rem" }}>
         <WorkerIdentityCard worker={workerData} />
-        <NavigationTabs />
+        <NavigationTabs worker={workerData} />
       </div>
+
       <Footer />
     </main>
   );
