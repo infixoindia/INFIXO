@@ -4,7 +4,7 @@ import { useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
-import EditableText from "@/app/components/EditableText/EditableText";
+import EditableText from "../../EditableText/EditableText";
 
 
 export default function WorkerIdentityCard({ worker = {} }) {
