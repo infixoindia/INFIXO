@@ -1,10 +1,35 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from "next/link";
+import { supabase } from '@/lib/supabaseClient';
 import styles from './NavigationTabs.module.css';
 
-export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
+export default function NavigationTabs() {
+  const [photoCount, setPhotoCount] = useState(0);
+  const [videoCount, setVideoCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCounts() {
+      // Work Photos count
+      const { count: photos } = await supabase
+        .from('work_photos')
+        .select('*', { count: 'exact', head: true });
+
+      // Work Videos count
+      const { count: videos } = await supabase
+        .from('work_videos')
+        .select('*', { count: 'exact', head: true });
+
+      if (photos !== null) setPhotoCount(photos);
+      if (videos !== null) setVideoCount(videos);
+    }
+
+    fetchCounts();
+  }, []);
+
   return (
     <div className={styles.grid}>
-
       {/* Work Details */}
       <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
         <div className={styles.glassShine} />
@@ -80,7 +105,6 @@ export default function NavigationTabs({ photoCount = 15, videoCount = 8 }) {
           </svg>
         </div>
       </Link>
-
     </div>
   );
 }
