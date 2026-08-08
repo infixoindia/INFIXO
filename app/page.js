@@ -8,21 +8,23 @@ import Footer from "./components/Footer/Footer";
 import dummyWorker from "./data/dummyWorker";
 import { createClient } from "@supabase/supabase-js";
 
-// Safe Inline Supabase Client Init (Taaki import path fail hone se page na phate)
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) 
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
-  : null;
-
 export default function HomePage() {
   const [workerData, setWorkerData] = useState(dummyWorker);
 
   useEffect(() => {
     let channel = null;
 
-    async function loadAndSubscribe() {
-      if (!supabase) return;
+    async function loadDataAndSubscribe() {
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      // Agar Vercel Env Vars miss hain ya invalid hain, toh crash hone se bachaye
+      if (!url || !key || !url.startsWith("http")) {
+        console.warn("Supabase credentials missing or invalid. Showing default UI.");
+        return;
+      }
+
+      const supabase = createClient(url, key);
 
       try {
         // 1. Initial Fetch
@@ -52,7 +54,7 @@ export default function HomePage() {
 
         // 2. Realtime Listener
         channel = supabase
-          .channel('realtime_profile')
+          .channel('realtime_profile_changes')
           .on(
             'postgres_changes',
             { event: '*', schema: 'public', table: 'worker_profile' },
@@ -78,17 +80,16 @@ export default function HomePage() {
             }
           )
           .subscribe();
+
       } catch (err) {
-        console.error("Supabase load error:", err);
+        console.error("Error loading Supabase data:", err);
       }
     }
 
-    loadAndSubscribe();
+    loadDataAndSubscribe();
 
     return () => {
-      if (channel && supabase) {
-        supabase.removeChannel(channel);
-      }
+      // Cleanup listener if created
     };
   }, []);
 
