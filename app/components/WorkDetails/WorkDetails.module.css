@@ -1,510 +1,222 @@
-.wrapper{
-  margin-top:12px;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-.header{
-  text-align:center;
-  margin-bottom:14px;
+.wrapper {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-.header h2{
-  margin:0;
-  font-size:30px;
-  font-weight:800;
-  color:#111827;
-  line-height:1.1;
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 14px;
 }
 
-.header p{
-  margin-top:4px;
-  margin-bottom:0;
-  font-size:15px;
-  color:#6B7280;
-  line-height:1.3;
+.header h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.1;
 }
 
-.card{
-  display:flex;
-  flex-direction:column;
-  gap:22px;
-  margin-top:22px;
+.header p {
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-size: 15px;
+  color: #6B7280;
+  line-height: 1.3;
 }
 
-.row{
-  display:grid;
-  grid-template-columns:95px 1fr;
-
-  background:#FFFFFF;
-
-  border-radius:24px;
-
-  overflow:hidden;
-
-  border:1px solid #ECEEF5;
-
-  box-shadow:
-      0 8px 22px rgba(0,0,0,.06),
-      0 2px 8px rgba(0,0,0,.04);
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 22px;
+  width: 100%;
 }
 
-.label{
-  background:#F4F7FD;
-
-  padding:12px 8px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  text-align:center;
-
-  font-size:12px;
-  font-weight:700;
-
-  color:#111827;
-
-  line-height:1.1;
+.row {
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  background: #FFFFFF;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #ECEEF5;
+  box-shadow: 0 8px 22px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+  width: 100%;
 }
 
-.value{
-  padding:12px;
-
-  display:flex;
-  flex-wrap:wrap;
-
-  gap:8px;
-
-  align-items:center;
-  justify-content:flex-start;
+.label {
+  background: #F4F7FD;
+  padding: 12px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.1;
 }
 
-.primaryBadge{
+.value {
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.primaryBadge {
   position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-
   padding: 7px 14px;
-
   border-radius: 12px;
-
-  /* Naya glossy color aur background match karke */
   background: linear-gradient(180deg, #FFF9F4 0%, #FFE9DA 100%);
   border: 1px solid #FFC9A8;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 3px 8px rgba(249, 115, 22, 0.12);
-
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 3px 8px rgba(249, 115, 22, 0.12);
   color: #EA580C;
+  font-size: 13px;
+  font-weight: 700;
+  max-width: 100%;
+}
 
+.serviceChip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #EEF5FF 100%);
+  border: 1px solid #C9DEFF;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, .12), inset 0 1px 1px rgba(255, 255, 255, .9);
+  color: #1D4ED8;
+  font-size: 11px;
+  font-weight: 600;
+  max-width: 100%;
+}
+
+.serviceText {
+  white-space: normal;
+  line-height: 1;
+  word-break: break-word;
+}
+
+.experienceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 11px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #C9F3F3 0%, #A3E8EA 100%);
+  border: 1px solid #6FD3D6;
+  color: #064E52;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+  max-width: 100%;
+}
+
+.workingHoursBadge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  gap: 9px;
+  padding: 7px 11px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #E4F8E7 0%, #D5F2DA 100%);
+  border: 1px solid #CBEFCF;
+  color: #19B54A;
+  max-width: 100%;
+}
+
+.workingHoursText {
+  color: #15803D;
   font-size: 13px;
   font-weight: 700;
 }
 
-/* Glossy highlight effect on top-right */
-.primaryBadge::before {
-  content: '';
+.serviceAreaBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #FFF9F5 0%, #F3E4D5 100%);
+  border: 1px solid #D2AE86;
+  color: #5C3A21;
+  font-size: 13px;
+  font-weight: 700;
+  max-width: 100%;
+}
+
+.whyBadge {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #EEF5FF 0%, #DCEBFF 100%);
+  border: 1px solid #BFD6FF;
+  color: #002D97;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.whyCard {
+  background: #FFFFFF;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #ECEEF5;
+  margin-top: 4px;
+  margin-bottom: 36px;
+  width: 100%;
+}
+
+.whyHeader {
+  padding: 18px 18px 14px;
+  background: linear-gradient(180deg, #F8FBFF 0%, #EEF5FF 100%);
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.whyBody {
+  padding: 16px 16px 30px;
+}
+
+.whyList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.backLink {
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 50%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
-  transform: rotate(25deg);
-  pointer-events: none;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  text-decoration: none;
 }
 
-.primaryBadge span{
-  position:relative;
-  z-index:1;
-  line-height:1;
-}
-
-.skillIcon{
-  width:18px;
-  height:18px;
-  flex-shrink:0;
-  position:relative;
-  z-index:1;
-}
-
-.serviceChip{
-  display:flex;
-  align-items:center;
-  gap:5px;
-
-  padding:4px 10px;
-
-  border-radius:999px;
-
-  background:linear-gradient(180deg,#FFFFFF 0%,#EEF5FF 100%);
-  border:1px solid #C9DEFF;
-
-  box-shadow:
-    0 2px 6px rgba(29,78,216,.12),
-    inset 0 1px 1px rgba(255,255,255,.9);
-
-  color:#1D4ED8;
-
-  font-size:9px;
-  font-weight:600;
-
-  width:fit-content;
-}
-
-.tick{
-  width:18px;
-  height:18px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border-radius:50%;
-
-  color:#fff;
-  font-size:10px;
-  font-weight:700;
-
-  background:
-    radial-gradient(circle at 30% 30%, #5EA3FF 0%, #3B82F6 35%, #1D4ED8 100%);
-
-  border:1px solid #2E6BFF;
-
-  box-shadow:
-    inset 0 2px 2px rgba(255,255,255,.45),
-    inset 0 -2px 3px rgba(0,0,0,.12),
-    0 3px 8px rgba(37,99,235,.35);
-
-  flex-shrink:0;
-}
-
-.serviceText{
-    white-space: nowrap;
-    line-height: 1;
-}
-
-.experienceBadge{
-  display:inline-flex;
-  align-items:center;
-  gap:9px;
-
-  padding:7px 11px;
-
-  border-radius:16px;
-
-  background:linear-gradient(180deg,#C9F3F3 0%, #A3E8EA 100%);
-  border:1px solid #6FD3D6;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.5),
-    0 4px 10px rgba(0,120,140,.22);
-
-  color:#064E52;
-
-  font-size:11px;
-  font-weight:700;
-  line-height:1.15;
-  width:fit-content;
-}
-
-.expIcon{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:22px;
-  height:22px;
-  flex-shrink:0;
-}
-
-.expIcon svg{
-  width:100%;
-  height:100%;
-}
-
-.workingHoursBadge{
-  display:inline-flex;
-  align-items:center;
-  line-height: 1;
-  gap:9px;
-
-  padding:7px 11px;
-
-  border-radius:16px;
-
-  background:linear-gradient(
-180deg,
-#E4F8E7 0%,
-#D5F2DA 100%
-);
-
-  border:1px solid #CBEFCF;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.5),
-    0 4px 10px rgba(0,120,140,.22);
-
-  color:#19B54A;
-}
-
-.workingHoursIcon{
-  width:22px;
-  height:22px;
-  color:#15803D;
-}
-
-.workingHoursText{
-  color:#15803D;
-  font-size:13px;
-  font-weight:700;
-}
-
-.shiftBadges{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.dayBadge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-
-  padding:7px 12px;
-
-  border-radius:16px;
-
-  background:linear-gradient(180deg,#FFFDF8 0%,#FFF2D9 100%);
-  border:1px solid #FFD98A;
-
-  box-shadow:
-  inset 0 1px 1px rgba(255,255,255,.18),
-  0 3px 8px rgba(0,0,0,.10);
-  
-  color:#D97706;
-
-  font-size:13px;
-  font-weight:700;
-}
-
-.nightBadge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-
-  padding:7px 12px;
-
-  border-radius:16px;
-
-background: linear-gradient(
- 180deg,
- #6D90BE 0%,
- #4E73A5 55%,
- #3A5E90 100%
-);
-  
-  border:1px solid #7E9CC5;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.18),
-    0 5px 14px rgba(45,85,145,.28);
-
-  color:#FFFFFF;
-
-  font-size:13px;
-  font-weight:700;
-}
-
-.moonIcon{
-  width:21px;
-  height:21px;
-  display:block;
-  flex-shrink:0;
-}
-
-.sunIcon{
-  width:21px;
-  height:21px;
-  display:block;
-  flex-shrink:0;
-}
-
-.serviceAreaBadge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-
-  padding:7px 12px;
-
-  border-radius:16px;
-
-  background:linear-gradient(
-    180deg,
-    #FFF9F5 0%,
-    #F3E4D5 100%
-  );
-
-  border:1px solid #D2AE86;
-
-  box-shadow:
-  inset 0 1px 1px rgba(255,255,255,.45),
-  0 5px 12px rgba(88,55,25,.16);
-
-  color:#5C3A21;
-
-  font-size:13px;
-  font-weight:700;
-
-  width:fit-content;
-}
-
-.locationIcon{
-  width:22px;
-  height:22px;
-  display:block;
-  flex-shrink:0;
-}
-
-.whyBadge{
-  width:fit-content;
-  max-width:82%;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:flex-start;
-
-  padding:10px 16px;
-
-  border-radius:16px;
-
-  background:linear-gradient(
-  180deg,
-  #EEF5FF 0%,
-  #DCEBFF 100%
-);
-
-border:1px solid #BFD6FF;
-
-box-shadow:
-  inset 0 1px 1px rgba(255,255,255,.6),
-  0 4px 10px rgba(0,45,151,.12);
-
-color:#002D97;
-
-  font-size:12px;
-  font-weight:700;
-
-  line-height:1.2;
-
-  text-align:left;
-
-  min-height:44px;
-}
-
-.whySection{
-  width:100%;
-
-  display:flex;
-  flex-direction:column;
-
-  gap:14px;
-
-  margin-top:4px;
-}
-
-.whyTitle{
-  font-size:16px;
-  font-weight:700;
-  color:#1F2937;
-  margin-bottom:8px;
-}
-
-.whySubtitle{
-  font-size:12px;
-  font-weight:500;
-  color: #6B7280;
-  margin:0;
-}
-
-.whyList{
-  display:flex;
-  
-  flex-direction:column;
-  
-  gap:10px;
-  
-  width:100%;
-
-  align-items:flex-start;
-}
-
-.whyCard{
-  background:#FFFFFF;
-
-  border-radius:24px;
-
-  overflow:hidden;
-
-  border:1px solid #ECEEF5;
-
-  box-shadow:
-    0 8px 22px rgba(0,0,0,.06),
-    0 2px 8px rgba(0,0,0,.04);
-
-  margin-top:4px;
-  margin-bottom:36px;
-}
-
-.whyHeader{
-  padding:18px 18px 14px;
-
-  background:linear-gradient(
-    180deg,
-    #F8FBFF 0%,
-    #EEF5FF 100%
-  );
-
-  border-bottom:1px solid #E5E7EB;
-}
-
-.whyBody{
-  padding:16px 16px 30px;
-}
-
-.header{
-  position:relative;
-  text-align:center;
-  margin-bottom:14px;
-}
-
-.backLink{
-  position:absolute;
-  left:0;
-  top:50%;
-  transform:translateY(-50%);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  width:36px;
-  height:36px;
-
-  text-decoration:none;
-}
-
-.backArrow{
-  width:24px;
-  height:24px;
-
-  color:#111827;
-
-  transition:.2s;
-}
-
-.backLink:hover .backArrow{
-  color:#F97316;
-  transform:translateX(-2px);
+.backArrow {
+  width: 24px;
+  height: 24px;
+  color: #111827;
 }
