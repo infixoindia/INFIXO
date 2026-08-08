@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
-import EditableText from "@/app/components/EditableText/EditableText";
+import EditableText from "../../EditableText/EditableText";
+
 
 
 export default function WorkerDetails() {
