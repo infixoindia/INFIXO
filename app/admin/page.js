@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,7 +36,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      {/* HEADER SECTION */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '24px' }}>Worker Management Dashboard</h1>
@@ -61,7 +60,6 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      {/* SEARCH BAR */}
       <div style={{ marginBottom: '1.5rem' }}>
         <input
           type="text"
@@ -79,7 +77,6 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      {/* WORKERS TABLE */}
       <div style={{ border: '1px solid #e2e8f0', borderRadius: '8px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
