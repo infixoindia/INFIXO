@@ -10,48 +10,45 @@ import { supabase } from "../lib/supabaseClient";
 export default function HomePage() {
   const [workerData, setWorkerData] = useState(dummyWorker);
 
-  useEffect(() => {
-    async function getProfile() {
-      try {
-        const { data, error } = await supabase
-          .from('worker_profile')
-          .select('*')
-          .limit(1);
-
-        if (data && data.length > 0) {
-          const dbData = data[0];
-          setWorkerData({
-            ...dummyWorker,
-            name: dbData.name || dummyWorker.name,
-            profession: dbData.profession || dummyWorker.profession,
-            experience: dbData.experience || dummyWorker.experience,
-            serviceArea: dbData.service_area || dummyWorker.serviceArea,
-            gender: dbData.gender || dummyWorker.gender,
-            age: dbData.age || dummyWorker.age,
-            languages: dbData.languages || dummyWorker.languages,
-            primarySkill: dbData.primary_skill || dummyWorker.primarySkill,
-            workingHours: dbWorker.working_hours || dummyWorker.workingHours,
-            workingShift: dbWorker.working_shift || dummyWorker.workingShift,
-            aboutMe: dbData.about_me || dummyWorker.aboutMe,
-          });
-        }
-      } catch (err) {
-        console.log("Supabase Fetch Error:", err);
-      }
+  // 1. Data Fetch karne ka function
+  async function getProfile() {
+    const { data } = await supabase.from('worker_profile').select('*').limit(1);
+    if (data && data.length > 0) {
+      setWorkerData(prev => ({ ...prev, ...data[0] }));
     }
+  }
 
+  useEffect(() => {
+    // Pehle baar data load karo
     getProfile();
+
+    // 2. Realtime Listener: Jaise hi DB change hoga, ye trigger hoga
+    const channel = supabase
+      .channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'worker_profile' },
+        (payload) => {
+          console.log('Change detected!', payload);
+          // New data update karo
+          setWorkerData(prev => ({ ...prev, ...payload.new }));
+        }
+      )
+      .subscribe();
+
+    // Cleanup: Memory bachane ke liye
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
     <main>
       <Header />
-
       <div style={{ padding: "2rem 1rem 0 1rem" }}>
         <WorkerIdentityCard worker={workerData} />
         <NavigationTabs />
       </div>
-
       <Footer />
     </main>
   );
