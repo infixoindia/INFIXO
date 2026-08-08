@@ -1,13 +1,20 @@
 import WorkerMasterProfile from '@/app/components/WorkerMasterProfile/WorkerMasterProfile';
-import dummyWorker from '@/app/data/dummyWorker'; // Apne dummy data file ka path check kar lena
+import { supabase } from '@/lib/supabase';
+import { notFound } from 'next/navigation';
 
-export default function PublicWorkerProfilePage({ params }) {
-  // Temporary initial data (Step 4 me Supabase fetch connect karenge)
-  const workerData = {
-    ...dummyWorker,
-    full_name: params.slug.replace(/-/g, ' '),
-    slug: params.slug,
-  };
+export default async function PublicWorkerProfilePage({ params }) {
+  const { slug } = await params;
 
-  return <WorkerMasterProfile initialWorkerData={workerData} mode="preview" />;
+  // Supabase se worker fetch karo
+  const { data: worker, error } = await supabase
+    .from('workers')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  if (error || !worker) {
+    notFound(); // Agar database me worker na mile toh 404
+  }
+
+  return <WorkerMasterProfile initialWorkerData={worker} mode="preview" />;
 }
