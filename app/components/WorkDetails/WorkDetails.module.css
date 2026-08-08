@@ -1,9 +1,3 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 .wrapper {
   margin-top: 12px;
   width: 100%;
