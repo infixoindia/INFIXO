@@ -4,7 +4,8 @@ import { useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
-import EditableText from '../EditableText/EditableText'; // Path update karein
+import EditableText from "@/app/components/EditableText/EditableText";
+
 
 export default function WorkerIdentityCard({ worker = {} }) {
   const [profile, setProfile] = useState({
