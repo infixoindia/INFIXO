@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -46,7 +48,7 @@
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid #ECEEF5;
-  box-shadow: 0 8px 22px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
   width: 100%;
 }
 
@@ -91,6 +93,12 @@
   max-width: 100%;
 }
 
+.skillIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 .serviceChip {
   display: flex;
   align-items: center;
@@ -99,11 +107,16 @@
   border-radius: 999px;
   background: linear-gradient(180deg, #FFFFFF 0%, #EEF5FF 100%);
   border: 1px solid #C9DEFF;
-  box-shadow: 0 2px 6px rgba(29, 78, 216, .12), inset 0 1px 1px rgba(255, 255, 255, .9);
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.9);
   color: #1D4ED8;
   font-size: 11px;
   font-weight: 600;
   max-width: 100%;
+}
+
+.tick {
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .serviceText {
@@ -138,6 +151,12 @@
   border: 1px solid #CBEFCF;
   color: #19B54A;
   max-width: 100%;
+}
+
+.workingHoursIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .workingHoursText {
@@ -189,6 +208,18 @@
   padding: 18px 18px 14px;
   background: linear-gradient(180deg, #F8FBFF 0%, #EEF5FF 100%);
   border-bottom: 1px solid #E5E7EB;
+}
+
+.whyTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.whySubtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6B7280;
 }
 
 .whyBody {
