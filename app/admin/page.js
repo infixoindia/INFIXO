@@ -2,10 +2,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = (url && key) ? createClient(url, key) : null;
-
 export default function AdminPanel() {
   const [profile, setProfile] = useState({
     name: '',
@@ -24,13 +20,27 @@ export default function AdminPanel() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  // 1. Existing Profile Fetch Karo
+  // Safe client getter function (Taaki Top-Level execution crash na kare)
+  const getSupabaseClient = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!url || !key || !url.startsWith("http")) return null;
+    return createClient(url, key);
+  };
+
+  // 1. Existing Profile Fetch
   useEffect(() => {
     async function loadProfile() {
+      const supabase = getSupabaseClient();
       if (!supabase) return;
-      const { data } = await supabase.from('worker_profile').select('*').limit(1);
-      if (data && data.length > 0) {
-        setProfile(data[0]);
+
+      try {
+        const { data } = await supabase.from('worker_profile').select('*').limit(1);
+        if (data && data.length > 0) {
+          setProfile(data[0]);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
       }
     }
     loadProfile();
@@ -40,28 +50,34 @@ export default function AdminPanel() {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  // 2. Admin se Save Button Dabane par Update Hoga
+  // 2. Admin Save Handler
   const handleSave = async (e) => {
     e.preventDefault();
+    const supabase = getSupabaseClient();
+
     if (!supabase) {
-      alert("Supabase keys missing!");
+      alert("Supabase Credentials Missing in Vercel!");
       return;
     }
 
     setSaving(true);
     setMessage('');
 
-    const { error } = await supabase
-      .from('worker_profile')
-      .update(profile)
-      .eq('id', profile.id || 1);
+    try {
+      const { error } = await supabase
+        .from('worker_profile')
+        .update(profile)
+        .eq('id', profile.id || 1);
 
-    setSaving(false);
-
-    if (error) {
-      setMessage('❌ Failed to save changes: ' + error.message);
-    } else {
-      setMessage('✅ Profile Updated Successfully! Live website instantly check karo.');
+      if (error) {
+        setMessage('❌ Failed to save: ' + error.message);
+      } else {
+        setMessage('✅ Profile Updated Successfully!');
+      }
+    } catch (err) {
+      setMessage('❌ Error: ' + err.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -69,7 +85,11 @@ export default function AdminPanel() {
     <div style={{ maxWidth: '600px', margin: '30px auto', padding: '20px', fontFamily: 'sans-serif', background: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
       <h1 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '20px', textAlign: 'center' }}>⚙️ Admin Panel - Edit Profile</h1>
 
-      {message && <div style={{ padding: '12px', marginBottom: '16px', borderRadius: '8px', background: message.includes('✅') ? '#dcfce7' : '#fee2e2', color: message.includes('✅') ? '#166534' : '#991b1b', fontSize: '14px' }}>{message}</div>}
+      {message && (
+        <div style={{ padding: '12px', marginBottom: '16px', borderRadius: '8px', background: message.includes('✅') ? '#dcfce7' : '#fee2e2', color: message.includes('✅') ? '#166534' : '#991b1b', fontSize: '14px' }}>
+          {message}
+        </div>
+      )}
 
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div>
