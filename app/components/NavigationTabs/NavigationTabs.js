@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from "next/link";
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '@/lib/supabaseClient';
 import styles from './NavigationTabs.module.css';
 
 export default function NavigationTabs() {
@@ -11,18 +11,22 @@ export default function NavigationTabs() {
 
   useEffect(() => {
     async function fetchCounts() {
-      // Work Photos count
-      const { count: photos } = await supabase
-        .from('work_photos')
-        .select('*', { count: 'exact', head: true });
+      try {
+        // Work Photos count
+        const { count: photos } = await supabase
+          .from('work_photos')
+          .select('*', { count: 'exact', head: true });
 
-      // Work Videos count
-      const { count: videos } = await supabase
-        .from('work_videos')
-        .select('*', { count: 'exact', head: true });
+        // Work Videos count
+        const { count: videos } = await supabase
+          .from('work_videos')
+          .select('*', { count: 'exact', head: true });
 
-      if (photos !== null) setPhotoCount(photos);
-      if (videos !== null) setVideoCount(videos);
+        if (photos !== null) setPhotoCount(photos);
+        if (videos !== null) setVideoCount(videos);
+      } catch (err) {
+        console.error('Error fetching counts:', err);
+      }
     }
 
     fetchCounts();
