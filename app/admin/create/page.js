@@ -1,8 +1,12 @@
 'use client';
 
 import WorkerMasterProfile from '@/app/components/WorkerMasterProfile/WorkerMasterProfile';
+import { supabase } from '../../../lib/supabase';
+import { useRouter } from 'next/navigation';
 
 export default function CreateWorkerPage() {
+  const router = useRouter();
+
   const emptyWorker = {
     full_name: '',
     profession: '',
@@ -11,10 +15,24 @@ export default function CreateWorkerPage() {
     working_shift: ['Day', 'Night'],
   };
 
-  const handleSave = (newData) => {
-    console.log('Creating new worker:', newData);
-    const newSlug = newData.fullName ? newData.fullName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') : 'new-worker';
-    alert(`New Worker Created! Unique URL generated: /w/${newSlug}`);
+  const handleSave = async (newData) => {
+    const generatedSlug = newData.full_name
+      ? newData.full_name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')
+      : `worker-${Date.now()}`;
+
+    const payload = {
+      ...newData,
+      slug: generatedSlug,
+    };
+
+    const { error } = await supabase.from('workers').insert([payload]);
+
+    if (error) {
+      alert('Error creating worker: ' + error.message);
+    } else {
+      alert(`New Worker Created! URL: /w/${generatedSlug}`);
+      router.push('/admin');
+    }
   };
 
   return (
