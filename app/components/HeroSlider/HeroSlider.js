@@ -15,16 +15,22 @@ const DEFAULT_SLIDES = [
 ];
 
 export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
-  const originalSlides = slides.map((slide) => {
+  // Safe filtering: Array check + filter null/undefined items
+  const safeSlides = Array.isArray(slides) && slides.length > 0 
+    ? slides.filter(Boolean) 
+    : DEFAULT_SLIDES;
+
+  const originalSlides = safeSlides.map((slide) => {
+    if (!slide) return { image: '/images/worker-1.avif' };
     if (typeof slide === 'string') return { image: slide };
-    return { image: slide.image || slide.url };
+    return { image: slide.image || slide.url || '/images/worker-1.avif' };
   });
 
   const totalOriginal = originalSlides.length;
 
   // Infinite loop cloned array: [Last, ...Originals, First]
   const extendedSlides = [
-    originalSlides[totalOriginal - 1],
+    originalSlides[totalOriginal - 1] || originalSlides[0],
     ...originalSlides,
     originalSlides[0],
   ];
@@ -134,7 +140,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
           {extendedSlides.map((slide, index) => (
             <div key={index} className={styles.slide}>
               <img
-                src={slide.image}
+                src={slide?.image || '/images/worker-1.avif'}
                 alt={`${workerName} image ${index}`}
                 className={styles.slideImage}
                 loading={index === 1 ? 'eager' : 'lazy'}
