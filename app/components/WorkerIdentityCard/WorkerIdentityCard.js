@@ -49,7 +49,7 @@ Z"
           <h1 className={styles.name}>{fullName}</h1>
           <p className={styles.profession}>{profession}</p>
           <div className={styles.divider}>
-            <span>â–¼</span>
+            <span aria-hidden="true">&#9660;</span>
           </div>
 
           <div className={styles.infoBox}>
