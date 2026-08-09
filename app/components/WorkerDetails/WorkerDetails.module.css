@@ -194,15 +194,15 @@
   position:relative;
 }
 
-.aboutBody p::before{
-  content:"â€¢";
-
-  position:absolute;
-  left:0;
-
-  color:#111827;
-  font-weight:700;
+/* WorkerDetails.module.css */
+.aboutBody p::before {
+  content: "\2022";
+  position: absolute;
+  left: 0;
+  color: #111827;
+  font-weight: 700;
 }
+
 
 .aboutBody p:last-child{
   margin-bottom:0;
