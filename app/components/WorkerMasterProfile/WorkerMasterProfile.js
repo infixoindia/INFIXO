@@ -20,24 +20,24 @@ export default function WorkerMasterProfile({ worker }) {
 
       {/* Identity Card */}
       <WorkerIdentityCard
-        name={worker.name}
+        name={worker.fullName || worker.name}
         profession={worker.profession}
         workerCode={worker.workerCode}
         category={worker.category}
         location={worker.location}
         profileImage={worker.profileImage}
-        verifiedBadge={worker.verifiedBadge}
+        verifiedBadge={worker.isVerified ?? worker.verifiedBadge}
       />
 
       {/* Hero Slider */}
-      <HeroSlider images={worker.heroImages || []} />
+      <HeroSlider images={worker.heroSlides || worker.heroImages || []} />
 
       {/* Navigation Tabs */}
       <NavigationTabs />
 
       {/* Work Details Section */}
       <section id="work-details">
-        <WorkDetails data={worker.workDetails || {}} />
+        <WorkDetails data={worker.workDetails || worker} />
       </section>
 
       {/* Work Photos Section */}
