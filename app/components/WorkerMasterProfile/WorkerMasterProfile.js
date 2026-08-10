@@ -30,7 +30,7 @@ export default function WorkerMasterProfile({ worker }) {
       />
 
       {/* Hero Slider */}
-      <HeroSlider images={worker.heroSlides || worker.heroImages || []} />
+      <HeroSlider slides={worker.heroImages || []} workerName={worker.name} />
 
       {/* Navigation Tabs */}
       <NavigationTabs />
