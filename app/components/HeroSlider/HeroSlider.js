@@ -15,22 +15,19 @@ const DEFAULT_SLIDES = [
 ];
 
 export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Worker' }) {
-  // Safe filtering: Array check + filter null/undefined items
-  const safeSlides = Array.isArray(slides) && slides.length > 0 
-    ? slides.filter(Boolean) 
-    : DEFAULT_SLIDES;
+  // Check if slides array is empty, fallback to DEFAULT_SLIDES for safety
+  const safeSlides = slides && slides.length > 0 ? slides : DEFAULT_SLIDES;
 
   const originalSlides = safeSlides.map((slide) => {
-    if (!slide) return { image: '/images/worker-1.avif' };
     if (typeof slide === 'string') return { image: slide };
-    return { image: slide.image || slide.url || '/images/worker-1.avif' };
+    return { image: slide.image || slide.url };
   });
 
   const totalOriginal = originalSlides.length;
 
   // Infinite loop cloned array: [Last, ...Originals, First]
   const extendedSlides = [
-    originalSlides[totalOriginal - 1] || originalSlides[0],
+    originalSlides[totalOriginal - 1],
     ...originalSlides,
     originalSlides[0],
   ];
@@ -102,6 +99,8 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
   };
 
   const handleTouchEnd = () => {
+    if (totalOriginal <= 1) return; // Prevent unnecessary swipe if only 1 slide exists
+
     const distance = touchStartX.current - touchEndX.current;
     if (Math.abs(distance) > minSwipeDistance) {
       if (distance > 0) {
@@ -140,7 +139,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
           {extendedSlides.map((slide, index) => (
             <div key={index} className={styles.slide}>
               <img
-                src={slide?.image || '/images/worker-1.avif'}
+                src={slide.image}
                 alt={`${workerName} image ${index}`}
                 className={styles.slideImage}
                 loading={index === 1 ? 'eager' : 'lazy'}
