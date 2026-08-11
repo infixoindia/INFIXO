@@ -1,41 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from "next/link";
-import { supabase } from '@/lib/supabaseClient';
 import styles from './NavigationTabs.module.css';
 
-export default function NavigationTabs() {
-  const [photoCount, setPhotoCount] = useState(0);
-  const [videoCount, setVideoCount] = useState(0);
-
-  useEffect(() => {
-    async function fetchCounts() {
-      try {
-        // Work Photos count
-        const { count: photos } = await supabase
-          .from('work_photos')
-          .select('*', { count: 'exact', head: true });
-
-        // Work Videos count
-        const { count: videos } = await supabase
-          .from('work_videos')
-          .select('*', { count: 'exact', head: true });
-
-        if (photos !== null) setPhotoCount(photos);
-        if (videos !== null) setVideoCount(videos);
-      } catch (err) {
-        console.error('Error fetching counts:', err);
-      }
-    }
-
-    fetchCounts();
-  }, []);
+export default function NavigationTabs({ worker, basePath = "" }) {
+  const photoCount = worker?.photos?.length || 0;
+  const videoCount = worker?.videos?.length || 0;
 
   return (
     <div className={styles.grid}>
       {/* Work Details */}
-      <Link href="/work-details" className={`${styles.card} ${styles.blue}`}>
+      <Link href={`${basePath}/work-details`} className={`${styles.card} ${styles.blue}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -52,7 +27,7 @@ export default function NavigationTabs() {
       </Link>
 
       {/* Worker Details */}
-      <Link href="/worker-details" className={`${styles.card} ${styles.orange}`}>
+      <Link href={`${basePath}/worker-details`} className={`${styles.card} ${styles.orange}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#EA580C">
@@ -66,7 +41,7 @@ export default function NavigationTabs() {
       </Link>
 
       {/* Work Photos */}
-      <Link href="/work-photos" className={`${styles.card} ${styles.green}`}>
+      <Link href={`${basePath}/work-photos`} className={`${styles.card} ${styles.green}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -90,7 +65,7 @@ export default function NavigationTabs() {
       </Link>
 
       {/* Work Videos */}
-      <Link href="/work-videos" className={`${styles.card} ${styles.purple}`}>
+      <Link href={`${basePath}/work-videos`} className={`${styles.card} ${styles.purple}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#9333EA">

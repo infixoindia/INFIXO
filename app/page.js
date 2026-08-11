@@ -6,7 +6,13 @@ import WorkerIdentityCard from "./components/WorkerIdentityCard/WorkerIdentityCa
 import NavigationTabs from "./components/NavigationTabs/NavigationTabs";
 import Footer from "./components/Footer/Footer";
 import dummyWorker from "./data/dummyWorker";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
+import { mapDatabaseToWorker } from "@/lib/workerService";
+
+// The homepage always shows the default/demo worker (slug: rahul-sharma)
+// so old bookmarks to "/" keep working. Every other worker created in the
+// admin panel gets its own URL at /w/[slug].
+const DEFAULT_SLUG = "rahul-sharma";
 
 export default function HomePage() {
   const [workerData, setWorkerData] = useState(dummyWorker);
@@ -15,81 +21,38 @@ export default function HomePage() {
     let channel = null;
 
     async function loadDataAndSubscribe() {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      // Agar Vercel Env Vars miss hain ya invalid hain, toh crash hone se bachaye
-      if (!url || !key || !url.startsWith("http")) {
-        console.warn("Supabase credentials missing or invalid. Showing default UI.");
-        return;
-      }
-
-      const supabase = createClient(url, key);
-
       try {
-        // 1. Initial Fetch
         const { data } = await supabase
-          .from('worker_profile')
-          .select('*')
-          .limit(1);
+          .from("workers")
+          .select("*")
+          .eq("slug", DEFAULT_SLUG)
+          .maybeSingle();
 
-        if (data && data.length > 0) {
-          const dbData = data[0];
-          setWorkerData((prev) => ({
-            ...prev,
-            name: dbData.name || prev.name,
-            profession: dbData.profession || prev.profession,
-            experience: dbData.experience || prev.experience,
-            serviceArea: dbData.service_area || prev.serviceArea,
-            gender: dbData.gender || prev.gender,
-            age: dbData.age || prev.age,
-            languages: dbData.languages || prev.languages,
-            primarySkill: dbData.primary_skill || prev.primarySkill,
-            workingHours: dbData.working_hours || prev.workingHours,
-            workingShift: dbData.working_shift || prev.workingShift,
-            aboutMe: dbData.about_me || prev.aboutMe,
-            profilePic: dbData.profile_pic || prev.profilePic
-          }));
+        if (data) {
+          setWorkerData(mapDatabaseToWorker(data));
         }
 
-        // 2. Realtime Listener
         channel = supabase
-          .channel('realtime_profile_changes')
+          .channel("realtime_worker_changes")
           .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'worker_profile' },
+            "postgres_changes",
+            { event: "*", schema: "public", table: "workers", filter: `slug=eq.${DEFAULT_SLUG}` },
             (payload) => {
               if (payload.new) {
-                const dbData = payload.new;
-                setWorkerData((prev) => ({
-                  ...prev,
-                  name: dbData.name || prev.name,
-                  profession: dbData.profession || prev.profession,
-                  experience: dbData.experience || prev.experience,
-                  serviceArea: dbData.service_area || prev.serviceArea,
-                  gender: dbData.gender || prev.gender,
-                  age: dbData.age || prev.age,
-                  languages: dbData.languages || prev.languages,
-                  primarySkill: dbData.primary_skill || prev.primarySkill,
-                  workingHours: dbData.working_hours || prev.workingHours,
-                  workingShift: dbData.working_shift || prev.workingShift,
-                  aboutMe: dbData.about_me || prev.aboutMe,
-                  profilePic: dbData.profile_pic || prev.profilePic
-                }));
+                setWorkerData(mapDatabaseToWorker(payload.new));
               }
             }
           )
           .subscribe();
-
       } catch (err) {
-        console.error("Error loading Supabase data:", err);
+        console.error("Error loading worker data:", err);
       }
     }
 
     loadDataAndSubscribe();
 
     return () => {
-      // Cleanup listener if created
+      if (channel) supabase.removeChannel(channel);
     };
   }, []);
 
@@ -99,7 +62,7 @@ export default function HomePage() {
 
       <div style={{ padding: "2rem 1rem 0 1rem" }}>
         <WorkerIdentityCard worker={workerData} />
-        <NavigationTabs worker={workerData} />
+        <NavigationTabs worker={workerData} basePath="" />
       </div>
 
       <Footer />
