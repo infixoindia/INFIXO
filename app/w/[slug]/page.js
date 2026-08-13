@@ -5,6 +5,11 @@ import NavigationTabs from "../../components/NavigationTabs/NavigationTabs";
 import Footer from "../../components/Footer/Footer";
 import { getWorkerBySlug } from "@/lib/workerService";
 
+// Always fetch fresh data — never cache this page, since admin edits
+// must show up immediately on the public profile.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function WorkerProfilePage({ params }) {
   const { slug } = await params;
   const worker = await getWorkerBySlug(slug);
