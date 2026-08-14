@@ -4,29 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
-export default function WorkVideos() {
-  const videos = [
-    {
-      video: "/videos/work1.mp4",
-      thumbnail: "/images/video-thumb-1.jpg",
-      duration: "00:10",
-    },
-    {
-      video: "/videos/work2.mp4",
-      thumbnail: "/images/video-thumb-2.jpg",
-      duration: "00:10",
-    },
-    {
-      video: "/videos/work3.mp4",
-      thumbnail: "/images/video-thumb-3.jpg",
-      duration: "00:10",
-    },
-    {
-      video: "/videos/work4.mp4",
-      thumbnail: "/images/video-thumb-4.jpg",
-      duration: "00:10",
-    },
-  ];
+export default function WorkVideos({ worker, backHref = "/" }) {
+  const videos = worker?.videos || [];
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -248,7 +227,7 @@ export default function WorkVideos() {
       )}
 
       <div className={styles.header}>
-        <Link href="/" className={styles.backLink}>
+        <Link href={backHref} className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
             <path
               d="M15 5L8 12L15 19"

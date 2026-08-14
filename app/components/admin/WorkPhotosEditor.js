@@ -61,17 +61,18 @@ export default function WorkPhotosEditor({ worker, updateField, onSave, saving, 
         {photos.map((url, idx) => (
           <div className={styles.mediaItem} key={idx}>
             <img src={url} alt={`Work photo ${idx + 1}`} />
+            <label style={{ position: "absolute", inset: 0, opacity: 0, zIndex: 1 }}>
+              <input type="file" accept="image/*" onChange={(e) => handleReplace(idx, e)} />
+            </label>
             <button
               type="button"
               className={styles.mediaRemoveBtn}
               onClick={() => handleRemove(idx)}
               aria-label="Remove photo"
+              style={{ position: "relative", zIndex: 2 }}
             >
               ✕
             </button>
-            <label style={{ position: "absolute", inset: 0, opacity: 0 }}>
-              <input type="file" accept="image/*" onChange={(e) => handleReplace(idx, e)} />
-            </label>
           </div>
         ))}
 

@@ -4,15 +4,27 @@ import { useState } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
 
-export default function WorkerDetails() {
+export default function WorkerDetails({ worker, backHref = "/" }) {
   const [workerOpen, setWorkerOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
-  
+
+  const languages = Array.isArray(worker?.languages)
+    ? worker.languages.join(", ")
+    : worker?.languages || "";
+
+  const aboutParagraphs = worker?.about || [];
+
+  const verifications = worker?.verifications || {
+    identityVerified: false,
+    workVerified: false,
+    addressVerified: false,
+  };
+
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
-        <Link href="/" className={styles.backLink}>
+        <Link href={backHref} className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
             <path d="M15 5L8 12L15 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -29,23 +41,23 @@ export default function WorkerDetails() {
         <div className={styles.detailsBody}>
           <div className={styles.detailRow}>
             <div className={styles.label}>Full Name</div>
-            <div className={styles.value}><span className={styles.detailText}>Rahul Sharma</span></div>
+            <div className={styles.value}><span className={styles.detailText}>{worker?.fullName}</span></div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Gender</div>
-            <div className={styles.value}><span className={styles.detailText}>Male</span></div>
+            <div className={styles.value}><span className={styles.detailText}>{worker?.gender}</span></div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Age</div>
-            <div className={styles.value}><span className={styles.detailText}>28 Years</span></div>
+            <div className={styles.value}><span className={styles.detailText}>{worker?.age}</span></div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Address</div>
-            <div className={styles.value}><span className={styles.detailText}>Indore, Madhya Pradesh</span></div>
+            <div className={styles.value}><span className={styles.detailText}>{worker?.address}</span></div>
           </div>
           <div className={styles.detailRow}>
             <div className={styles.label}>Languages</div>
-            <div className={styles.value}><span className={styles.detailText}>Hindi, English</span></div>
+            <div className={styles.value}><span className={styles.detailText}>{languages}</span></div>
           </div>
         </div>
       </div>
@@ -56,9 +68,9 @@ export default function WorkerDetails() {
           <p>A short introduction about the worker.</p>
         </div>
         <div className={styles.aboutBody}>
-          <p>Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.</p>
-          <p>He pays close attention to every detail and ensures every project is completed with care and a premium finish.</p>
-          <p>His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.</p>
+          {aboutParagraphs.map((para, idx) => (
+            <p key={idx}>{para}</p>
+          ))}
         </div>
       </div>
 
@@ -70,8 +82,10 @@ export default function WorkerDetails() {
 
         <div className={styles.verificationContent}>
           <div className={styles.verifyList}>
-            
+
             {/* Worker Verified */}
+            {verifications.identityVerified && (
+            <>
             <div className={`${styles.verifyBadge} ${styles.green}`} onClick={() => setWorkerOpen(!workerOpen)}>
               <div className={styles.verifyIconOuter}>
                 <div className={styles.verifyIcon}>
@@ -101,8 +115,12 @@ export default function WorkerDetails() {
                 <span>More Information</span>
               </Link>
             </div>
+            </>
+            )}
 
             {/* Work Verified */}
+            {verifications.workVerified && (
+            <>
             <div className={`${styles.verifyBadge} ${styles.blue}`} onClick={() => setWorkOpen(!workOpen)}>
               <div className={styles.verifyIconOuter}>
                 <div className={styles.verifyIcon}>
@@ -132,8 +150,12 @@ export default function WorkerDetails() {
                 <span>More Information</span>
               </Link>
             </div>
+            </>
+            )}
 
             {/* Address Verified */}
+            {verifications.addressVerified && (
+            <>
             <div className={`${styles.verifyBadge} ${styles.orange}`} onClick={() => setAddressOpen(!addressOpen)}>
               <div className={styles.verifyIconOuter}>
                 <div className={styles.verifyIcon}>
@@ -163,10 +185,12 @@ export default function WorkerDetails() {
                 <span>More Information</span>
               </Link>
             </div>
+            </>
+            )}
 
           </div>
         </div>
       </div>
     </section>
   );
-    }
+}

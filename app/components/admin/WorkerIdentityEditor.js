@@ -137,15 +137,22 @@ export default function WorkerIdentityEditor({
           {heroSlides.map((slide, idx) => (
             <div className={styles.mediaItem} key={idx}>
               <img src={slide.image} alt={`Slide ${idx + 1}`} />
+              <label
+                className={styles.uploadBox}
+                style={{ position: "absolute", inset: 0, opacity: 0, zIndex: 1 }}
+              >
+                <input type="file" accept="image/*" onChange={(e) => handleReplaceImage(idx, e)} />
+              </label>
               <button
                 type="button"
                 className={styles.mediaRemoveBtn}
                 onClick={() => handleRemoveImage(idx)}
                 aria-label="Remove image"
+                style={{ position: "relative", zIndex: 2 }}
               >
                 ✕
               </button>
-              <div className={styles.mediaReorderBtns}>
+              <div className={styles.mediaReorderBtns} style={{ position: "relative", zIndex: 2 }}>
                 <button type="button" onClick={() => handleMove(idx, -1)} disabled={idx === 0}>
                   ↑
                 </button>
@@ -157,9 +164,6 @@ export default function WorkerIdentityEditor({
                   ↓
                 </button>
               </div>
-              <label className={styles.uploadBox} style={{ position: "absolute", inset: 0, opacity: 0 }}>
-                <input type="file" accept="image/*" onChange={(e) => handleReplaceImage(idx, e)} />
-              </label>
             </div>
           ))}
 

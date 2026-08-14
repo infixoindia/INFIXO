@@ -1,13 +1,20 @@
 import Link from "next/link";
 import styles from "./WorkDetails.module.css";
 
-export default function WorkDetails() {
+export default function WorkDetails({ worker, backHref = "/" }) {
+  const services = worker?.services || [];
+  const whyChooseMe = worker?.whyChooseMe || [];
+  const shift = worker?.workingShift || { day: false, night: false };
+  const serviceArea = Array.isArray(worker?.serviceArea)
+    ? worker.serviceArea.join(", ")
+    : worker?.serviceArea || "";
+
   return (
     <section className={styles.wrapper}>
 
       <div className={styles.header}>
-    
-    <Link href="/" className={styles.backLink}>
+
+    <Link href={backHref} className={styles.backLink}>
   <svg
     className={styles.backArrow}
     viewBox="0 0 24 24"
@@ -23,8 +30,8 @@ export default function WorkDetails() {
   </svg>
 
 </Link>
- 
-        
+
+
         <h2>Work Details</h2>
         <p>Everything about the work.</p>
       </div>
@@ -53,35 +60,22 @@ export default function WorkDetails() {
   <path d="M12 15.5v5" strokeWidth="2.8" />
 </svg>
 
-  <span>Painter</span>
+  <span>{worker?.primarySkill}</span>
 </div>
 </div>
 </div>
-    
+
         <div className={styles.row}>
   <div className={styles.label}>Services</div>
 
   <div className={styles.value}>
-    <div className={styles.serviceChip}>
-    <span className={styles.tick}>✓</span>
-    <span className={styles.serviceText}>Putty Work</span>
-</div>
+    {services.map((service, idx) => (
+      <div className={styles.serviceChip} key={idx}>
+        <span className={styles.tick}>✓</span>
+        <span className={styles.serviceText}>{service}</span>
+      </div>
+    ))}
 
-<div className={styles.serviceChip}>
-    <span className={styles.tick}>✓</span>
-    <span className={styles.serviceText}>Texture Finish</span>
-</div>
-
-<div className={styles.serviceChip}>
-    <span className={styles.tick}>✓</span>
-    <span className={styles.serviceText}>Waterproofing</span>
-</div>
-
-<div className={styles.serviceChip}>
-    <span className={styles.tick}>✓</span>
-    <span className={styles.serviceText}>Interior Paints</span>
-</div>
-    
  </div>
 </div>
 
@@ -89,7 +83,7 @@ export default function WorkDetails() {
   <div className={styles.label}>Experience</div>
 
   <div className={styles.value}>
-    <div 
+    <div
     className={styles.experienceBadge}>
      <svg
   className={styles.expIcon}
@@ -149,13 +143,13 @@ export default function WorkDetails() {
     fill="#0F8E82"
   />
 </svg>
-    
+
 <span>
-    8+ Years of experience <br />
-    in painting work
+    {worker?.experience}+ Years of experience <br />
+    in {worker?.primarySkill?.toLowerCase()} work
   </span>
 </div>
-</div> 
+</div>
 </div>
 
 
@@ -179,7 +173,7 @@ export default function WorkDetails() {
       </svg>
 
       <span className={styles.workingHoursText}>
-        9:00 AM – 7:00 PM
+        {worker?.workingHours}
       </span>
 
     </div>
@@ -192,6 +186,7 @@ export default function WorkDetails() {
   <div className={styles.value}>
     <div className={styles.shiftBadges}>
 
+      {shift.day && (
       <div className={styles.dayBadge}>
         <svg
   className={styles.sunIcon}
@@ -222,7 +217,9 @@ export default function WorkDetails() {
 </svg>
         <span>Day</span>
       </div>
+      )}
 
+      {shift.night && (
       <div className={styles.nightBadge}>
 <svg
   className={styles.moonIcon}
@@ -246,6 +243,7 @@ export default function WorkDetails() {
 </svg>
         <span>Night</span>
       </div>
+      )}
 
     </div>
   </div>
@@ -280,12 +278,12 @@ export default function WorkDetails() {
     fill="#FFFFFF"
   />
 </svg>
-      <span>Indore</span>
+      <span>{serviceArea}</span>
     </div>
   </div>
 </div>
 
-      
+
  <div className={styles.whyCard}>
 
   <div className={styles.whyHeader}>
@@ -304,37 +302,19 @@ export default function WorkDetails() {
 
     <div className={styles.whyList}>
 
-      <div className={styles.whyBadge}>
-       Clean & Professional Work
+      {whyChooseMe.map((reason, idx) => (
+        <div className={styles.whyBadge} key={idx}>
+          {reason}
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
+
       </div>
-
-      <div className={styles.whyBadge}>
-       Premium Paint Finish
-      </div>
-
-      <div className={styles.whyBadge}>
-        On Time Work
-      </div>
-
-      <div className={styles.whyBadge}>
-        Reasonable Pricing
-      </div>
-
-      <div className={styles.whyBadge}>
-      8+ Years Trusted Experience
-      </div>
-
-      <div className={styles.whyBadge}>
-        Customer Satisfaction
-      </div>
-
-    </div> 
-
-  </div> 
-
-</div> 
-
-      </div> 
 
     </section>
   );
