@@ -69,7 +69,7 @@ export default function WorkPhotosEditor({ worker, updateField, onSave, saving, 
               className={styles.mediaRemoveBtn}
               onClick={() => handleRemove(idx)}
               aria-label="Remove photo"
-              style={{ position: "relative", zIndex: 2 }}
+              style={{ zIndex: 2 }}
             >
               ✕
             </button>

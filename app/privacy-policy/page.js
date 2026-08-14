@@ -6,13 +6,15 @@ export const metadata = {
   description: 'Privacy Policy for Infixo worker verification platform',
 };
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage({ searchParams }) {
+  const params = await searchParams;
+  const homeHref = params?.from ? `/w/${params.from}` : "/";
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
         {/* Navigation Breadcrumb */}
         <div className={styles.breadCrumb}>
-          <Link href="/" className={styles.backLink}>
+          <Link href={homeHref} className={styles.backLink}>
             ← Home
           </Link>
           <span className={styles.breadSeparator}>/</span>

@@ -23,7 +23,7 @@ export default async function WorkerProfilePage({ params }) {
         <WorkerIdentityCard worker={worker} />
         <NavigationTabs worker={worker} basePath={`/w/${slug}`} />
       </div>
-      <Footer />
+      <Footer slug={slug} />
     </main>
   );
 }

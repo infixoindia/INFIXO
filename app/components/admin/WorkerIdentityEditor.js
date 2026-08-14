@@ -148,11 +148,11 @@ export default function WorkerIdentityEditor({
                 className={styles.mediaRemoveBtn}
                 onClick={() => handleRemoveImage(idx)}
                 aria-label="Remove image"
-                style={{ position: "relative", zIndex: 2 }}
+                style={{ zIndex: 2 }}
               >
                 ✕
               </button>
-              <div className={styles.mediaReorderBtns} style={{ position: "relative", zIndex: 2 }}>
+              <div className={styles.mediaReorderBtns} style={{ zIndex: 2 }}>
                 <button type="button" onClick={() => handleMove(idx, -1)} disabled={idx === 0}>
                   ↑
                 </button>

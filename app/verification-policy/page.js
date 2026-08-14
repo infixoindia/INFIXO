@@ -6,12 +6,14 @@ export const metadata = {
   description: 'Official Verification Policy and Badge Breakdown for Infixo platform',
 };
 
-export default function VerificationPolicyPage() {
+export default async function VerificationPolicyPage({ searchParams }) {
+  const params = await searchParams;
+  const homeHref = params?.from ? `/w/${params.from}` : "/";
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
         <div className={styles.breadCrumb}>
-          <Link href="/" className={styles.backLink}>← Home</Link>
+          <Link href={homeHref} className={styles.backLink}>← Home</Link>
           <span className={styles.breadSeparator}>/</span>
           <span className={styles.currentBread}>Verification Policy</span>
         </div>

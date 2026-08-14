@@ -6,13 +6,15 @@ export const metadata = {
   description: 'Terms and Conditions for Infixo worker verification platform',
 };
 
-export default function TermsAndConditionsPage() {
+export default async function TermsAndConditionsPage({ searchParams }) {
+  const params = await searchParams;
+  const homeHref = params?.from ? `/w/${params.from}` : "/";
   return (
     <div className={styles.mainWrapper}>
       <div className={styles.container}>
         {/* Navigation Breadcrumb */}
         <div className={styles.breadCrumb}>
-          <Link href="/" className={styles.backLink}>
+          <Link href={homeHref} className={styles.backLink}>
             ← Home
           </Link>
           <span className={styles.breadSeparator}>/</span>
