@@ -3,14 +3,14 @@
 import Link from "next/link";
 import styles from './NavigationTabs.module.css';
 
-export default function NavigationTabs({ worker, basePath = "" }) {
+export default function NavigationTabs({ worker, basePath = "", queryString = "" }) {
   const photoCount = worker?.photos?.length || 0;
   const videoCount = worker?.videos?.length || 0;
 
   return (
     <div className={styles.grid}>
       {/* Work Details */}
-      <Link href={`${basePath}/work-details`} className={`${styles.card} ${styles.blue}`}>
+      <Link href={`${basePath}/work-details${queryString}`} className={`${styles.card} ${styles.blue}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -27,7 +27,7 @@ export default function NavigationTabs({ worker, basePath = "" }) {
       </Link>
 
       {/* Worker Details */}
-      <Link href={`${basePath}/worker-details`} className={`${styles.card} ${styles.orange}`}>
+      <Link href={`${basePath}/worker-details${queryString}`} className={`${styles.card} ${styles.orange}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#EA580C">
@@ -41,7 +41,7 @@ export default function NavigationTabs({ worker, basePath = "" }) {
       </Link>
 
       {/* Work Photos */}
-      <Link href={`${basePath}/work-photos`} className={`${styles.card} ${styles.green}`}>
+      <Link href={`${basePath}/work-photos${queryString}`} className={`${styles.card} ${styles.green}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -65,7 +65,7 @@ export default function NavigationTabs({ worker, basePath = "" }) {
       </Link>
 
       {/* Work Videos */}
-      <Link href={`${basePath}/work-videos`} className={`${styles.card} ${styles.purple}`}>
+      <Link href={`${basePath}/work-videos${queryString}`} className={`${styles.card} ${styles.purple}`}>
         <div className={styles.glassShine} />
         <div className={styles.iconBox}>
           <svg viewBox="0 0 24 24" fill="#9333EA">

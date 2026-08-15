@@ -273,7 +273,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
 
           {worker.slug && (
             <Link
-              href={`/w/${worker.slug}`}
+              href={`/w/${worker.slug}?admin=${worker.id}`}
               target="_blank"
               className={`${styles.btn} ${styles.btnSecondary}`}
               style={{ display: "block", textAlign: "center", marginTop: "1rem", textDecoration: "none" }}
