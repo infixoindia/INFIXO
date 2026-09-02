@@ -218,10 +218,10 @@ export default function WorkVideos({ worker, backHref = "/" }) {
       {viewerOpen && (
         <div style={{ display: "none" }}>
           {currentIndex > 0 && (
-            <video src={videos[currentIndex - 1].video} preload="auto" muted />
+            <video src={videos[currentIndex - 1].video} preload="metadata" muted />
           )}
           {currentIndex < videos.length - 1 && (
-            <video src={videos[currentIndex + 1].video} preload="auto" muted />
+            <video src={videos[currentIndex + 1].video} preload="metadata" muted />
           )}
         </div>
       )}
@@ -341,6 +341,7 @@ export default function WorkVideos({ worker, backHref = "/" }) {
                             ref={videoRef}
                             className={styles.viewerVideo}
                             src={item.video}
+                            poster={item.thumbnail}
                             autoPlay={!isPaused}
                             muted={isMuted}
                             playsInline
