@@ -109,6 +109,20 @@ export default function WorkerIdentityEditor({
         />
       </div>
 
+      <div className={styles.field}>
+        <label className={styles.label}>Phone Number (for Contact / WhatsApp buttons)</label>
+        <input
+          type="tel"
+          className={styles.input}
+          value={worker.phone || ""}
+          onChange={(e) => updateField("phone", e.target.value)}
+          placeholder="9876543210 or +91 9876543210"
+        />
+        <p className={styles.hint}>
+          Used for the public "Contact" and "Chat" buttons. Leave empty to hide those buttons.
+        </p>
+      </div>
+
       <div className={styles.row2}>
         <div className={styles.field}>
           <label className={styles.label}>Experience (Years)</label>

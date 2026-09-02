@@ -105,6 +105,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
         experience: worker.experience,
         serviceArea: worker.serviceArea,
         heroSlides: worker.heroSlides,
+        phone: worker.phone,
       };
       const updated = await updateWorker(worker.id, patch);
       setWorker(updated);
