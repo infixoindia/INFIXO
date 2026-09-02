@@ -218,10 +218,10 @@ export default function WorkVideos({ worker, backHref = "/" }) {
       {viewerOpen && (
         <div style={{ display: "none" }}>
           {currentIndex > 0 && (
-            <video src={videos[currentIndex - 1].video} preload="metadata" muted />
+            <video src={videos[currentIndex - 1].video} preload="auto" muted />
           )}
           {currentIndex < videos.length - 1 && (
-            <video src={videos[currentIndex + 1].video} preload="metadata" muted />
+            <video src={videos[currentIndex + 1].video} preload="auto" muted />
           )}
         </div>
       )}
@@ -335,7 +335,20 @@ export default function WorkVideos({ worker, backHref = "/" }) {
                     >
                       {isCurrent && (
                         <>
-                          {isLoading && <div className={styles.videoLoader}></div>}
+                          {isLoading && (
+                            <>
+                              {/* Shown until the video actually has data —
+                                  guarantees the thumbnail is visible instead
+                                  of a black frame while it buffers. */}
+                              <img
+                                src={item.thumbnail}
+                                alt=""
+                                className={styles.viewerVideo}
+                                style={{ position: "absolute", inset: 0 }}
+                              />
+                              <div className={styles.videoLoader}></div>
+                            </>
+                          )}
 
                           <video
                             ref={videoRef}
