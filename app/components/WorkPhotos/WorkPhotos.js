@@ -11,6 +11,10 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
 
+  // Smooth swipe follow + snap (same feel as the Identity slider)
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isSwipeAnimating, setIsSwipeAnimating] = useState(false);
+
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -150,6 +154,7 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
       } else if (scale === 1) {
         isSwipingRef.current = true;
         touchEndX.current = touches[0].clientX;
+        setDragOffset(touches[0].clientX - touchStartX.current);
       }
     } else if (touches.length === 2) {
       e.preventDefault();
@@ -193,6 +198,8 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
     if (scale === 1 && isSwipingRef.current) {
       const distance = touchStartX.current - touchEndX.current;
 
+      setIsSwipeAnimating(true);
+
       if (Math.abs(distance) >= 80) {
         if (distance > 80 && currentIndex < images.length - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -204,6 +211,8 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
       touchStartX.current = 0;
       touchEndX.current = 0;
       isSwipingRef.current = false;
+      setDragOffset(0);
+      setTimeout(() => setIsSwipeAnimating(false), 300);
     }
   };
 
@@ -313,7 +322,8 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
             <div
               className={styles.sliderTrack}
               style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
+                transform: `translateX(calc(-${currentIndex * 100}% + ${dragOffset}px))`,
+                transition: isSwipeAnimating ? "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)" : "none",
               }}
             >
               {images.map((image, index) => {

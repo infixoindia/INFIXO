@@ -1,4 +1,7 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import Header from "../../components/Header/Header";
 import WorkerIdentityCard from "../../components/WorkerIdentityCard/WorkerIdentityCard";
 import NavigationTabs from "../../components/NavigationTabs/NavigationTabs";
@@ -6,19 +9,44 @@ import Footer from "../../components/Footer/Footer";
 import AdminEditFab from "../../components/AdminEditFab/AdminEditFab";
 import { getWorkerBySlug } from "@/lib/workerService";
 
-// Always fetch fresh data — never cache this page, since admin edits
-// must show up immediately on the public profile.
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
+// Client-rendered so route navigation is instant (no server round-trip
+// blocking the page transition), same feel as the default homepage.
+// Data is still always fetched fresh from Supabase on every visit.
+function WorkerProfilePageInner() {
+  const { slug } = useParams();
+  const searchParams = useSearchParams();
+  const [worker, setWorker] = useState(null);
+  const [isMissing, setIsMissing] = useState(false);
 
-export default async function WorkerProfilePage({ params, searchParams }) {
-  const { slug } = await params;
-  const sp = await searchParams;
-  const worker = await getWorkerBySlug(slug);
-  if (!worker) notFound();
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const data = await getWorkerBySlug(slug);
+        if (!active) return;
+        if (!data) setIsMissing(true);
+        else setWorker(data);
+      } catch (err) {
+        console.error(err);
+        if (active) setIsMissing(true);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [slug]);
 
-  const isAdminPreview = sp?.admin === worker.id;
+  if (isMissing) {
+    return (
+      <main style={{ padding: "3rem 1rem", textAlign: "center" }}>
+        <p>Worker not found.</p>
+      </main>
+    );
+  }
+
+  if (!worker) return null;
+
+  const isAdminPreview = searchParams.get("admin") === worker.id;
   const queryString = isAdminPreview ? `?admin=${worker.id}` : "";
 
   return (
@@ -31,5 +59,13 @@ export default async function WorkerProfilePage({ params, searchParams }) {
       <Footer slug={slug} />
       {isAdminPreview && <AdminEditFab workerId={worker.id} />}
     </main>
+  );
+}
+
+export default function WorkerProfilePage() {
+  return (
+    <Suspense fallback={null}>
+      <WorkerProfilePageInner />
+    </Suspense>
   );
 }
