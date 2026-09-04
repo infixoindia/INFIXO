@@ -89,15 +89,15 @@
 
   border-radius: 12px;
 
-  /* Naya glossy color aur background match karke */
-  background: linear-gradient(180deg, #FFF9F4 0%, #FFE9DA 100%);
-  border: 1px solid #FFC9A8;
+  /* Purple/violet premium pill style */
+  background: linear-gradient(180deg, #F8F5FF 0%, #EDE4FF 100%);
+  border: 1px solid #C9AFFF;
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 3px 8px rgba(249, 115, 22, 0.12);
+    0 3px 8px rgba(139, 92, 246, 0.18);
 
-  color: #EA580C;
+  color: #7C3AED;
 
   font-size: 13px;
   font-weight: 700;
