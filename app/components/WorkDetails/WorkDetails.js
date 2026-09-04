@@ -1,7 +1,9 @@
 import Link from "next/link";
 import styles from "./WorkDetails.module.css";
+import { resolveSkillCategory } from "@/lib/skillCategories";
 
 export default function WorkDetails({ worker, backHref = "/" }) {
+  const skillCategory = resolveSkillCategory(worker?.primarySkill);
   const services = worker?.services || [];
   const whyChooseMe = worker?.whyChooseMe || [];
   const shift = worker?.workingShift || { day: false, night: false };
@@ -43,7 +45,8 @@ export default function WorkDetails({ worker, backHref = "/" }) {
 
   <div className={styles.value}>
    <div className={styles.primaryBadge}>
-  <span>{worker?.primarySkill}</span>
+  {skillCategory?.Icon && <skillCategory.Icon className={styles.skillIcon} />}
+  <span>{skillCategory?.label}</span>
 </div>
 </div>
 </div>

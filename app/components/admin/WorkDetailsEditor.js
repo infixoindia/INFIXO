@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./Admin.module.css";
+import { SKILL_CATEGORIES, resolveSkillCategory } from "@/lib/skillCategories";
 
 function ChipListField({ label, hint, items, onChange, placeholder }) {
   const [draft, setDraft] = useState("");
@@ -66,12 +67,20 @@ export default function WorkDetailsEditor({ worker, updateField, onSave, saving,
 
       <div className={styles.field}>
         <label className={styles.label}>Primary Skill</label>
-        <input
-          className={styles.input}
-          value={worker.primarySkill || ""}
+        <select
+          className={styles.select}
+          value={resolveSkillCategory(worker.primarySkill)?.slug || ""}
           onChange={(e) => updateField("primarySkill", e.target.value)}
-          placeholder="e.g. Painter"
-        />
+        >
+          <option value="" disabled>
+            Select a category…
+          </option>
+          {SKILL_CATEGORIES.map((cat) => (
+            <option key={cat.slug} value={cat.slug}>
+              {cat.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <ChipListField
