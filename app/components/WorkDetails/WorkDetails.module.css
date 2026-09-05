@@ -89,23 +89,23 @@
 
   border-radius: 12px;
 
-  /* Royal indigo premium pill style — same structure/pattern as the
+  /* Bronze/copper premium pill style — same structure/pattern as the
      other badges below (soft gradient bg + matching border + soft
-     colored glow), with a distinguished "premium" indigo color. */
-  background: linear-gradient(180deg, #E4DFFF 0%, #C9BEF5 100%);
-  border: 1px solid #7A68D9;
+     colored glow), with a distinguished "premium" bronze color. */
+  background: linear-gradient(180deg, #FBEEE3 0%, #F0D3B8 100%);
+  border: 1px solid #C98B4E;
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 3px 8px rgba(75, 49, 196, 0.26);
+    0 3px 8px rgba(160, 100, 40, 0.24);
 
-  color: #362683;
+  color: #8A4E1E;
 
   font-size: 13px;
   font-weight: 700;
 }
 
-/* Glossy highlight effect on top-right — kept subtle so the rich indigo
+/* Glossy highlight effect on top-right — kept subtle so the rich bronze
    color still shows through clearly instead of looking washed out. */
 .primaryBadge::before {
   content: '';
