@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "../../components/admin/Admin.module.css";
+import WorkerShareCard from "../../components/admin/WorkerShareCard";
 import { listWorkers } from "@/lib/workerService";
 
 export default function WorkersListPage() {
@@ -42,15 +43,7 @@ export default function WorkersListPage() {
       )}
 
       {workers.map((w) => (
-        <Link key={w.id} href={`/admin/workers/${w.id}`} className={styles.workerListItem}>
-          <div>
-            <div className={styles.workerListName}>{w.fullName || "Untitled Worker"}</div>
-            <div className={styles.workerListMeta}>
-              {w.profession || "—"} · /w/{w.slug}
-            </div>
-          </div>
-          <span>›</span>
-        </Link>
+        <WorkerShareCard key={w.id} worker={w} />
       ))}
     </div>
   );

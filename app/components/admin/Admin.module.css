@@ -363,3 +363,95 @@
   max-height: 640px;
   overflow-y: auto;
 }
+
+/* ============================================================
+   NEW — Worker card in the admin list: Edit + copy link + QR + Share.
+   ============================================================ */
+
+.workerCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.workerCardHeader {
+  margin-bottom: 0.85rem;
+}
+
+.workerEditBtn {
+  display: block;
+  text-align: center;
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  text-decoration: none;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.25);
+}
+
+.workerLinkRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
+  margin-bottom: 0.85rem;
+}
+
+.workerLinkText {
+  flex: 1;
+  font-size: 0.78rem;
+  color: #4b5563;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workerCopyBtn {
+  flex-shrink: 0;
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.workerQrBox {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  margin-bottom: 0.85rem;
+}
+
+.workerQrBox img {
+  width: 160px;
+  height: 160px;
+}
+
+.workerShareBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+}

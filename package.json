@@ -10,6 +10,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.48.0",
     "next": "latest",
+    "qrcode": "^1.5.3",
     "react": "latest",
     "react-dom": "latest"
   }
