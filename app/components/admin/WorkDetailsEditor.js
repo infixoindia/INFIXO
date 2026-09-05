@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import styles from "./Admin.module.css";
-import { SKILL_CATEGORIES, resolveSkillCategory } from "@/lib/skillCategories";
+import { resolveSkillCategory } from "@/lib/skillCategories";
 
 function ChipListField({ label, hint, items, onChange, placeholder }) {
   const [draft, setDraft] = useState("");
@@ -67,20 +67,22 @@ export default function WorkDetailsEditor({ worker, updateField, onSave, saving,
 
       <div className={styles.field}>
         <label className={styles.label}>Primary Skill</label>
-        <select
-          className={styles.select}
-          value={resolveSkillCategory(worker.primarySkill)?.slug || ""}
-          onChange={(e) => updateField("primarySkill", e.target.value)}
+        <div
+          className={styles.input}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            background: "#f3f4f6",
+            color: "#374151",
+            cursor: "default",
+          }}
         >
-          <option value="" disabled>
-            Select a category…
-          </option>
-          {SKILL_CATEGORIES.map((cat) => (
-            <option key={cat.slug} value={cat.slug}>
-              {cat.label}
-            </option>
-          ))}
-        </select>
+          {resolveSkillCategory(worker.profession)?.label || "— not set —"}
+        </div>
+        <p className={styles.hint}>
+          Set from Worker Identity → Profession. Change it there to update this.
+        </p>
       </div>
 
       <ChipListField

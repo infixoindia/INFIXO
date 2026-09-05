@@ -136,7 +136,6 @@ export default function AdminWorkerEditor({ workerId = null }) {
 
   const saveWorkDetails = () =>
     saveSection("work", [
-      "primarySkill",
       "services",
       "experience",
       "workingHours",

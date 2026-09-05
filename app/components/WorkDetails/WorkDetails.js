@@ -3,7 +3,7 @@ import styles from "./WorkDetails.module.css";
 import { resolveSkillCategory } from "@/lib/skillCategories";
 
 export default function WorkDetails({ worker, backHref = "/" }) {
-  const skillCategory = resolveSkillCategory(worker?.primarySkill);
+  const skillCategory = resolveSkillCategory(worker?.profession);
   const services = worker?.services || [];
   const whyChooseMe = worker?.whyChooseMe || [];
   const shift = worker?.workingShift || { day: false, night: false };

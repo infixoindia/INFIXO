@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styles from "./Admin.module.css";
 import { uploadWorkerFile, deleteWorkerFile } from "@/lib/storageService";
+import { SKILL_CATEGORIES, resolveSkillCategory } from "@/lib/skillCategories";
 
 export default function WorkerIdentityEditor({
   worker,
@@ -101,12 +102,23 @@ export default function WorkerIdentityEditor({
 
       <div className={styles.field}>
         <label className={styles.label}>Profession</label>
-        <input
-          className={styles.input}
-          value={worker.profession || ""}
+        <select
+          className={styles.select}
+          value={resolveSkillCategory(worker.profession)?.label || ""}
           onChange={(e) => updateField("profession", e.target.value)}
-          placeholder="e.g. Electrician"
-        />
+        >
+          <option value="" disabled>
+            Select a profession…
+          </option>
+          {SKILL_CATEGORIES.map((cat) => (
+            <option key={cat.slug} value={cat.label}>
+              {cat.label}
+            </option>
+          ))}
+        </select>
+        <p className={styles.hint}>
+          This also sets the "Primary Skill" shown in Work Details automatically.
+        </p>
       </div>
 
       <div className={styles.field}>
