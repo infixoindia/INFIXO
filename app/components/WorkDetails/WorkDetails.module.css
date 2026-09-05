@@ -89,17 +89,17 @@
 
   border-radius: 12px;
 
-  /* Premium gold/champagne pill style — same structure/pattern as the
+  /* Royal indigo premium pill style — same structure/pattern as the
      other badges below (soft gradient bg + matching border + soft
-     colored glow), just with a distinguished "premium" gold color. */
-  background: linear-gradient(180deg, #FFF7E0 0%, #FBE7B4 100%);
-  border: 1px solid #E3B341;
+     colored glow), with a distinguished "premium" indigo color. */
+  background: linear-gradient(180deg, #F0EEFF 0%, #DCD5FF 100%);
+  border: 1px solid #8B7BE0;
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 3px 8px rgba(180, 130, 20, 0.22);
+    0 3px 8px rgba(75, 49, 196, 0.22);
 
-  color: #8A5B00;
+  color: #3D2E99;
 
   font-size: 13px;
   font-weight: 700;
