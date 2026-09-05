@@ -5,15 +5,14 @@ import Link from "next/link";
 import QRCode from "qrcode";
 import styles from "./Admin.module.css";
 
+// Shows Edit / copyable link / QR code / Share — used on the worker's
+// dedicated "share" page (not inline in the list).
 export default function WorkerShareCard({ worker }) {
-  const [isOpen, setIsOpen] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState(null);
   const [copied, setCopied] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
 
   useEffect(() => {
-    if (!isOpen) return; // only generate once the card is actually expanded
-
     const url = `${window.location.origin}/w/${worker.slug}`;
     setProfileUrl(url);
 
@@ -26,7 +25,7 @@ export default function WorkerShareCard({ worker }) {
     })
       .then(setQrDataUrl)
       .catch((err) => console.error("QR generation failed:", err));
-  }, [isOpen, worker.slug]);
+  }, [worker.slug]);
 
   const handleCopy = async () => {
     try {
@@ -61,53 +60,31 @@ export default function WorkerShareCard({ worker }) {
 
   return (
     <div className={styles.workerCard}>
-      <button
-        type="button"
-        className={styles.workerCardHeader}
-        onClick={() => setIsOpen((v) => !v)}
-        style={{
-          width: "100%",
-          border: "none",
-          background: "none",
-          textAlign: "left",
-          padding: 0,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          <div className={styles.workerListName}>{worker.fullName || "Untitled Worker"}</div>
-          <div className={styles.workerListMeta}>{worker.profession || "—"}</div>
-        </div>
-        <span style={{ fontSize: "1.1rem", color: "#9ca3af" }}>{isOpen ? "▲" : "▼"}</span>
-      </button>
+      <div className={styles.workerCardHeader}>
+        <div className={styles.workerListName}>{worker.fullName || "Untitled Worker"}</div>
+        <div className={styles.workerListMeta}>{worker.profession || "—"}</div>
+      </div>
 
-      {isOpen && (
-        <div style={{ marginTop: "0.85rem" }}>
-          <Link href={`/admin/workers/${worker.id}`} className={styles.workerEditBtn}>
-            ✏️ Edit Profile
-          </Link>
+      <Link href={`/admin/workers/${worker.id}`} className={styles.workerEditBtn}>
+        ✏️ Edit Profile
+      </Link>
 
-          <div className={styles.workerLinkRow}>
-            <span className={styles.workerLinkText}>{profileUrl || "Loading link…"}</span>
-            <button type="button" className={styles.workerCopyBtn} onClick={handleCopy}>
-              {copied ? "Copied!" : "Copy"}
-            </button>
-          </div>
+      <div className={styles.workerLinkRow}>
+        <span className={styles.workerLinkText}>{profileUrl || "Loading link…"}</span>
+        <button type="button" className={styles.workerCopyBtn} onClick={handleCopy}>
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
 
-          {qrDataUrl && (
-            <div className={styles.workerQrBox}>
-              <img src={qrDataUrl} alt={`QR code for ${worker.fullName}'s profile`} />
-            </div>
-          )}
-
-          <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
-            📤 Share Profile
-          </button>
+      {qrDataUrl && (
+        <div className={styles.workerQrBox}>
+          <img src={qrDataUrl} alt={`QR code for ${worker.fullName}'s profile`} />
         </div>
       )}
+
+      <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
+        📤 Share Profile
+      </button>
     </div>
   );
 }
