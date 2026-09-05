@@ -6,12 +6,14 @@ import QRCode from "qrcode";
 import styles from "./Admin.module.css";
 
 export default function WorkerShareCard({ worker }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState(null);
   const [copied, setCopied] = useState(false);
   const [profileUrl, setProfileUrl] = useState("");
 
   useEffect(() => {
-    // Build the full absolute link (needs window, so this runs client-side only)
+    if (!isOpen) return; // only generate once the card is actually expanded
+
     const url = `${window.location.origin}/w/${worker.slug}`;
     setProfileUrl(url);
 
@@ -24,7 +26,7 @@ export default function WorkerShareCard({ worker }) {
     })
       .then(setQrDataUrl)
       .catch((err) => console.error("QR generation failed:", err));
-  }, [worker.slug]);
+  }, [isOpen, worker.slug]);
 
   const handleCopy = async () => {
     try {
@@ -37,7 +39,9 @@ export default function WorkerShareCard({ worker }) {
   };
 
   const handleShare = async () => {
-    const shareText = `Namaste! 🙏 ${worker.fullName || "Worker"} ki Infixo profile taiyaar hai — verified details, work photos aur videos sab isi link par dekh sakte hain:`;
+    // TODO: share message wording is being finalized with the admin —
+    // placeholder text for now.
+    const shareText = `${worker.fullName || "Worker"} ki Infixo profile:`;
 
     if (navigator.share) {
       try {
@@ -47,11 +51,9 @@ export default function WorkerShareCard({ worker }) {
           url: profileUrl,
         });
       } catch (err) {
-        // User cancelled the share sheet — not an error worth logging noisily
         if (err.name !== "AbortError") console.error("Share failed:", err);
       }
     } else {
-      // Fallback for browsers without native share support
       handleCopy();
       alert("Share isn't supported on this browser — the link was copied instead.");
     }
@@ -59,33 +61,53 @@ export default function WorkerShareCard({ worker }) {
 
   return (
     <div className={styles.workerCard}>
-      <div className={styles.workerCardHeader}>
-        <div className={styles.workerListName}>{worker.fullName || "Untitled Worker"}</div>
-        <div className={styles.workerListMeta}>
-          {worker.profession || "—"} · /w/{worker.slug}
+      <button
+        type="button"
+        className={styles.workerCardHeader}
+        onClick={() => setIsOpen((v) => !v)}
+        style={{
+          width: "100%",
+          border: "none",
+          background: "none",
+          textAlign: "left",
+          padding: 0,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          <div className={styles.workerListName}>{worker.fullName || "Untitled Worker"}</div>
+          <div className={styles.workerListMeta}>{worker.profession || "—"}</div>
         </div>
-      </div>
+        <span style={{ fontSize: "1.1rem", color: "#9ca3af" }}>{isOpen ? "▲" : "▼"}</span>
+      </button>
 
-      <Link href={`/admin/workers/${worker.id}`} className={styles.workerEditBtn}>
-        ✏️ Edit Profile
-      </Link>
+      {isOpen && (
+        <div style={{ marginTop: "0.85rem" }}>
+          <Link href={`/admin/workers/${worker.id}`} className={styles.workerEditBtn}>
+            ✏️ Edit Profile
+          </Link>
 
-      <div className={styles.workerLinkRow}>
-        <span className={styles.workerLinkText}>{profileUrl || "Loading link…"}</span>
-        <button type="button" className={styles.workerCopyBtn} onClick={handleCopy}>
-          {copied ? "Copied!" : "Copy"}
-        </button>
-      </div>
+          <div className={styles.workerLinkRow}>
+            <span className={styles.workerLinkText}>{profileUrl || "Loading link…"}</span>
+            <button type="button" className={styles.workerCopyBtn} onClick={handleCopy}>
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
 
-      {qrDataUrl && (
-        <div className={styles.workerQrBox}>
-          <img src={qrDataUrl} alt={`QR code for ${worker.fullName}'s profile`} />
+          {qrDataUrl && (
+            <div className={styles.workerQrBox}>
+              <img src={qrDataUrl} alt={`QR code for ${worker.fullName}'s profile`} />
+            </div>
+          )}
+
+          <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
+            📤 Share Profile
+          </button>
         </div>
       )}
-
-      <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
-        📤 Share Profile
-      </button>
     </div>
   );
 }
