@@ -89,15 +89,17 @@
 
   border-radius: 12px;
 
-  /* Purple/violet premium pill style */
-  background: linear-gradient(180deg, #F8F5FF 0%, #EDE4FF 100%);
-  border: 1px solid #C9AFFF;
+  /* Premium gold/champagne pill style — same structure/pattern as the
+     other badges below (soft gradient bg + matching border + soft
+     colored glow), just with a distinguished "premium" gold color. */
+  background: linear-gradient(180deg, #FFF7E0 0%, #FBE7B4 100%);
+  border: 1px solid #E3B341;
 
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.9),
-    0 3px 8px rgba(139, 92, 246, 0.18);
+    0 3px 8px rgba(180, 130, 20, 0.22);
 
-  color: #7C3AED;
+  color: #8A5B00;
 
   font-size: 13px;
   font-weight: 700;
