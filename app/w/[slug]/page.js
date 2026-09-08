@@ -7,6 +7,7 @@ import WorkerIdentityCard from "../../components/WorkerIdentityCard/WorkerIdenti
 import NavigationTabs from "../../components/NavigationTabs/NavigationTabs";
 import Footer from "../../components/Footer/Footer";
 import AdminEditFab from "../../components/AdminEditFab/AdminEditFab";
+import WorkerShareFab from "../../components/WorkerShareFab/WorkerShareFab";
 import { getWorkerBySlug } from "@/lib/workerService";
 
 // Client-rendered so route navigation is instant (no server round-trip
@@ -47,7 +48,9 @@ function WorkerProfilePageInner() {
   if (!worker) return null;
 
   const isAdminPreview = searchParams.get("admin") === worker.id;
+  const isWorkerOwnLink = searchParams.get("me") === worker.id;
   const queryString = isAdminPreview ? `?admin=${worker.id}` : "";
+  const cleanUrl = typeof window !== "undefined" ? `${window.location.origin}/w/${slug}` : "";
 
   return (
     <main>
@@ -58,6 +61,7 @@ function WorkerProfilePageInner() {
       </div>
       <Footer slug={slug} />
       {isAdminPreview && <AdminEditFab workerId={worker.id} />}
+      {isWorkerOwnLink && <WorkerShareFab worker={worker} cleanUrl={cleanUrl} />}
     </main>
   );
 }

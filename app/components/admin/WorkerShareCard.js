@@ -5,55 +5,64 @@ import Link from "next/link";
 import QRCode from "qrcode";
 import styles from "./Admin.module.css";
 
-// Shows Edit / copyable link / QR code / Share — used on the worker's
+// Shows Edit / copyable links / QR code / Share — used on the worker's
 // dedicated "share" page (not inline in the list).
+//
+// Two different links are shown on purpose:
+//  - "Customer Link" (plain /w/slug) — safe to send to anyone, never shows
+//    any Share/Edit button on the public page.
+//  - "Worker's Own Link" (/w/slug?me=<id>) — give this ONLY to the worker.
+//    Opening it shows them a "Share My Profile" button so they can easily
+//    re-share their profile with new customers themselves.
 export default function WorkerShareCard({ worker }) {
   const [qrDataUrl, setQrDataUrl] = useState(null);
-  const [copied, setCopied] = useState(false);
-  const [profileUrl, setProfileUrl] = useState("");
+  const [copiedCustomer, setCopiedCustomer] = useState(false);
+  const [copiedWorker, setCopiedWorker] = useState(false);
+  const [customerUrl, setCustomerUrl] = useState("");
+  const [workerOwnUrl, setWorkerOwnUrl] = useState("");
 
   useEffect(() => {
-    const url = `${window.location.origin}/w/${worker.slug}`;
-    setProfileUrl(url);
+    const base = `${window.location.origin}/w/${worker.slug}`;
+    setCustomerUrl(base);
+    setWorkerOwnUrl(`${base}?me=${worker.id}`);
 
     // Generate the QR code entirely in the browser — no external service,
     // no network call, works even if the phone is offline afterwards.
-    QRCode.toDataURL(url, {
+    // The QR points to the plain customer link.
+    QRCode.toDataURL(base, {
       width: 220,
       margin: 1,
       color: { dark: "#1f2937", light: "#ffffff" },
     })
       .then(setQrDataUrl)
       .catch((err) => console.error("QR generation failed:", err));
-  }, [worker.slug]);
+  }, [worker.slug, worker.id]);
 
-  const handleCopy = async () => {
+  const copyText = async (text, setFlag) => {
     try {
-      await navigator.clipboard.writeText(profileUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
+      setFlag(true);
+      setTimeout(() => setFlag(false), 2000);
     } catch (err) {
       console.error("Copy failed:", err);
     }
   };
 
   const handleShare = async () => {
-    // TODO: share message wording is being finalized with the admin —
-    // placeholder text for now.
-    const shareText = `${worker.fullName || "Worker"} ki Infixo profile:`;
+    const shareText = `Namaste! 🙏 ${worker.fullName || "Worker"} ki Infixo par verified profile taiyaar hai — details, work photos aur videos yahan dekh sakte hain:`;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: `${worker.fullName || "Worker"} — Infixo Profile`,
           text: shareText,
-          url: profileUrl,
+          url: customerUrl,
         });
       } catch (err) {
         if (err.name !== "AbortError") console.error("Share failed:", err);
       }
     } else {
-      handleCopy();
+      copyText(customerUrl, setCopiedCustomer);
       alert("Share isn't supported on this browser — the link was copied instead.");
     }
   };
@@ -69,10 +78,14 @@ export default function WorkerShareCard({ worker }) {
         ✏️ Edit Profile
       </Link>
 
+      <p className={styles.label} style={{ marginBottom: "0.35rem" }}>Customer Link</p>
+      <p className={styles.hint} style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+        Safe to send to anyone — no buttons show up for them.
+      </p>
       <div className={styles.workerLinkRow}>
-        <span className={styles.workerLinkText}>{profileUrl || "Loading link…"}</span>
-        <button type="button" className={styles.workerCopyBtn} onClick={handleCopy}>
-          {copied ? "Copied!" : "Copy"}
+        <span className={styles.workerLinkText}>{customerUrl || "Loading link…"}</span>
+        <button type="button" className={styles.workerCopyBtn} onClick={() => copyText(customerUrl, setCopiedCustomer)}>
+          {copiedCustomer ? "Copied!" : "Copy"}
         </button>
       </div>
 
@@ -85,6 +98,20 @@ export default function WorkerShareCard({ worker }) {
       <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
         📤 Share Profile
       </button>
+
+      <div style={{ marginTop: "1.25rem", paddingTop: "1rem", borderTop: "1px dashed #e5e7eb" }}>
+        <p className={styles.label} style={{ marginBottom: "0.35rem" }}>Worker's Own Link</p>
+        <p className={styles.hint} style={{ marginTop: 0, marginBottom: "0.4rem" }}>
+          Give this ONLY to {worker.fullName || "the worker"} — it shows them their own
+          "Share My Profile" button so they can send it to new customers themselves.
+        </p>
+        <div className={styles.workerLinkRow}>
+          <span className={styles.workerLinkText}>{workerOwnUrl || "Loading link…"}</span>
+          <button type="button" className={styles.workerCopyBtn} onClick={() => copyText(workerOwnUrl, setCopiedWorker)}>
+            {copiedWorker ? "Copied!" : "Copy"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
