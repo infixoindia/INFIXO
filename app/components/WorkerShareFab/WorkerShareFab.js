@@ -6,21 +6,29 @@ import QRCode from "qrcode";
 // Floating "X" button shown ONLY to the worker themselves (their private
 // ?me=<id> link). Customers on the plain /w/[slug] link never see this.
 //
-// - Draggable anywhere on screen (touch + mouse), snaps to the nearest
-//   left/right edge on release (never rests in the horizontal middle).
+// - Uses Pointer Events (unified touch + mouse) with pointer capture for
+//   reliable drag AND tap detection on real phones.
+// - Draggable anywhere on screen, snaps to the nearest left/right edge on
+//   release (never rests in the horizontal middle).
+// - Position is tracked with position:fixed + the visualViewport API so it
+//   never drifts or gets stuck mid-scroll on mobile browsers.
 // - Tapping it (without dragging) expands two sub-buttons: QR and Share.
-//   Their pop-out direction automatically adapts to whichever corner the
-//   main button is currently docked in, so they never go off-screen.
-// - QR sub-button opens a full QR code the worker can show a nearby
-//   customer to scan directly.
-// - Share sub-button opens the device's native share sheet with the
-//   CLEAN profile link (no ?me= token), so whoever receives it never
-//   sees this button.
+//   Their pop-out direction adapts to whichever corner it's docked in.
+// - Share sub-button always shares the CLEAN profile link (no ?me= token).
 const SIZE = 56;
 const SUB = 44;
 const PAD = 16;
 const NAVY = "#1B2A70";
 const ORANGE = "#F7941D";
+const DRAG_THRESHOLD = 6;
+
+function getViewport() {
+  if (typeof window === "undefined") return { width: 0, height: 0 };
+  if (window.visualViewport) {
+    return { width: window.visualViewport.width, height: window.visualViewport.height };
+  }
+  return { width: window.innerWidth, height: window.innerHeight };
+}
 
 export default function WorkerShareFab({ worker, cleanUrl }) {
   const [pos, setPos] = useState(null);
@@ -28,15 +36,35 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const [showQr, setShowQr] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState(null);
   const posRef = useRef(null);
-  const drag = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origLeft: 0, origTop: 0 });
+  const drag = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origLeft: 0, origTop: 0, pointerId: null });
 
+  // Initial placement: bottom-right corner, clear of the footer text.
   useEffect(() => {
+    const vp = getViewport();
     const initial = {
-      left: window.innerWidth - SIZE - PAD,
-      top: window.innerHeight - SIZE - PAD - 90,
+      left: vp.width - SIZE - PAD,
+      top: vp.height - SIZE - PAD,
     };
     setPos(initial);
     posRef.current = initial;
+  }, []);
+
+  // Keep it correctly clamped if the viewport changes (address bar
+  // show/hide, keyboard, rotation) — this is what stops it drifting.
+  useEffect(() => {
+    const onResize = () => {
+      if (!posRef.current) return;
+      const vp = getViewport();
+      const next = clamp(posRef.current.left, posRef.current.top, vp);
+      posRef.current = next;
+      setPos(next);
+    };
+    window.visualViewport?.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.visualViewport?.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -50,29 +78,36 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
       .catch((err) => console.error("QR generation failed:", err));
   }, [cleanUrl]);
 
-  const clamp = (left, top) => {
-    const maxLeft = window.innerWidth - SIZE - PAD;
-    const maxTop = window.innerHeight - SIZE - PAD;
+  function clamp(left, top, vp) {
+    const v = vp || getViewport();
+    const maxLeft = v.width - SIZE - PAD;
+    const maxTop = v.height - SIZE - PAD;
     return {
       left: Math.max(PAD, Math.min(left, maxLeft)),
       top: Math.max(PAD, Math.min(top, maxTop)),
     };
-  };
+  }
 
-  const getPoint = (e) => {
-    if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    if (e.changedTouches && e.changedTouches.length) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-    return { x: e.clientX, y: e.clientY };
-  };
-
-  const onMove = (e) => {
+  const onPointerDown = (e) => {
+    if (!posRef.current) return;
+    const btn = e.currentTarget;
+    btn.setPointerCapture(e.pointerId);
     const d = drag.current;
-    if (!d.dragging) return;
-    if (e.cancelable) e.preventDefault();
-    const p = getPoint(e);
-    const dx = p.x - d.startX;
-    const dy = p.y - d.startY;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) d.moved = true;
+    d.dragging = true;
+    d.moved = false;
+    d.pointerId = e.pointerId;
+    d.startX = e.clientX;
+    d.startY = e.clientY;
+    d.origLeft = posRef.current.left;
+    d.origTop = posRef.current.top;
+  };
+
+  const onPointerMove = (e) => {
+    const d = drag.current;
+    if (!d.dragging || d.pointerId !== e.pointerId) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) d.moved = true;
     if (d.moved) {
       const next = clamp(d.origLeft + dx, d.origTop + dy);
       posRef.current = next;
@@ -80,14 +115,20 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     }
   };
 
-  const onEnd = () => {
+  const onPointerUp = (e) => {
     const d = drag.current;
-    if (!d.dragging) return;
+    if (!d.dragging || d.pointerId !== e.pointerId) return;
     d.dragging = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch (err) {
+      // ignore — capture may already be released
+    }
     if (d.moved) {
+      const vp = getViewport();
       const current = posRef.current;
-      const goRight = current.left + SIZE / 2 > window.innerWidth / 2;
-      const finalLeft = goRight ? window.innerWidth - SIZE - PAD : PAD;
+      const goRight = current.left + SIZE / 2 > vp.width / 2;
+      const finalLeft = goRight ? vp.width - SIZE - PAD : PAD;
       const next = { left: finalLeft, top: current.top };
       posRef.current = next;
       setPos(next);
@@ -95,26 +136,6 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
       setIsOpen((v) => !v);
     }
     d.moved = false;
-    document.removeEventListener("mousemove", onMove);
-    document.removeEventListener("mouseup", onEnd);
-    document.removeEventListener("touchmove", onMove);
-    document.removeEventListener("touchend", onEnd);
-  };
-
-  const onStart = (e) => {
-    if (!posRef.current) return;
-    const d = drag.current;
-    d.dragging = true;
-    d.moved = false;
-    const p = getPoint(e);
-    d.startX = p.x;
-    d.startY = p.y;
-    d.origLeft = posRef.current.left;
-    d.origTop = posRef.current.top;
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onEnd);
-    document.addEventListener("touchmove", onMove, { passive: false });
-    document.addEventListener("touchend", onEnd);
   };
 
   const handleShare = async () => {
@@ -142,20 +163,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
   if (!worker || !pos) return null;
 
-  const dockRight = pos.left + SIZE / 2 > window.innerWidth / 2;
-  const dockBottom = pos.top + SIZE / 2 > window.innerHeight / 2;
+  const vp = getViewport();
+  const dockRight = pos.left + SIZE / 2 > vp.width / 2;
+  const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
 
   const nearDx = dockRight ? -60 : 60;
   const nearDy = dockBottom ? -50 : 50;
   const farDx = dockRight ? -10 : 10;
   const farDy = dockBottom ? -95 : 95;
 
-  const qrPos = isOpen
-    ? { left: pos.left + nearDx, top: pos.top + nearDy }
-    : { left: pos.left, top: pos.top };
-  const sharePos = isOpen
-    ? { left: pos.left + farDx, top: pos.top + farDy }
-    : { left: pos.left, top: pos.top };
+  const qrPos = isOpen ? { left: pos.left + nearDx, top: pos.top + nearDy } : { left: pos.left, top: pos.top };
+  const sharePos = isOpen ? { left: pos.left + farDx, top: pos.top + farDy } : { left: pos.left, top: pos.top };
 
   return (
     <>
@@ -230,8 +248,10 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
       {/* Main X button */}
       <button
         type="button"
-        onMouseDown={onStart}
-        onTouchStart={onStart}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
         style={{
           position: "fixed",
           left: pos.left,
@@ -252,8 +272,9 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         }}
         aria-label="Share this profile"
       >
-        <svg width="26" height="26" viewBox="0 0 40 40" fill="none">
-          <path d="M6 6 L34 34 M34 6 L6 34" stroke={ORANGE} strokeWidth="4.5" strokeLinecap="round" />
+        <svg width="30" height="30" viewBox="0 0 40 40">
+          <polygon points="3,3 15,3 37,29 25,29" fill="none" stroke={ORANGE} strokeWidth="2.6" strokeLinejoin="round" />
+          <polygon points="37,3 25,3 3,29 15,29" fill="none" stroke={ORANGE} strokeWidth="2.6" strokeLinejoin="round" />
         </svg>
       </button>
 
