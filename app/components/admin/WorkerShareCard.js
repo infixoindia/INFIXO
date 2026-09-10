@@ -49,7 +49,16 @@ export default function WorkerShareCard({ worker }) {
   };
 
   const handleShare = async () => {
-    const shareText = `Namaste! 🙏 ${worker.fullName || "Worker"} ki Infixo par verified profile taiyaar hai — details, work photos aur videos yahan dekh sakte hain:`;
+    const shareText = [
+      `Hello ${worker.fullName || "there"} 👋`,
+      "",
+      "Aapki INFIXO Profile Ready Hai! 🎉",
+      "Ab aap apni profile use kar sakte hain aur customers ke saath apni profile share kar sakte hain.",
+      "",
+      "Apno Se Judne Ka Naya Tarika.",
+      "",
+      "— Team INFIXO",
+    ].join("\n");
 
     if (navigator.share) {
       try {

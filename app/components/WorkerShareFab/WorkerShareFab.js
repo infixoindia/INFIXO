@@ -5,16 +5,6 @@ import QRCode from "qrcode";
 
 // Floating "X" button shown ONLY to the worker themselves (their private
 // ?me=<id> link). Customers on the plain /w/[slug] link never see this.
-//
-// - Uses Pointer Events (unified touch + mouse) with pointer capture for
-//   reliable drag AND tap detection on real phones.
-// - Draggable anywhere on screen, snaps to the nearest left/right edge on
-//   release (never rests in the horizontal middle).
-// - Position is tracked with position:fixed + the visualViewport API so it
-//   never drifts or gets stuck mid-scroll on mobile browsers.
-// - Tapping it (without dragging) expands two sub-buttons: QR and Share.
-//   Their pop-out direction adapts to whichever corner it's docked in.
-// - Share sub-button always shares the CLEAN profile link (no ?me= token).
 const SIZE = 56;
 const SUB = 44;
 const PAD = 16;
@@ -38,19 +28,18 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const posRef = useRef(null);
   const drag = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origLeft: 0, origTop: 0, pointerId: null });
 
-  // Initial placement: bottom-right corner, clear of the footer text.
+  // Initial placement: middle-right of the screen — deliberately NOT
+  // anchored to the bottom edge, so it never sits on top of the footer.
   useEffect(() => {
     const vp = getViewport();
     const initial = {
       left: vp.width - SIZE - PAD,
-      top: vp.height - SIZE - PAD,
+      top: Math.round(vp.height / 2 - SIZE / 2),
     };
     setPos(initial);
     posRef.current = initial;
   }, []);
 
-  // Keep it correctly clamped if the viewport changes (address bar
-  // show/hide, keyboard, rotation) — this is what stops it drifting.
   useEffect(() => {
     const onResize = () => {
       if (!posRef.current) return;
@@ -72,7 +61,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     QRCode.toDataURL(cleanUrl, {
       width: 260,
       margin: 1,
-      color: { dark: NAVY, light: "#ffffff" },
+      color: { dark: "#000000", light: "#ffffff" },
     })
       .then(setQrDataUrl)
       .catch((err) => console.error("QR generation failed:", err));
@@ -122,7 +111,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     try {
       e.currentTarget.releasePointerCapture(e.pointerId);
     } catch (err) {
-      // ignore — capture may already be released
+      // ignore
     }
     if (d.moved) {
       const vp = getViewport();
@@ -139,7 +128,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   };
 
   const handleShare = async () => {
-    const shareText = `Namaste! 🙏 Yeh meri Infixo par verified profile hai — mera kaam (photos, videos, details) yahan dekh sakte hain:`;
+    // Exact approved wording for the customer-facing share (sent by the
+    // worker themselves to a customer).
+    const shareText = [
+      "Hello 👋",
+      "",
+      "Ye meri INFIXO Worker Profile hai.",
+      "Aap yahan mera kaam, profile aur contact details dekh sakte hain.",
+      "",
+      "INFIXO — Apno Se Judne Ka Naya Tarika.",
+    ].join("\n");
+
     if (navigator.share) {
       try {
         await navigator.share({
@@ -167,17 +166,34 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const dockRight = pos.left + SIZE / 2 > vp.width / 2;
   const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
 
-  const nearDx = dockRight ? -60 : 60;
-  const nearDy = dockBottom ? -50 : 50;
-  const farDx = dockRight ? -10 : 10;
-  const farDy = dockBottom ? -95 : 95;
+  // Explicit per-corner offsets so QR is ALWAYS the "inner" (closer) bubble
+  // and Share is ALWAYS the "outer" (farther) bubble — only their screen
+  // position mirrors with the dock corner, never their color/identity.
+  let qrOffset, shareOffset;
+  if (dockRight && dockBottom) {
+    qrOffset = { dx: -60, dy: -50 };
+    shareOffset = { dx: -10, dy: -95 };
+  } else if (!dockRight && dockBottom) {
+    qrOffset = { dx: 60, dy: -50 };
+    shareOffset = { dx: 10, dy: -95 };
+  } else if (dockRight && !dockBottom) {
+    qrOffset = { dx: -60, dy: 50 };
+    shareOffset = { dx: -10, dy: 95 };
+  } else {
+    qrOffset = { dx: 60, dy: 50 };
+    shareOffset = { dx: 10, dy: 95 };
+  }
 
-  const qrPos = isOpen ? { left: pos.left + nearDx, top: pos.top + nearDy } : { left: pos.left, top: pos.top };
-  const sharePos = isOpen ? { left: pos.left + farDx, top: pos.top + farDy } : { left: pos.left, top: pos.top };
+  const qrPos = isOpen
+    ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
+    : { left: pos.left, top: pos.top };
+  const sharePos = isOpen
+    ? { left: pos.left + shareOffset.dx, top: pos.top + shareOffset.dy }
+    : { left: pos.left, top: pos.top };
 
   return (
     <>
-      {/* QR sub-button */}
+      {/* QR sub-button — always navy blue */}
       <button
         type="button"
         onClick={() => {
@@ -213,7 +229,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* Share sub-button */}
+      {/* Share sub-button — always orange */}
       <button
         type="button"
         onClick={handleShare}
@@ -278,14 +294,14 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* QR modal */}
+      {/* QR modal — dark theme */}
       {showQr && qrDataUrl && (
         <div
           onClick={() => setShowQr(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.75)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -296,16 +312,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#fff",
+              background: "#000000",
+              border: "1px solid #2a2a2a",
               borderRadius: "18px",
               padding: "1.5rem",
               textAlign: "center",
               maxWidth: "300px",
               width: "100%",
-              boxShadow: "0 20px 45px rgba(0,0,0,0.3)",
+              boxShadow: "0 20px 45px rgba(0,0,0,0.5)",
             }}
           >
-            <p style={{ fontWeight: 700, color: NAVY, marginBottom: "0.75rem" }}>
+            <p style={{ fontWeight: 700, color: "#ffffff", marginBottom: "0.75rem" }}>
               Scan to view {worker.fullName || "this"} profile
             </p>
             <img src={qrDataUrl} alt="Profile QR code" style={{ width: "100%", borderRadius: "10px" }} />
@@ -314,9 +331,9 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               onClick={() => setShowQr(false)}
               style={{
                 marginTop: "1rem",
-                border: "none",
-                background: NAVY,
-                color: "#fff",
+                border: `1px solid ${ORANGE}`,
+                background: "#000000",
+                color: "#ffffff",
                 fontWeight: 700,
                 padding: "0.6rem 1.5rem",
                 borderRadius: "999px",
