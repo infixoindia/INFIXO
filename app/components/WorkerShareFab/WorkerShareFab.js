@@ -173,10 +173,13 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   // stack extends upward or downward depends only on which half of the
   // screen the button is currently in — left/right dock never affects
   // color or ordering, only the snap-to-edge X position.
-  const qrOffset = dockBottom ? { dx: 0, dy: -(SUB + GAP) } : { dx: 0, dy: SIZE + GAP };
-  const shareOffset = dockBottom
+  // QR is ALWAYS the FARTHER bubble, Share is ALWAYS the NEARER one —
+  // this direction never changes based on left/right dock, only whether
+  // the stack extends up or down (which depends solely on dockBottom).
+  const qrOffset = dockBottom
     ? { dx: 0, dy: -(SUB * 2 + GAP * 2) }
     : { dx: 0, dy: SIZE + SUB + GAP * 2 };
+  const shareOffset = dockBottom ? { dx: 0, dy: -(SUB + GAP) } : { dx: 0, dy: SIZE + GAP };
 
   const qrPos = isOpen
     ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
