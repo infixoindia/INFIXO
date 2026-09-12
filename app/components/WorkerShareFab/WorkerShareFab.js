@@ -8,6 +8,7 @@ import QRCode from "qrcode";
 const SIZE = 56;
 const SUB = 44;
 const PAD = 16;
+const GAP = 14;
 const NAVY = "#1B2A70";
 const ORANGE = "#F7941D";
 const DRAG_THRESHOLD = 6;
@@ -28,13 +29,12 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const posRef = useRef(null);
   const drag = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origLeft: 0, origTop: 0, pointerId: null });
 
-  // Initial placement: middle-right of the screen — deliberately NOT
-  // anchored to the bottom edge, so it never sits on top of the footer.
+  // Initial placement: bottom-right corner, every time the page loads.
   useEffect(() => {
     const vp = getViewport();
     const initial = {
       left: vp.width - SIZE - PAD,
-      top: Math.round(vp.height / 2 - SIZE / 2),
+      top: vp.height - SIZE - PAD,
     };
     setPos(initial);
     posRef.current = initial;
@@ -128,13 +128,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   };
 
   const handleShare = async () => {
-    // Exact approved wording for the customer-facing share (sent by the
-    // worker themselves to a customer).
+    // Exact approved wording — the link is embedded directly inside the
+    // text on its own line (not passed as a separate `url`), so WhatsApp
+    // never re-appends it somewhere else and the spacing stays exact.
     const shareText = [
       "Hello 👋",
       "",
       "Ye meri INFIXO Worker Profile hai.",
       "Aap yahan mera kaam, profile aur contact details dekh sakte hain.",
+      "",
+      "🔗 Meri Profile:",
+      cleanUrl,
       "",
       "INFIXO — Apno Se Judne Ka Naya Tarika.",
     ].join("\n");
@@ -144,15 +148,14 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         await navigator.share({
           title: `${worker.fullName || "My"} — Infixo Profile`,
           text: shareText,
-          url: cleanUrl,
         });
       } catch (err) {
         if (err.name !== "AbortError") console.error("Share failed:", err);
       }
     } else {
       try {
-        await navigator.clipboard.writeText(cleanUrl);
-        alert("Share isn't supported here — link copied instead.");
+        await navigator.clipboard.writeText(shareText);
+        alert("Share isn't supported here — message copied instead.");
       } catch (err) {
         console.error("Copy failed:", err);
       }
@@ -163,26 +166,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   if (!worker || !pos) return null;
 
   const vp = getViewport();
-  const dockRight = pos.left + SIZE / 2 > vp.width / 2;
   const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
 
-  // Explicit per-corner offsets so QR is ALWAYS the "inner" (closer) bubble
-  // and Share is ALWAYS the "outer" (farther) bubble — only their screen
-  // position mirrors with the dock corner, never their color/identity.
-  let qrOffset, shareOffset;
-  if (dockRight && dockBottom) {
-    qrOffset = { dx: -60, dy: -50 };
-    shareOffset = { dx: -10, dy: -95 };
-  } else if (!dockRight && dockBottom) {
-    qrOffset = { dx: 60, dy: -50 };
-    shareOffset = { dx: 10, dy: -95 };
-  } else if (dockRight && !dockBottom) {
-    qrOffset = { dx: -60, dy: 50 };
-    shareOffset = { dx: -10, dy: 95 };
-  } else {
-    qrOffset = { dx: 60, dy: 50 };
-    shareOffset = { dx: 10, dy: 95 };
-  }
+  // Simple, unambiguous vertical stack: QR is ALWAYS the bubble nearest
+  // the main button, Share is ALWAYS the one farther out. Whether that
+  // stack extends upward or downward depends only on which half of the
+  // screen the button is currently in — left/right dock never affects
+  // color or ordering, only the snap-to-edge X position.
+  const qrOffset = dockBottom ? { dx: 0, dy: -(SUB + GAP) } : { dx: 0, dy: SIZE + GAP };
+  const shareOffset = dockBottom
+    ? { dx: 0, dy: -(SUB * 2 + GAP * 2) }
+    : { dx: 0, dy: SIZE + SUB + GAP * 2 };
 
   const qrPos = isOpen
     ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
@@ -193,7 +187,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
   return (
     <>
-      {/* QR sub-button — always navy blue */}
+      {/* QR sub-button — always navy blue, always the NEARER bubble */}
       <button
         type="button"
         onClick={() => {
@@ -229,7 +223,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* Share sub-button — always orange */}
+      {/* Share sub-button — always orange, always the FARTHER bubble */}
       <button
         type="button"
         onClick={handleShare}
@@ -294,14 +288,14 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* QR modal — dark theme */}
+      {/* QR modal — white card, black text, close button stays black */}
       {showQr && qrDataUrl && (
         <div
           onClick={() => setShowQr(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.75)",
+            background: "rgba(0,0,0,0.6)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -312,17 +306,17 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              background: "#000000",
-              border: "1px solid #2a2a2a",
+              background: "#ffffff",
+              border: "1px solid #e5e7eb",
               borderRadius: "18px",
               padding: "1.5rem",
               textAlign: "center",
               maxWidth: "300px",
               width: "100%",
-              boxShadow: "0 20px 45px rgba(0,0,0,0.5)",
+              boxShadow: "0 20px 45px rgba(0,0,0,0.3)",
             }}
           >
-            <p style={{ fontWeight: 700, color: "#ffffff", marginBottom: "0.75rem" }}>
+            <p style={{ fontWeight: 700, color: "#111111", marginBottom: "0.75rem" }}>
               Scan to view {worker.fullName || "this"} profile
             </p>
             <img src={qrDataUrl} alt="Profile QR code" style={{ width: "100%", borderRadius: "10px" }} />
