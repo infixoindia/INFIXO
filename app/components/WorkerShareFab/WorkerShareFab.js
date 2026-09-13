@@ -176,10 +176,14 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   // QR is ALWAYS the FARTHER bubble, Share is ALWAYS the NEARER one —
   // this direction never changes based on left/right dock, only whether
   // the stack extends up or down (which depends solely on dockBottom).
+  // Desired order when the main X button is near the bottom:
+  // X (main) -> Share -> QR, with equal spacing between bubbles.
+  const shareOffset = dockBottom
+    ? { dx: 0, dy: -(SUB + GAP) }
+    : { dx: 0, dy: SIZE + GAP };
   const qrOffset = dockBottom
     ? { dx: 0, dy: -(SUB * 2 + GAP * 2) }
     : { dx: 0, dy: SIZE + SUB + GAP * 2 };
-  const shareOffset = dockBottom ? { dx: 0, dy: -(SUB + GAP) } : { dx: 0, dy: SIZE + GAP };
 
   const qrPos = isOpen
     ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
@@ -190,7 +194,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
   return (
     <>
-      {/* QR sub-button — always navy blue, always the NEARER bubble */}
+      {/* QR sub-button — navy blue, FARTHER from the main X button */}
       <button
         type="button"
         onClick={() => {
@@ -226,7 +230,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* Share sub-button — always orange, always the FARTHER bubble */}
+      {/* Share sub-button — orange, NEARER to the main X button */}
       <button
         type="button"
         onClick={handleShare}
