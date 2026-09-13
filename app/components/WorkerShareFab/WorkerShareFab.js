@@ -168,24 +168,19 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const vp = getViewport();
   const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
 
-  // Simple, unambiguous vertical stack: QR is ALWAYS the bubble nearest
-  // the main button, Share is ALWAYS the one farther out. Whether that
-  // stack extends upward or downward depends only on which half of the
-  // screen the button is currently in — left/right dock never affects
-  // color or ordering, only the snap-to-edge X position.
-  // QR is ALWAYS the FARTHER bubble, Share is ALWAYS the NEARER one —
-  // this direction never changes based on left/right dock, only whether
-  // the stack extends up or down (which depends solely on dockBottom).
-  // Match the reference screenshot: the expanded buttons form a diagonal
-  // fan around the main X button — QR sits upper-left of X, Share sits
-  // slightly upper-left and above QR. Keep these offsets tied to X so
-  // dragging the main button preserves the exact relative positioning.
+  // The expanded buttons form a directional fan around X.
+  // Right side: QR is upper-left of X and Share is above X, matching
+  // the existing reference layout. Left side: mirror that same geometry
+  // horizontally, so QR and Share stay inside the viewport instead of
+  // escaping off-screen. Blue QR remains position #1 and orange Share #2.
+  const onLeft = pos.left + SIZE / 2 <= vp.width / 2;
+  const side = onLeft ? 1 : -1;
   const qrOffset = dockBottom
-    ? { dx: -(SUB + 17), dy: -50 }
-    : { dx: -(SUB + 17), dy: 50 };
+    ? { dx: side * (SUB + 17), dy: -50 }
+    : { dx: side * (SUB + 17), dy: 50 };
   const shareOffset = dockBottom
-    ? { dx: -10, dy: -96 }
-    : { dx: -10, dy: 96 };
+    ? { dx: side * 10, dy: -96 }
+    : { dx: side * 10, dy: 96 };
 
   const qrPos = isOpen
     ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
