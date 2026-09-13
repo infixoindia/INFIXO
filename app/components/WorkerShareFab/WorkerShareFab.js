@@ -175,12 +175,18 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   // escaping off-screen. Blue QR remains position #1 and orange Share #2.
   const onLeft = pos.left + SIZE / 2 <= vp.width / 2;
   const side = onLeft ? 1 : -1;
-  const qrOffset = dockBottom
+  const baseQrOffset = dockBottom
     ? { dx: side * (SUB + 17), dy: -50 }
     : { dx: side * (SUB + 17), dy: 50 };
-  const shareOffset = dockBottom
+  const baseShareOffset = dockBottom
     ? { dx: side * 10, dy: -96 }
     : { dx: side * 10, dy: 96 };
+
+  // On the left side, keep the exact same two physical positions but
+  // exchange which action occupies them: QR takes Share's position and
+  // Share takes QR's position. Right side remains unchanged.
+  const qrOffset = onLeft ? baseShareOffset : baseQrOffset;
+  const shareOffset = onLeft ? baseQrOffset : baseShareOffset;
 
   const qrPos = isOpen
     ? { left: pos.left + qrOffset.dx, top: pos.top + qrOffset.dy }
