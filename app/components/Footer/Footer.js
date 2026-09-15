@@ -52,6 +52,7 @@ export default function Footer({ slug }) {
           width={1200}
           height={600}
           priority={false}
+          unoptimized
           className={styles.footerImage}
         />
       </div>
