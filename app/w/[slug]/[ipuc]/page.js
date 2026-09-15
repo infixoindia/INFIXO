@@ -1,0 +1,70 @@
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useSearchParams } from "next/navigation";
+import Header from "../../../components/Header/Header";
+import WorkerIdentityCard from "../../../components/WorkerIdentityCard/WorkerIdentityCard";
+import NavigationTabs from "../../../components/NavigationTabs/NavigationTabs";
+import Footer from "../../../components/Footer/Footer";
+import AdminEditFab from "../../../components/AdminEditFab/AdminEditFab";
+import WorkerShareFab from "../../../components/WorkerShareFab/WorkerShareFab";
+import { getWorkerByIpuc } from "@/lib/workerService";
+
+function WorkerProfilePageInner() {
+  const { slug, ipuc } = useParams();
+  const searchParams = useSearchParams();
+  const [worker, setWorker] = useState(null);
+  const [isMissing, setIsMissing] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const data = await getWorkerByIpuc(ipuc);
+        if (!active) return;
+        if (!data || data.slug !== slug) setIsMissing(true);
+        else setWorker(data);
+      } catch (err) {
+        console.error(err);
+        if (active) setIsMissing(true);
+      }
+    })();
+    return () => { active = false; };
+  }, [slug, ipuc]);
+
+  if (isMissing) {
+    return (
+      <main style={{ padding: "3rem 1rem", textAlign: "center" }}>
+        <p>Worker not found.</p>
+      </main>
+    );
+  }
+
+  if (!worker) return null;
+
+  const isAdminPreview = searchParams.get("admin") === worker.id;
+  const queryString = isAdminPreview ? `?admin=${worker.id}` : "";
+  const privateBasePath = `/w/${slug}/${worker.ipuc}`;
+  const cleanUrl = typeof window !== "undefined" ? `${window.location.origin}/w/${slug}` : "";
+
+  return (
+    <main>
+      <Header />
+      <div style={{ padding: "2rem 1rem 0 1rem" }}>
+        <WorkerIdentityCard worker={worker} />
+        <NavigationTabs worker={worker} basePath={privateBasePath} queryString={queryString} />
+      </div>
+      <Footer slug={slug} />
+      {isAdminPreview && <AdminEditFab workerId={worker.id} />}
+      <WorkerShareFab worker={worker} cleanUrl={cleanUrl} />
+    </main>
+  );
+}
+
+export default function WorkerProfilePage() {
+  return (
+    <Suspense fallback={null}>
+      <WorkerProfilePageInner />
+    </Suspense>
+  );
+}

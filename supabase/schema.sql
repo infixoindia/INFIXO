@@ -3,10 +3,19 @@
 -- Run this once in Supabase SQL Editor
 -- ============================================================
 
+-- Short branded unique code used by the private worker handover link.
+create or replace function public.generate_ipuc()
+returns text as $$
+begin
+  return 'IPUC-' || upper(substr(encode(gen_random_bytes(4), 'hex'), 1, 8));
+end;
+$$ language plpgsql;
+
 -- 1. WORKERS TABLE (single source of truth for all worker data)
 create table if not exists public.workers (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null,
+  ipuc text unique not null default public.generate_ipuc(), -- e.g. IPUC-K7X4P2A9
 
   -- Identity
   full_name text default '',

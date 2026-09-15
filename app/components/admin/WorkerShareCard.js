@@ -11,7 +11,7 @@ import styles from "./Admin.module.css";
 // Two different links are shown on purpose:
 //  - "Customer Link" (plain /w/slug) — safe to send to anyone, never shows
 //    any Share/Edit button on the public page.
-//  - "Worker's Own Link" (/w/slug?me=<id>) — give this ONLY to the worker.
+//  - "Worker's Own Link" (/w/slug/IPUC-XXXXXX) — give this ONLY to the worker.
 //    Opening it shows them a "Share My Profile" button so they can easily
 //    re-share their profile with new customers themselves.
 export default function WorkerShareCard({ worker }) {
@@ -24,7 +24,7 @@ export default function WorkerShareCard({ worker }) {
   useEffect(() => {
     const base = `${window.location.origin}/w/${worker.slug}`;
     setCustomerUrl(base);
-    setWorkerOwnUrl(`${base}?me=${worker.id}`);
+    setWorkerOwnUrl(`${base}/${worker.ipuc}`);
 
     // Generate the QR code entirely in the browser — no external service,
     // no network call, works even if the phone is offline afterwards.
@@ -36,7 +36,7 @@ export default function WorkerShareCard({ worker }) {
     })
       .then(setQrDataUrl)
       .catch((err) => console.error("QR generation failed:", err));
-  }, [worker.slug, worker.id]);
+  }, [worker.slug, worker.id, worker.ipuc]);
 
   const copyText = async (text, setFlag) => {
     try {
@@ -49,9 +49,6 @@ export default function WorkerShareCard({ worker }) {
   };
 
   const handleShare = async () => {
-    // First handover from Admin to the worker uses the private worker link.
-    // This link contains ?me=<worker-id>, which is what enables the worker's
-    // own Share/QR FAB. The plain customer link is intentionally NOT used here.
     const shareText = [
       `Hello ${worker.fullName || "there"} 👋`,
       "",
@@ -78,6 +75,8 @@ export default function WorkerShareCard({ worker }) {
     } else {
       try {
         await navigator.clipboard.writeText(shareText);
+        setCopiedWorker(true);
+        setTimeout(() => setCopiedWorker(false), 2000);
         alert("Share isn't supported on this browser — the message was copied instead.");
       } catch (err) {
         console.error("Copy failed:", err);
