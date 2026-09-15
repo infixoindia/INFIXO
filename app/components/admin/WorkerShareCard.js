@@ -49,13 +49,19 @@ export default function WorkerShareCard({ worker }) {
   };
 
   const handleShare = async () => {
+    // First handover from Admin to the worker uses the private worker link.
+    // This link contains ?me=<worker-id>, which is what enables the worker's
+    // own Share/QR FAB. The plain customer link is intentionally NOT used here.
     const shareText = [
       `Hello ${worker.fullName || "there"} 👋`,
       "",
       "Aapki INFIXO Profile Ready Hai! 🎉",
-      "Ab aap apni profile use kar sakte hain aur customers ke saath apni profile share kar sakte hain.",
+      "Ab aap apni profile customers ke saath share karke apne kaam aur contact details dikha sakte hain.",
       "",
-      "Apno Se Judne Ka Naya Tarika.",
+      "🔗 Profile Dekhein:",
+      workerOwnUrl,
+      "",
+      "INFIXO — Apno Se Judne Ka Naya Tarika.",
       "",
       "— Team INFIXO",
     ].join("\n");
@@ -65,14 +71,17 @@ export default function WorkerShareCard({ worker }) {
         await navigator.share({
           title: `${worker.fullName || "Worker"} — Infixo Profile`,
           text: shareText,
-          url: customerUrl,
         });
       } catch (err) {
         if (err.name !== "AbortError") console.error("Share failed:", err);
       }
     } else {
-      copyText(customerUrl, setCopiedCustomer);
-      alert("Share isn't supported on this browser — the link was copied instead.");
+      try {
+        await navigator.clipboard.writeText(shareText);
+        alert("Share isn't supported on this browser — the message was copied instead.");
+      } catch (err) {
+        console.error("Copy failed:", err);
+      }
     }
   };
 
