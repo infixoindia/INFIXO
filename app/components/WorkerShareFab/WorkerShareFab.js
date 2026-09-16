@@ -23,6 +23,7 @@ function getViewport() {
 }
 
 export default function WorkerShareFab({ worker, cleanUrl }) {
+  const pathname = usePathname();
   const [pos, setPos] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [showQr, setShowQr] = useState(false);
@@ -164,16 +165,18 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     setIsOpen(false);
   };
 
-  // The X belongs only to the worker's HOME profile.
-  // Support both private-link formats: /w/slug?me=<uuid> and
-  // /w/slug/IPUC-XXXXXX. Never show it on nested detail pages.
-  const homePath = worker?.slug ? `/w/${worker.slug}` : null;
-  const normalizedPath = (pathname || "").replace(/\/$/, "");
-  const isHomeProfile =
-    normalizedPath === homePath ||
-    (worker?.ipuc && normalizedPath === `${homePath}/${worker.ipuc}`);
+  if (!worker || !pos) return null;
 
-  if (!worker || !pos || !isHomeProfile) return null;
+  // The FAB is a worker-only control. It is allowed on the private home
+  // profile (/w/slug?me=...) and on the IPUC private home profile
+  // (/w/slug/IPUC-XXXXXX), but never on detail routes.
+  const rootPath = worker?.slug ? `/w/${worker.slug}` : null;
+  const ipucHomePath = worker?.slug && worker?.ipuc
+    ? `/w/${worker.slug}/${worker.ipuc}`
+    : null;
+  const normalizedPath = (pathname || "").replace(/\/$/, "");
+  const isAllowedHomePath = normalizedPath === rootPath || normalizedPath === ipucHomePath;
+  if (!isAllowedHomePath) return null;
 
   const vp = getViewport();
   const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
