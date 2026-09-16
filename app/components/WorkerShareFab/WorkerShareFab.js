@@ -58,6 +58,16 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     };
   }, []);
 
+  // Auto-collapse the QR/Share action buttons after 5 seconds.
+  // The main X button stays visible; only the expanded action buttons close.
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer = window.setTimeout(() => {
+      setIsOpen(false);
+    }, 5000);
+    return () => window.clearTimeout(timer);
+  }, [isOpen]);
+
   useEffect(() => {
     if (!cleanUrl) return;
     QRCode.toDataURL(cleanUrl, {
