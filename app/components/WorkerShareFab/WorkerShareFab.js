@@ -321,11 +321,11 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
             style={{
               width: "100%",
               maxWidth: "760px",
-              maxHeight: "92vh",
+              maxHeight: "72vh",
               overflowY: "auto",
               background: "#242424",
-              borderRadius: "32px 32px 0 0",
-              padding: "28px 22px 26px",
+              borderRadius: "28px 28px 0 0",
+              padding: "20px 18px 18px",
               textAlign: "center",
               boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
@@ -333,8 +333,8 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           >
             <p
               style={{
-                margin: "0 0 22px",
-                fontSize: "26px",
+                margin: "0 0 16px",
+                fontSize: "21px",
                 lineHeight: 1.2,
                 fontWeight: 700,
                 color: "#f5f5f5",
@@ -345,7 +345,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
             <div
               style={{
-                width: "min(72vw, 560px)",
+                width: "min(58vw, 300px)",
                 margin: "0 auto",
                 padding: "0",
                 background: "#ffffff",
@@ -360,8 +360,8 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
             <p
               style={{
-                margin: "22px 0 20px",
-                fontSize: "18px",
+                margin: "14px 0 14px",
+                fontSize: "15px",
                 lineHeight: 1.35,
                 fontWeight: 500,
                 color: "#bdbdbd",
@@ -375,15 +375,15 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               onClick={() => setShowQr(false)}
               style={{
                 display: "block",
-                width: "calc(100% - 56px)",
-                maxWidth: "640px",
+                width: "min(72%, 260px)",
+                maxWidth: "260px",
                 margin: "0 auto",
                 border: "none",
                 background: "#087FE5",
                 color: "#ffffff",
-                fontSize: "22px",
+                fontSize: "18px",
                 fontWeight: 700,
-                padding: "17px 20px",
+                padding: "11px 18px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
