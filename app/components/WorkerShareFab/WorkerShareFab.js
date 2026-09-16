@@ -333,8 +333,8 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           >
             <p
               style={{
-                margin: "0 0 16px",
-                fontSize: "21px",
+                margin: "0 0 14px",
+                fontSize: "18px",
                 lineHeight: 1.2,
                 fontWeight: 700,
                 color: "#f5f5f5",
@@ -345,9 +345,9 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
             <div
               style={{
-                width: "min(58vw, 300px)",
+                width: "min(50vw, 240px)",
                 margin: "0 auto",
-                padding: "0",
+                padding: "8px",
                 background: "#ffffff",
               }}
             >
@@ -358,32 +358,20 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               />
             </div>
 
-            <p
-              style={{
-                margin: "14px 0 14px",
-                fontSize: "15px",
-                lineHeight: 1.35,
-                fontWeight: 500,
-                color: "#bdbdbd",
-              }}
-            >
-              To share, scan the QR code above.
-            </p>
-
             <button
               type="button"
               onClick={() => setShowQr(false)}
               style={{
                 display: "block",
-                width: "min(72%, 260px)",
-                maxWidth: "260px",
+                width: "min(60%, 220px)",
+                maxWidth: "220px",
                 margin: "0 auto",
                 border: "none",
                 background: "#087FE5",
                 color: "#ffffff",
-                fontSize: "18px",
+                fontSize: "16px",
                 fontWeight: 700,
-                padding: "11px 18px",
+                padding: "9px 16px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
