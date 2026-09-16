@@ -175,3 +175,81 @@
 .badgeWrap {
   margin-top: 16px;
 }
+
+/* ================= WORKER ID FOLD CONTROL ================= */
+.workerIdButton {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  background: #2738F4;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
+  transition: opacity 180ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.workerIdButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.workerIdButton:active {
+  transform: scale(0.96);
+}
+
+.workerIdCloseLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: transparent;
+  cursor: pointer;
+}
+
+.workerIdTab {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  z-index: 41;
+  width: 42px;
+  height: 128px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px 0 0 14px;
+  background: #2738F4;
+  color: #fff;
+  box-shadow: -4px 7px 16px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  transform: translateX(115%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+}
+
+.workerIdTabOpen {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.workerIdTabText {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+}

@@ -1,8 +1,27 @@
 'use client';
 
+import { useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
+
+function WorkerIdIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8" cy="11" r="2" />
+      <path d="M12 9h6M12 13h4" />
+    </svg>
+  );
+}
 
 export default function WorkerIdentityCard({ worker }) {
   const {
@@ -11,14 +30,21 @@ export default function WorkerIdentityCard({ worker }) {
     experience,
     serviceArea,
     isVerified,
-    heroSlides, // Pass Array of Objects from worker data
+    heroSlides,
+    workerId,
   } = worker;
+
+  const [isWorkerIdOpen, setIsWorkerIdOpen] = useState(false);
+
+  const toggleWorkerId = (e) => {
+    e.stopPropagation();
+    setIsWorkerIdOpen((open) => !open);
+  };
 
   return (
     <section className={styles.card}>
       {/* ================= HERO ================= */}
       <div className={styles.hero}>
-        {/* Dynamic Object-Positioned Slider */}
         <HeroSlider slides={heroSlides} workerName={fullName} />
 
         <div className={styles.pattern}></div>
@@ -41,6 +67,45 @@ L0,70
 Z"
           />
         </svg>
+
+        {/* ================= WORKER ID ================= */}
+        {workerId && (
+          <>
+            {!isWorkerIdOpen && (
+              <button
+                type="button"
+                className={styles.workerIdButton}
+                data-worker-id-control="true"
+                onClick={toggleWorkerId}
+                aria-label={`Show Worker ID ${workerId}`}
+              >
+                <WorkerIdIcon />
+                <span>ID</span>
+              </button>
+            )}
+
+            {isWorkerIdOpen && (
+              <div
+                className={styles.workerIdCloseLayer}
+                data-worker-id-control="true"
+                onClick={() => setIsWorkerIdOpen(false)}
+                aria-hidden="true"
+              />
+            )}
+
+            <button
+              type="button"
+              className={`${styles.workerIdTab} ${isWorkerIdOpen ? styles.workerIdTabOpen : ''}`}
+              data-worker-id-control="true"
+              onClick={toggleWorkerId}
+              aria-label={isWorkerIdOpen ? 'Hide Worker ID' : `Show Worker ID ${workerId}`}
+            >
+              <span className={styles.workerIdTabText}>
+                ID: {workerId}
+              </span>
+            </button>
+          </>
+        )}
       </div>
 
       {/* ================= WHITE PANEL ================= */}
@@ -108,4 +173,4 @@ Z"
       </div>
     </section>
   );
-                    }
+}
