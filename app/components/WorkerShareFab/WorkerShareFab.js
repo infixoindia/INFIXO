@@ -365,7 +365,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
                 display: "block",
                 width: "min(52%, 190px)",
                 maxWidth: "190px",
-                margin: "0 auto",
+                margin: "8px auto 0",
                 border: "none",
                 background: "#087FE5",
                 color: "#ffffff",
