@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
@@ -41,8 +41,21 @@ export default function WorkerIdentityCard({ worker }) {
     setIsWorkerIdOpen((open) => !open);
   };
 
+  // Automatically close the Worker ID panel after 5 seconds.
+  useEffect(() => {
+    if (!isWorkerIdOpen) return undefined;
+
+    const timer = setTimeout(() => {
+      setIsWorkerIdOpen(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [isWorkerIdOpen]);
+
+  const closeWorkerId = () => setIsWorkerIdOpen(false);
+
   return (
-    <section className={styles.card}>
+    <section className={styles.card} onClick={closeWorkerId}>
       {/* ================= HERO ================= */}
       <div className={styles.hero}>
         <HeroSlider slides={heroSlides} workerName={fullName} />
@@ -88,7 +101,7 @@ Z"
               <div
                 className={styles.workerIdCloseLayer}
                 data-worker-id-control="true"
-                onClick={() => setIsWorkerIdOpen(false)}
+                onClick={closeWorkerId}
                 aria-hidden="true"
               />
             )}
