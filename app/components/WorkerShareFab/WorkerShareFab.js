@@ -321,11 +321,11 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
             style={{
               width: "100%",
               maxWidth: "760px",
-              maxHeight: "78vh",
+              maxHeight: "84vh",
               overflowY: "auto",
               background: "#242424",
               borderRadius: "28px 28px 0 0",
-              padding: "22px 18px 24px",
+              padding: "18px 18px 58px",
               textAlign: "center",
               boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
@@ -333,7 +333,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           >
             <p
               style={{
-                margin: "0 0 16px",
+                margin: "0 0 14px",
                 fontSize: "17px",
                 lineHeight: 1.2,
                 fontWeight: 700,
