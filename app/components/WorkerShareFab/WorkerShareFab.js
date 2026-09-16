@@ -298,54 +298,105 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* QR modal — white card, black text, close button stays black */}
+      {/* QR share sheet — styled to match the supplied Wi-Fi QR reference. */}
       {showQr && qrDataUrl && (
         <div
           onClick={() => setShowQr(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.58)",
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-end",
             justifyContent: "center",
             zIndex: 1000,
-            padding: "1.5rem",
+            overflow: "hidden",
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Share Identity & Skill Profile"
             style={{
-              background: "#ffffff",
-              border: "1px solid #e5e7eb",
-              borderRadius: "18px",
-              padding: "1.5rem",
-              textAlign: "center",
-              maxWidth: "300px",
               width: "100%",
-              boxShadow: "0 20px 45px rgba(0,0,0,0.3)",
+              maxWidth: "760px",
+              maxHeight: "92vh",
+              overflowY: "auto",
+              background: "#242424",
+              borderRadius: "32px 32px 0 0",
+              padding: "28px 22px 26px",
+              textAlign: "center",
+              boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
+              animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
             }}
           >
-            <p style={{ fontWeight: 700, color: "#111111", marginBottom: "0.75rem" }}>
-              Scan to view {worker.fullName || "this"} profile
+            <p
+              style={{
+                margin: "0 0 22px",
+                fontSize: "26px",
+                lineHeight: 1.2,
+                fontWeight: 700,
+                color: "#f5f5f5",
+              }}
+            >
+              Share Identity &amp; Skill Profile
             </p>
-            <img src={qrDataUrl} alt="Profile QR code" style={{ width: "100%", borderRadius: "10px" }} />
+
+            <div
+              style={{
+                width: "min(72vw, 560px)",
+                margin: "0 auto",
+                padding: "0",
+                background: "#ffffff",
+              }}
+            >
+              <img
+                src={qrDataUrl}
+                alt="Identity & Skill Profile QR code"
+                style={{ width: "100%", display: "block", aspectRatio: "1 / 1" }}
+              />
+            </div>
+
+            <p
+              style={{
+                margin: "22px 0 20px",
+                fontSize: "18px",
+                lineHeight: 1.35,
+                fontWeight: 500,
+                color: "#bdbdbd",
+              }}
+            >
+              To share, scan the QR code above.
+            </p>
+
             <button
               type="button"
               onClick={() => setShowQr(false)}
               style={{
-                marginTop: "1rem",
-                border: `1px solid ${ORANGE}`,
-                background: "#000000",
+                display: "block",
+                width: "calc(100% - 56px)",
+                maxWidth: "640px",
+                margin: "0 auto",
+                border: "none",
+                background: "#087FE5",
                 color: "#ffffff",
+                fontSize: "22px",
                 fontWeight: 700,
-                padding: "0.6rem 1.5rem",
+                padding: "17px 20px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
             >
-              Close
+              Done
             </button>
+
+            <style>{`
+              @keyframes infixoQrSheetUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+              }
+            `}</style>
           </div>
         </div>
       )}
