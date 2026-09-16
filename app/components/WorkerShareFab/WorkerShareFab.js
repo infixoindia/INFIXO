@@ -321,11 +321,11 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
             style={{
               width: "100%",
               maxWidth: "760px",
-              maxHeight: "72vh",
+              maxHeight: "78vh",
               overflowY: "auto",
               background: "#242424",
               borderRadius: "28px 28px 0 0",
-              padding: "20px 18px 18px",
+              padding: "22px 18px 24px",
               textAlign: "center",
               boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
@@ -333,8 +333,8 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           >
             <p
               style={{
-                margin: "0 0 14px",
-                fontSize: "18px",
+                margin: "0 0 16px",
+                fontSize: "17px",
                 lineHeight: 1.2,
                 fontWeight: 700,
                 color: "#f5f5f5",
@@ -345,9 +345,9 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
 
             <div
               style={{
-                width: "min(50vw, 240px)",
+                width: "min(58vw, 270px)",
                 margin: "0 auto",
-                padding: "8px",
+                padding: "11px",
                 background: "#ffffff",
               }}
             >
@@ -363,15 +363,15 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               onClick={() => setShowQr(false)}
               style={{
                 display: "block",
-                width: "min(60%, 220px)",
-                maxWidth: "220px",
-                margin: "0 auto",
+                width: "min(52%, 190px)",
+                maxWidth: "190px",
+                margin: "18px auto 0",
                 border: "none",
                 background: "#087FE5",
                 color: "#ffffff",
-                fontSize: "16px",
+                fontSize: "15px",
                 fontWeight: 700,
-                padding: "9px 16px",
+                padding: "8px 14px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
