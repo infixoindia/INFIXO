@@ -23,7 +23,6 @@ function getViewport() {
 }
 
 export default function WorkerShareFab({ worker, cleanUrl }) {
-  const pathname = usePathname();
   const [pos, setPos] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [showQr, setShowQr] = useState(false);
@@ -165,11 +164,16 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     setIsOpen(false);
   };
 
-  // The worker Share/X FAB belongs only on the home profile page.
-  // Never carry it into Work Details, Worker Details, Photos, Videos, etc.
+  // The X belongs only to the worker's HOME profile.
+  // Support both private-link formats: /w/slug?me=<uuid> and
+  // /w/slug/IPUC-XXXXXX. Never show it on nested detail pages.
   const homePath = worker?.slug ? `/w/${worker.slug}` : null;
   const normalizedPath = (pathname || "").replace(/\/$/, "");
-  if (!worker || !pos || !homePath || normalizedPath !== homePath) return null;
+  const isHomeProfile =
+    normalizedPath === homePath ||
+    (worker?.ipuc && normalizedPath === `${homePath}/${worker.ipuc}`);
+
+  if (!worker || !pos || !isHomeProfile) return null;
 
   const vp = getViewport();
   const dockBottom = pos.top + SIZE / 2 > vp.height / 2;
@@ -304,54 +308,93 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         </svg>
       </button>
 
-      {/* QR modal — white card, black text, close button stays black */}
+      {/* QR share sheet — styled to match the supplied Wi-Fi QR reference. */}
       {showQr && qrDataUrl && (
         <div
           onClick={() => setShowQr(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.58)",
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-end",
             justifyContent: "center",
             zIndex: 1000,
-            padding: "1.5rem",
+            overflow: "hidden",
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Share Identity & Skill Profile"
             style={{
-              background: "#ffffff",
-              border: "1px solid #e5e7eb",
-              borderRadius: "18px",
-              padding: "1.5rem",
-              textAlign: "center",
-              maxWidth: "300px",
               width: "100%",
-              boxShadow: "0 20px 45px rgba(0,0,0,0.3)",
+              maxWidth: "760px",
+              maxHeight: "84vh",
+              overflowY: "auto",
+              background: "#242424",
+              borderRadius: "28px 28px 0 0",
+              padding: "28px 18px 72px",
+              textAlign: "center",
+              boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
+              animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
             }}
           >
-            <p style={{ fontWeight: 700, color: "#111111", marginBottom: "0.75rem" }}>
-              Scan to view {worker.fullName || "this"} profile
+            <p
+              style={{
+                margin: "0 0 20px",
+                fontSize: "17px",
+                lineHeight: 1.2,
+                fontWeight: 700,
+                color: "#f5f5f5",
+              }}
+            >
+              Share Identity &amp; Skill Profile
             </p>
-            <img src={qrDataUrl} alt="Profile QR code" style={{ width: "100%", borderRadius: "10px" }} />
+
+            <div
+              style={{
+                width: "min(58vw, 270px)",
+                margin: "0 auto 22px",
+                padding: "11px",
+                background: "#ffffff",
+              }}
+            >
+              <img
+                src={qrDataUrl}
+                alt="Identity & Skill Profile QR code"
+                style={{ width: "100%", display: "block", aspectRatio: "1 / 1" }}
+              />
+            </div>
+
             <button
               type="button"
               onClick={() => setShowQr(false)}
               style={{
-                marginTop: "1rem",
-                border: `1px solid ${ORANGE}`,
-                background: "#000000",
+                display: "block",
+                width: "min(52%, 190px)",
+                maxWidth: "190px",
+                margin: "8px auto 0",
+                border: "none",
+                background: "#087FE5",
                 color: "#ffffff",
+                fontSize: "15px",
                 fontWeight: 700,
-                padding: "0.6rem 1.5rem",
+                padding: "8px 14px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
             >
-              Close
+              Done
             </button>
+
+            <style>{`
+              @keyframes infixoQrSheetUp {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+              }
+            `}</style>
           </div>
         </div>
       )}
