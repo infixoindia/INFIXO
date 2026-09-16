@@ -189,7 +189,7 @@
   padding: 0 10px;
   border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: 999px;
-  background: rgba(39, 56, 244, 0.72);
+  background: rgba(39, 56, 244, 0.55);
   color: #fff;
   font: inherit;
   font-size: 12px;
@@ -229,7 +229,7 @@
   padding: 0;
   border: 0;
   border-radius: 14px 0 0 14px;
-  background: rgba(39, 56, 244, 0.72);
+  background: rgba(39, 56, 244, 0.55);
   color: #fff;
   box-shadow: -4px 7px 16px rgba(0, 0, 0, 0.18);
   backdrop-filter: blur(4px);
