@@ -325,7 +325,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               overflowY: "auto",
               background: "#242424",
               borderRadius: "28px 28px 0 0",
-              padding: "18px 18px 58px",
+              padding: "28px 18px 72px",
               textAlign: "center",
               boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
@@ -333,7 +333,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           >
             <p
               style={{
-                margin: "0 0 14px",
+                margin: "0 0 20px",
                 fontSize: "17px",
                 lineHeight: 1.2,
                 fontWeight: 700,
@@ -346,7 +346,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
             <div
               style={{
                 width: "min(58vw, 270px)",
-                margin: "0 auto",
+                margin: "0 auto 22px",
                 padding: "11px",
                 background: "#ffffff",
               }}
@@ -365,7 +365,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
                 display: "block",
                 width: "min(52%, 190px)",
                 maxWidth: "190px",
-                margin: "18px auto 0",
+                margin: "0 auto",
                 border: "none",
                 background: "#087FE5",
                 color: "#ffffff",
