@@ -301,9 +301,11 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
           top: pos.top,
           width: SIZE,
           height: SIZE,
+          padding: 0,
           borderRadius: "50%",
-          background: NAVY,
+          background: "transparent",
           border: "none",
+          overflow: "hidden",
           boxShadow: "0 0 22px rgba(30,70,220,0.55)",
           display: "flex",
           alignItems: "center",
@@ -315,10 +317,20 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
         }}
         aria-label="Share this profile"
       >
-        <svg width="30" height="30" viewBox="0 0 40 40">
-          <polygon points="3,3 15,3 37,29 25,29" fill="none" stroke={ORANGE} strokeWidth="2.6" strokeLinejoin="round" />
-          <polygon points="37,3 25,3 3,29 15,29" fill="none" stroke={ORANGE} strokeWidth="2.6" strokeLinejoin="round" />
-        </svg>
+        <img
+          src="/images/worker-fab-x.png"
+          alt=""
+          draggable="false"
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "block",
+            objectFit: "cover",
+            objectPosition: "center",
+            borderRadius: "50%",
+            pointerEvents: "none",
+          }}
+        />
       </button>
 
       {/* QR share sheet — styled to match the supplied Wi-Fi QR reference. */}
