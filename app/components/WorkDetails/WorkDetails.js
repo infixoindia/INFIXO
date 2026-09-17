@@ -45,7 +45,16 @@ export default function WorkDetails({ worker, backHref = "/" }) {
 
   <div className={styles.value}>
    <div className={styles.primaryBadge}>
-  {skillCategory?.Icon && <skillCategory.Icon className={styles.skillIcon} />}
+  {skillCategory?.image ? (
+    <img
+      className={styles.skillImage}
+      src={skillCategory.image}
+      alt=""
+      aria-hidden="true"
+    />
+  ) : (
+    skillCategory?.Icon && <skillCategory.Icon className={styles.skillIcon} />
+  )}
   <span>{skillCategory?.label}</span>
 </div>
 </div>
