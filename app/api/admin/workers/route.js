@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://xyplrbzyqershqngrjwo.supabase.co";
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -45,7 +46,7 @@ export async function POST(request) {
   try {
     const payload = await request.json();
     const supabase = getAdminClient();
-    const { data, error } = await supabase.from("workers").insert(payload).select().single();
+    const { data, error } = await supabase.from("workers").insert({ ...payload, id: randomUUID() }).select().single();
     if (error) throw error;
     return NextResponse.json({ worker: data }, { status: 201 });
   } catch (e) {

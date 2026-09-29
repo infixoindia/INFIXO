@@ -17,7 +17,7 @@ export default function WorkPhotosEditor({ worker, updateField, onSave, saving, 
       updateField("photos", [...photos, url]);
     } catch (err) {
       console.error(err);
-      alert("Photo upload failed. Please try again.");
+      alert(`Photo upload failed: ${err?.message || "Please try again."}`);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -37,7 +37,7 @@ export default function WorkPhotosEditor({ worker, updateField, onSave, saving, 
       if (oldUrl) deleteWorkerFile(oldUrl);
     } catch (err) {
       console.error(err);
-      alert("Photo upload failed. Please try again.");
+      alert(`Photo upload failed: ${err?.message || "Please try again."}`);
     } finally {
       setUploading(false);
       e.target.value = "";

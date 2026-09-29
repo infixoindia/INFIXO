@@ -112,7 +112,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
       flashMessage("identity", "Saved!");
     } catch (err) {
       console.error(err);
-      flashMessage("identity", "Save failed. Try again.", true);
+      flashMessage("identity", err?.message || "Save failed. Try again.", true);
     } finally {
       setSavingSection(null);
     }
@@ -128,7 +128,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
       flashMessage(section, "Saved!");
     } catch (err) {
       console.error(err);
-      flashMessage(section, "Save failed. Try again.", true);
+      flashMessage(section, err?.message || "Save failed. Try again.", true);
     } finally {
       setSavingSection(null);
     }

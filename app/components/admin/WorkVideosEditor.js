@@ -51,7 +51,7 @@ export default function WorkVideosEditor({ worker, updateField, onSave, saving, 
       setFileInputKey((k) => k + 1); // reset the file pickers
     } catch (err) {
       console.error(err);
-      alert("Video upload failed. Please try again.");
+      alert(`Video upload failed: ${err?.message || "Please try again."}`);
     } finally {
       setUploading(false);
     }

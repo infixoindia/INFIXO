@@ -41,7 +41,7 @@ export default function WorkerIdentityEditor({
       updateField("heroSlides", [...heroSlides, { image: url }]);
     } catch (err) {
       console.error(err);
-      alert("Image upload failed. Please try again.");
+      alert(`Image upload failed: ${err?.message || "Please try again."}`);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -64,7 +64,7 @@ export default function WorkerIdentityEditor({
       if (oldUrl) deleteWorkerFile(oldUrl);
     } catch (err) {
       console.error(err);
-      alert("Image upload failed. Please try again.");
+      alert(`Image upload failed: ${err?.message || "Please try again."}`);
     } finally {
       setUploading(false);
       e.target.value = "";
