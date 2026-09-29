@@ -2,7 +2,18 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://xyplrbzyqershqngrjwo.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
+function getSupabaseUrl() {
+  const raw = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^[\"']|[\"']$/g, "");
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+      return parsed.toString().replace(/\/$/, "");
+    }
+  } catch {}
+  return DEFAULT_SUPABASE_URL;
+}
+const url = getSupabaseUrl();
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function getAdminClient() {
