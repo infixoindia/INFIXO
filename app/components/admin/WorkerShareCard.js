@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QRCode from "qrcode";
 import styles from "./Admin.module.css";
+import { deleteWorker, setWorkerActive } from "@/lib/workerService";
 
 // Shows Edit / copyable links / QR code / Share — used on the worker's
 // dedicated "share" page (not inline in the list).
@@ -20,6 +22,8 @@ export default function WorkerShareCard({ worker }) {
   const [copiedWorker, setCopiedWorker] = useState(false);
   const [customerUrl, setCustomerUrl] = useState("");
   const [workerOwnUrl, setWorkerOwnUrl] = useState("");
+  const [busy, setBusy] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const base = `${window.location.origin}/w/${worker.slug}`;
@@ -45,6 +49,35 @@ export default function WorkerShareCard({ worker }) {
       setTimeout(() => setFlag(false), 2000);
     } catch (err) {
       console.error("Copy failed:", err);
+    }
+  };
+
+  const handleBlockToggle = async () => {
+    const nextActive = worker.isActive === false;
+    const action = nextActive ? "unblock" : "block";
+    if (!window.confirm(nextActive
+      ? `Unblock ${worker.fullName || "this worker"}? Their two profile links will work again.`
+      : `Block ${worker.fullName || "this worker"}? Both the customer link and worker link will stop opening, but the worker data will remain saved.`)) return;
+    setBusy(true);
+    try {
+      const updated = await setWorkerActive(worker.id, nextActive);
+      window.location.reload();
+    } catch (err) {
+      alert(err?.message || `Failed to ${action} worker.`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handlePermanentDelete = async () => {
+    if (!window.confirm(`Permanently delete ${worker.fullName || "this worker"}? This will remove the worker record and uploaded worker media from Supabase. This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      await deleteWorker(worker.id);
+      router.replace("/admin/workers");
+    } catch (err) {
+      alert(err?.message || "Failed to delete worker.");
+      setBusy(false);
     }
   };
 
@@ -126,6 +159,23 @@ export default function WorkerShareCard({ worker }) {
           <span className={styles.workerLinkText}>{workerOwnUrl || "Loading link…"}</span>
           <button type="button" className={styles.workerCopyBtn} onClick={() => copyText(workerOwnUrl, setCopiedWorker)}>
             {copiedWorker ? "Copied!" : "Copy"}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ marginTop: "1.25rem", paddingTop: "1rem", borderTop: "1px solid #e5e7eb" }}>
+        <p className={styles.label} style={{ marginBottom: "0.35rem" }}>Profile Status</p>
+        <p className={styles.hint} style={{ marginTop: 0, marginBottom: "0.7rem" }}>
+          {worker.isActive === false
+            ? "Blocked — customer and worker links are currently off."
+            : "Active — both customer and worker links are live."}
+        </p>
+        <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+          <button type="button" className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`} onClick={handleBlockToggle} disabled={busy}>
+            {worker.isActive === false ? "Unblock Profile" : "Block Profile"}
+          </button>
+          <button type="button" className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`} onClick={handlePermanentDelete} disabled={busy}>
+            Permanently Delete
           </button>
         </div>
       </div>
