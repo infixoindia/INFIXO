@@ -7,9 +7,7 @@ function getSupabaseUrl() {
   const raw = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^[\"']|[\"']$/g, "");
   try {
     const parsed = new URL(raw);
-    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-      return parsed.toString().replace(/\/$/, "");
-    }
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.toString().replace(/\/$/, "");
   } catch {}
   return DEFAULT_SUPABASE_URL;
 }

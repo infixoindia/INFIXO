@@ -4,7 +4,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "../../../../components/admin/Admin.module.css";
 import WorkerShareCard from "../../../../components/admin/WorkerShareCard";
-import { getWorkerById } from "@/lib/workerService";
+import { getWorkerById, listWorkers } from "@/lib/workerService";
 
 export default function WorkerSharePage({ params }) {
   const { id } = use(params);
@@ -19,6 +19,16 @@ export default function WorkerSharePage({ params }) {
         if (active) setWorker(data);
       } catch (err) {
         console.error(err);
+        // Fallback: the worker list endpoint is already known to work on the admin page.
+        // If a direct /[id] lookup fails, resolve the same worker from that list so an
+        // existing worker is not incorrectly shown as "Worker not found".
+        try {
+          const all = await listWorkers();
+          const fallback = (all || []).find((item) => item.id === id);
+          if (active && fallback) setWorker(fallback);
+        } catch (fallbackErr) {
+          console.error(fallbackErr);
+        }
       } finally {
         if (active) setLoading(false);
       }
