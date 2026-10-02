@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import styles from "./MapClient.module.css";
-import { buildWorkerHexes, featureCentroid, parentKeyForLonLat, polygonCoordinates } from "./hexGrid";
+import { buildWorkerHexes, featureCentroid, polygonCoordinates, workerHexForLonLat } from "./hexGrid";
 
 const CATEGORY_NAMES = ["Painter", "Plumber", "Electrician"];
 
@@ -91,7 +91,7 @@ export default function MapClient() {
       setConfigurationWarning(body.configurationError || "");
       if (query && body.workers?.length) {
         const first = body.workers.find((worker) => Number.isFinite(worker.latitude) && Number.isFinite(worker.longitude));
-        if (first) setSelected({ type: "worker", id: parentKeyForLonLat(first.longitude, first.latitude) });
+        if (first) setSelected({ type: "workerSearch", workerId: first.id });
       }
     } catch (err) {
       setError(err.message || "Could not load workers");
@@ -108,13 +108,13 @@ export default function MapClient() {
     const map = new Map();
     for (const worker of workers) {
       if (!Number.isFinite(worker.latitude) || !Number.isFinite(worker.longitude)) continue;
-      const key = parentKeyForLonLat(worker.longitude, worker.latitude);
+      const key = workerHexForLonLat(worker.longitude, worker.latitude, workerHexes);
       if (!key) continue;
       if (!map.has(key)) map.set(key, []);
       map.get(key).push(worker);
     }
     return map;
-  }, [workers]);
+  }, [workers, workerHexes]);
   const categoryCounts = useMemo(() => {
     const counts = { Painter: 0, Plumber: 0, Electrician: 0 };
     for (const worker of workers) {
@@ -125,7 +125,16 @@ export default function MapClient() {
   }, [workers]);
 
   const activeWorkers = workers.filter((worker) => worker.isActive).length;
-  const selectedWorkerHex = selected?.type === "worker" ? workerHexes.find((hex) => hex.workerHexId === selected.id) : null;
+  const selectedWorkerHex = selected?.type === "worker"
+    ? workerHexes.find((hex) => hex.workerHexId === selected.id)
+    : selected?.type === "workerSearch"
+      ? (() => {
+          const worker = workers.find((item) => item.id === selected.workerId);
+          if (!worker) return null;
+          const hexId = workerHexForLonLat(worker.longitude, worker.latitude, workerHexes);
+          return workerHexes.find((hex) => hex.workerHexId === hexId) || null;
+        })()
+      : null;
   const selectedCustomer = selected?.type === "customer" ? customer.find((feature) => labelForHex(feature) === selected.id) : null;
 
   return (
@@ -178,7 +187,7 @@ export default function MapClient() {
               })}
               {workerOn && workers.filter((worker) => Number.isFinite(worker.latitude) && Number.isFinite(worker.longitude)).map((worker) => {
                 const [x, y] = projection.project([worker.longitude, worker.latitude]);
-                return <circle key={worker.id} cx={x} cy={y} r="5" className={styles.workerDot} onClick={() => setSelected({ type: "worker", id: parentKeyForLonLat(worker.longitude, worker.latitude) })} />;
+                return <circle key={worker.id} cx={x} cy={y} r="5" className={styles.workerDot} onClick={() => setSelected({ type: "worker", id: workerHexForLonLat(worker.longitude, worker.latitude, workerHexes) })} />;
               })}
             </svg>
             <div className={styles.legend}>
