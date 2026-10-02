@@ -35,6 +35,10 @@ export default function WorkersListPage() {
         + Add New Worker
       </Link>
 
+      <Link href="/admin/map" className={styles.fabAdd}>
+        🗺️ INFIXO MAP
+      </Link>
+
       {loading && <p>Loading…</p>}
 
       {!loading && workers.length === 0 && (

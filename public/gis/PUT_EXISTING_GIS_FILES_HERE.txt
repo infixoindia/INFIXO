@@ -1,0 +1,9 @@
+COPY THESE EXISTING INFIXO GIS FILES INTO THIS FOLDER:
+
+infixo_hex_grid_indore.geojson
+imc_boundary_dissolved.geojson
+wards_indore_cleaned.geojson
+hex_ward_intersections.csv
+
+Do not regenerate, rename, edit, simplify, or reproject the Customer Hex GeoJSON.
+The current 149 Customer Hexes are the immutable base layer.
