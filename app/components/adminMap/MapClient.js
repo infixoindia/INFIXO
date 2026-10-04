@@ -107,11 +107,13 @@ export default function MapClient() {
     const maskData = makeDisplayMask(boundary);
     ensureSource("infixo-display-mask", maskData);
     const add = (layer) => { if (!map.getLayer(layer.id)) map.addLayer(layer); else { if (layer.layout) map.setLayoutProperty(layer.id, "visibility", layer.layout.visibility || "visible"); for (const [k,v] of Object.entries(layer.paint || {})) map.setPaintProperty(layer.id, k, v); } };
+    // Display-only mask stays UNDER all INFIXO overlays. It must never cover the hex layers.
+    add({ id: "infixo-display-mask", type: "fill", source: "infixo-display-mask", paint: { "fill-color": "#f7f8fa", "fill-opacity": 0.88 } });
     add({ id: "infixo-customer-fill", type: "fill", source: "infixo-customers", layout: { visibility: layers.customer ? "visible" : "none" }, paint: { "fill-color": "#cfe3f5", "fill-opacity": opacity.customer } });
     add({ id: "infixo-customer-line", type: "line", source: "infixo-customers", layout: { visibility: layers.customer ? "visible" : "none" }, paint: { "line-color": "#4d7ba6", "line-width": 0.7, "line-opacity": opacity.customer } });
     add({ id: "infixo-worker-line", type: "line", source: "infixo-workers", layout: { visibility: layers.worker ? "visible" : "none" }, paint: { "line-color": "#0b2a4a", "line-width": 3, "line-opacity": opacity.worker } });
     add({ id: "infixo-boundary-line", type: "line", source: "infixo-boundary", layout: { visibility: layers.boundary ? "visible" : "none" }, paint: { "line-color": "#c62828", "line-width": 2.5, "line-opacity": opacity.boundary } });
-    add({ id: "infixo-display-mask", type: "fill", source: "infixo-display-mask", paint: { "fill-color": "#f7f8fa", "fill-opacity": 0.88 } });
+    // Keep the boundary above the mask and overlays for a crisp IMC outline.
     if (map.getLayer("infixo-boundary-line")) { map.moveLayer("infixo-boundary-line"); }
     if (map.getLayer("infixo-customer-selected")) map.removeLayer("infixo-customer-selected");
     if (map.getLayer("infixo-worker-selected")) map.removeLayer("infixo-worker-selected");
