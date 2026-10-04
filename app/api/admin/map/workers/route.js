@@ -1,70 +1,85 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
+export const dynamic = "force-dynamic";
 
-function getSupabaseUrl() {
-  const raw = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^["']|["']$/g, "");
-  try {
-    const url = new URL(raw);
-    if (url.protocol === "http:" || url.protocol === "https:") return url.toString().replace(/\/$/, "");
-  } catch {}
-  return DEFAULT_SUPABASE_URL;
+function makeClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
-function isAdmin(request) {
-  const expected = process.env.INFIXO_ADMIN_SECRET;
-  return !!expected && request.cookies.get("infixo_admin")?.value === expected;
+function text(value) { return String(value ?? "").trim(); }
+function firstPoint(rows) {
+  return (rows || []).find((row) => Number.isFinite(Number(row.latitude)) && Number.isFinite(Number(row.longitude))) || null;
 }
-
-const norm = (value) => String(value ?? "").trim().toLowerCase();
 
 export async function GET(request) {
-  if (!isAdmin(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const serviceKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
-  if (!serviceKey) {
-    return NextResponse.json({
-      workers: [],
-      totalWorkers: 0,
-      configurationError: "SUPABASE_SERVICE_ROLE_KEY is not configured. Add the server-only Supabase service-role key to the deployment environment to load live workers.",
-    });
-  }
-
   try {
-    const query = norm(new URL(request.url).searchParams.get("q"));
-    const supabase = createClient(getSupabaseUrl(), serviceKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
+    const client = makeClient();
+    if (!client) return NextResponse.json({ workers: [], configurationError: "Supabase environment variables are missing." }, { status: 200 });
 
-    const { data, error } = await supabase
-      .from("workers")
-      .select("id,worker_id,slug,ipuc,full_name,profession,primary_skill,is_active,worker_service_areas(latitude,longitude,radius_km,city,locality)")
-      .order("created_at", { ascending: false });
+    const q = text(new URL(request.url).searchParams.get("q")).toLowerCase();
+    const [profilesResult, areasResult, availabilityResult] = await Promise.all([
+      client.from("public_worker_profiles").select("id,slug,ipuc,worker_id,full_name,profession,experience,service_area,hero_slides,phone,primary_skill,services,working_hours,working_shift,about,verifications,photos,videos"),
+      client.from("worker_service_areas").select("worker_id,city,locality,latitude,longitude,radius_km"),
+      client.from("worker_availability").select("worker_id,is_available,day_of_week,start_time,end_time"),
+    ]);
 
-    if (error) throw error;
+    const firstError = profilesResult.error || areasResult.error || availabilityResult.error;
+    if (firstError && !profilesResult.data) {
+      return NextResponse.json({ workers: [], configurationError: firstError.message || "Worker data could not be read." }, { status: 200 });
+    }
 
-    const workers = (data || []).map((worker) => {
-      const areas = Array.isArray(worker.worker_service_areas) ? worker.worker_service_areas : [];
-      const area = areas.find((item) => Number.isFinite(Number(item?.latitude)) && Number.isFinite(Number(item?.longitude))) || null;
+    const profiles = profilesResult.data || [];
+    const areas = areasResult.data || [];
+    const availability = availabilityResult.data || [];
+    const areasByWorker = new Map();
+    for (const row of areas) {
+      const id = row.worker_id;
+      if (!id) continue;
+      if (!areasByWorker.has(id)) areasByWorker.set(id, []);
+      areasByWorker.get(id).push(row);
+    }
+    const availabilityByWorker = new Map();
+    for (const row of availability) {
+      if (!row.worker_id) continue;
+      if (!availabilityByWorker.has(row.worker_id)) availabilityByWorker.set(row.worker_id, []);
+      availabilityByWorker.get(row.worker_id).push(row);
+    }
+
+    const workers = profiles.map((row) => {
+      const areaRows = areasByWorker.get(row.id) || [];
+      const point = firstPoint(areaRows);
+      const availabilityRows = availabilityByWorker.get(row.id) || [];
+      const isAvailable = availabilityRows.length ? availabilityRows.some((item) => item.is_available === true) : null;
+      const area = point || {};
       return {
-        id: worker.id,
-        workerId: worker.worker_id || "",
-        slug: worker.slug || "",
-        ipuc: worker.ipuc || "",
-        fullName: worker.full_name || "",
-        profession: worker.profession || worker.primary_skill || "",
-        isActive: worker.is_active !== false,
-        latitude: area ? Number(area.latitude) : null,
-        longitude: area ? Number(area.longitude) : null,
-        radiusKm: area?.radius_km == null ? null : Number(area.radius_km),
-        locality: area?.locality || "",
-        city: area?.city || "",
+        id: row.id,
+        slug: row.slug || "",
+        ipuc: row.ipuc || "",
+        workerId: row.worker_id || "",
+        fullName: row.full_name || "",
+        profession: row.profession || "",
+        experience: row.experience || "",
+        primarySkill: row.primary_skill || "",
+        services: Array.isArray(row.services) ? row.services : [],
+        serviceArea: Array.isArray(row.service_area) ? row.service_area : [],
+        city: area.city || "",
+        locality: area.locality || "",
+        latitude: Number(area.latitude),
+        longitude: Number(area.longitude),
+        radiusKm: Number(area.radius_km),
+        isAvailable,
+        workingHours: row.working_hours || "",
+        verification: row.verifications || {},
       };
-    }).filter((worker) => !query || [worker.workerId, worker.fullName, worker.profession, worker.ipuc, worker.slug].some((value) => norm(value).includes(query)));
+    }).filter((worker) => Number.isFinite(worker.latitude) && Number.isFinite(worker.longitude));
 
-    return NextResponse.json({ workers, totalWorkers: data?.length || 0 });
+    const filtered = q ? workers.filter((worker) => [worker.workerId, worker.ipuc, worker.slug, worker.fullName, worker.profession, worker.primarySkill, worker.city, worker.locality, ...(worker.services || [])].join(" ").toLowerCase().includes(q)) : workers;
+    return NextResponse.json({ workers: filtered, configurationError: firstError?.message || "" }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: error?.message || "Failed to load map workers" }, { status: 500 });
+    return NextResponse.json({ workers: [], error: error?.message || "Could not load worker map data." }, { status: 500 });
   }
 }

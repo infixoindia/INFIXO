@@ -1,325 +1,180 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./MapClient.module.css";
 
-const CATEGORY_NAMES = ["Painter", "Plumber", "Electrician"];
+const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
+const MAPLIBRE_JS = "https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.mjs";
+const MAPLIBRE_CSS = "https://unpkg.com/maplibre-gl@6.11.2/dist/maplibre-gl.css";
+const CATEGORIES = ["Painter", "Plumber", "Electrician"];
 
-function projectFactory(features) {
-  const points = [];
-  for (const feature of features || []) points.push(...polygonCoordinates(feature?.geometry));
-  if (!points.length) return null;
-  const valid = points.filter((point) => Number.isFinite(Number(point?.[0])) && Number.isFinite(Number(point?.[1])));
-  if (!valid.length) return null;
-  const lons = valid.map((point) => Number(point[0]));
-  const lats = valid.map((point) => Number(point[1]));
-  const minLon = Math.min(...lons); const maxLon = Math.max(...lons);
-  const minLat = Math.min(...lats); const maxLat = Math.max(...lats);
-  const padX = Math.max((maxLon - minLon) * 0.03, 0.001);
-  const padY = Math.max((maxLat - minLat) * 0.03, 0.001);
-  const lo = minLon - padX; const hi = maxLon + padX;
-  const la = minLat - padY; const ha = maxLat + padY;
-  return {
-    bounds: { minLon: lo, maxLon: hi, minLat: la, maxLat: ha },
-    project([lon, lat]) {
-      return [((Number(lon) - lo) / (hi - lo)) * 1000, 760 - ((Number(lat) - la) / (ha - la)) * 760];
-    },
-  };
-}
-
-function polygonCoordinates(geometry) {
-  if (!geometry) return [];
-  if (geometry.type === "Polygon") return geometry.coordinates?.[0] || [];
-  if (geometry.type === "MultiPolygon") {
-    let largest = [];
-    for (const polygon of geometry.coordinates || []) {
-      const ring = polygon?.[0] || [];
-      if (ring.length > largest.length) largest = ring;
-    }
-    return largest;
+function loadMapLibre() {
+  if (typeof window === "undefined") return Promise.reject(new Error("Map is browser-only."));
+  if (window.__infixoMapLibre) return Promise.resolve(window.__infixoMapLibre);
+  if (!document.getElementById("infixo-maplibre-css")) {
+    const link = document.createElement("link"); link.id = "infixo-maplibre-css"; link.rel = "stylesheet"; link.href = MAPLIBRE_CSS; document.head.appendChild(link);
   }
-  return [];
-}
-
-function allRings(geometry) {
-  if (!geometry) return [];
-  if (geometry.type === "Polygon") return geometry.coordinates || [];
-  if (geometry.type === "MultiPolygon") return (geometry.coordinates || []).flatMap((polygon) => polygon || []);
-  return [];
-}
-
-function pathFromRing(ring, project) {
-  const points = (ring || []).filter((point) => Number.isFinite(Number(point?.[0])) && Number.isFinite(Number(point?.[1])));
-  if (points.length < 3) return "";
-  return points.map((point, index) => {
-    const [x, y] = project(point);
-    return `${index ? "L" : "M"} ${x.toFixed(2)} ${y.toFixed(2)}`;
-  }).join(" ") + " Z";
-}
-
-function featurePath(feature, project) {
-  const geometry = feature?.geometry || feature;
-  if (!geometry || !project) return "";
-  return allRings(geometry).map((ring) => pathFromRing(ring, project)).filter(Boolean).join(" ");
-}
-
-function labelForCustomer(feature) {
-  return feature?.properties?.customer_hex_id || feature?.properties?.hex_id || "Customer Hex";
-}
-
-function workerIdForCustomer(feature) {
-  return feature?.properties?.worker_hex_id || "";
-}
-
-function workerLabelPoint(hex) {
-  const p = hex?.properties || {};
-  return [Number(p.label_lon), Number(p.label_lat)];
-}
-
-function pointInRing(point, ring) {
-  const [x, y] = point;
-  let inside = false;
-  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-    const xi = Number(ring[i][0]); const yi = Number(ring[i][1]);
-    const xj = Number(ring[j][0]); const yj = Number(ring[j][1]);
-    const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi);
-    if (intersect) inside = !inside;
+  if (!window.__infixoMapLibrePromise) {
+    window.__infixoMapLibrePromise = import(/* webpackIgnore: true */ MAPLIBRE_JS).then((mod) => {
+      window.__infixoMapLibre = mod.default || mod;
+      return window.__infixoMapLibre;
+    });
   }
-  return inside;
+  return window.__infixoMapLibrePromise;
 }
 
-function pointInGeometry(point, geometry) {
-  if (!geometry) return false;
-  if (geometry.type === "Polygon") {
-    const rings = geometry.coordinates || [];
-    if (!rings.length || !pointInRing(point, rings[0])) return false;
-    return !rings.slice(1).some((ring) => pointInRing(point, ring));
-  }
-  if (geometry.type === "MultiPolygon") return (geometry.coordinates || []).some((polygon) => pointInGeometry(point, { type: "Polygon", coordinates: polygon }));
-  return false;
-}
-
-function workerHexForPoint(workerHexes, longitude, latitude) {
-  if (!Number.isFinite(Number(longitude)) || !Number.isFinite(Number(latitude))) return null;
-  const point = [Number(longitude), Number(latitude)];
-  return workerHexes.find((hex) => pointInGeometry(point, hex.geometry)) || null;
-}
-
-function geometryCenter(feature, project) {
+function featureCollection(features) { return { type: "FeatureCollection", features: features || [] }; }
+function geometryCenter(feature) {
   const p = feature?.properties || {};
-  const label = [Number(p.label_lon), Number(p.label_lat)];
-  if (Number.isFinite(label[0]) && Number.isFinite(label[1])) return project(label);
-  const ring = polygonCoordinates(feature?.geometry);
-  if (!ring.length) return [0, 0];
-  const sum = ring.reduce((acc, point) => [acc[0] + Number(point[0]), acc[1] + Number(point[1])], [0, 0]);
-  return project([sum[0] / ring.length, sum[1] / ring.length]);
+  if (Number.isFinite(Number(p.label_lon)) && Number.isFinite(Number(p.label_lat))) return [Number(p.label_lon), Number(p.label_lat)];
+  const coords = feature?.geometry?.type === "Polygon" ? feature.geometry.coordinates?.[0] : feature?.geometry?.coordinates?.[0]?.[0];
+  if (!coords?.length) return [75.8577, 22.7196];
+  const sum = coords.reduce((a, c) => [a[0] + Number(c[0]), a[1] + Number(c[1])], [0, 0]);
+  return [sum[0] / coords.length, sum[1] / coords.length];
 }
-
-function selectedIdsForWorker(workerHex) {
-  return new Set(workerHex?.properties?.customer_hex_ids || []);
+function normalize(value) { return String(value || "").trim().toLowerCase(); }
+function categoryMatch(profession, category) {
+  const p = normalize(profession);
+  return category === "Painter" ? /painter|painting|paint/.test(p) : category === "Plumber" ? /plumber|plumbing/.test(p) : /electrician|electrical/.test(p);
 }
+function workerLink(worker) { return worker?.slug ? `/w/${worker.slug}` : null; }
 
 export default function MapClient() {
-  const [customer, setCustomer] = useState([]);
-  const [workerHexes, setWorkerHexes] = useState([]);
-  const [boundary, setBoundary] = useState(null);
-  const [workers, setWorkers] = useState([]);
-  const [customerOn, setCustomerOn] = useState(true);
-  const [workerOn, setWorkerOn] = useState(true);
-  const [boundaryOn, setBoundaryOn] = useState(true);
-  const [selected, setSelected] = useState(null);
-  const [hoveredWorkerId, setHoveredWorkerId] = useState(null);
-  const [search, setSearch] = useState("");
-  const [searching, setSearching] = useState(false);
-  const [error, setError] = useState("");
-  const [configurationWarning, setConfigurationWarning] = useState("");
+  const mapEl = useRef(null); const mapRef = useRef(null); const maplibreRef = useRef(null);
+  const [customer, setCustomer] = useState([]); const [workerHexes, setWorkerHexes] = useState([]); const [boundary, setBoundary] = useState(null); const [areaNames, setAreaNames] = useState({});
+  const [workers, setWorkers] = useState([]); const [selected, setSelected] = useState(null); const [search, setSearch] = useState(""); const [error, setError] = useState(""); const [warning, setWarning] = useState(""); const [loading, setLoading] = useState(true); const [fullscreen, setFullscreen] = useState(false); const [view3d, setView3d] = useState(false);
+  const [layers, setLayers] = useState({ customer: true, worker: true, boundary: true });
+  const [opacity, setOpacity] = useState({ customer: 0.72, worker: 1, boundary: 1 });
 
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      fetch("/gis/customer_hex_v2.geojson", { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(new Error("Customer Hex GeoJSON not found"))),
-      fetch("/gis/worker_hex_final.geojson", { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(new Error("Worker Hex GeoJSON not found"))),
-      fetch("/gis/imc_boundary_dissolved.geojson", { cache: "no-store" }).then((r) => r.ok ? r.json() : null),
-    ]).then(([customers, workersFinal, imc]) => {
+      fetch("/gis/customer_hex_v2.geojson", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/gis/worker_hex_final.geojson", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/gis/imc_boundary_dissolved.geojson", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/gis/customer_hex_areas.json", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/admin/map/workers", { cache: "no-store" }).then((r) => r.json()),
+    ]).then(([c, w, b, a, workerBody]) => {
       if (cancelled) return;
-      setCustomer(Array.isArray(customers?.features) ? customers.features : []);
-      setWorkerHexes(Array.isArray(workersFinal?.features) ? workersFinal.features : []);
-      setBoundary(imc);
-    }).catch((err) => { if (!cancelled) setError(err.message || "Could not load finalized hex geometry"); });
+      setCustomer(c.features || []); setWorkerHexes(w.features || []); setBoundary(b); setAreaNames(a || {}); setWorkers(workerBody.workers || []); setWarning(workerBody.configurationError || ""); setLoading(false);
+    }).catch((e) => { if (!cancelled) { setError(e.message || "Map data could not be loaded."); setLoading(false); } });
     return () => { cancelled = true; };
   }, []);
 
-  async function loadWorkers(query = "") {
-    setSearching(true);
-    setError("");
-    try {
-      const response = await fetch(`/api/admin/map/workers${query ? `?q=${encodeURIComponent(query)}` : ""}`, { cache: "no-store" });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not load workers");
-      setWorkers(Array.isArray(body.workers) ? body.workers : []);
-      setConfigurationWarning(body.configurationError || "");
-    } catch (err) {
-      setError(err.message || "Could not load workers");
-    } finally {
-      setSearching(false);
-    }
-  }
-
-  useEffect(() => { loadWorkers(); }, []);
-
-  const projection = useMemo(() => projectFactory(customer), [customer]);
   const workersByHex = useMemo(() => {
     const map = new Map();
     for (const worker of workers) {
-      const hex = workerHexForPoint(workerHexes, worker.longitude, worker.latitude);
+      const hex = workerHexes.find((h) => pointInGeometry([worker.longitude, worker.latitude], h.geometry));
       if (!hex) continue;
-      const id = hex.properties?.worker_hex_id;
-      if (!id) continue;
-      if (!map.has(id)) map.set(id, []);
-      map.get(id).push(worker);
+      const id = hex.properties?.worker_hex_id; if (!id) continue;
+      if (!map.has(id)) map.set(id, []); map.get(id).push(worker);
     }
     return map;
   }, [workers, workerHexes]);
-  const categoryCounts = useMemo(() => {
-    const counts = { Painter: 0, Plumber: 0, Electrician: 0 };
-    for (const worker of workers) {
-      const profession = String(worker.profession || "").toLowerCase();
-      for (const category of CATEGORY_NAMES) if (profession.includes(category.toLowerCase())) counts[category] += 1;
-    }
-    return counts;
-  }, [workers]);
-  const activeWorkers = workers.filter((worker) => worker.isActive).length;
-  const selectedWorker = selected?.type === "worker" ? workerHexes.find((hex) => hex.properties?.worker_hex_id === selected.id) : null;
-  const selectedCustomer = selected?.type === "customer" ? customer.find((feature) => labelForCustomer(feature) === selected.id) : null;
-  const selectedChildIds = selectedWorker ? selectedIdsForWorker(selectedWorker) : new Set();
-  const hoveredWorker = hoveredWorkerId ? workerHexes.find((hex) => hex.properties?.worker_hex_id === hoveredWorkerId) : null;
-  const hoveredChildIds = hoveredWorker ? selectedIdsForWorker(hoveredWorker) : new Set();
-  const boundaryFeatures = boundary?.features || [];
-  const boundaryPath = boundaryFeatures.map((feature) => featurePath(feature, projection?.project)).filter(Boolean).join(" ");
 
-  function runSearch() {
-    const q = search.trim().toLowerCase();
-    if (!q) return loadWorkers();
-    const workerMatch = workerHexes.find((hex) => String(hex.properties?.worker_hex_id || "").toLowerCase() === q);
-    if (workerMatch) {
-      setSelected({ type: "worker", id: workerMatch.properties.worker_hex_id });
-      return;
-    }
-    const customerMatch = customer.find((feature) => labelForCustomer(feature).toLowerCase() === q);
-    if (customerMatch) {
-      setSelected({ type: "customer", id: labelForCustomer(customerMatch) });
-      return;
-    }
-    loadWorkers(search.trim());
+  const selectedWorker = selected?.type === "worker" ? workerHexes.find((h) => h.properties?.worker_hex_id === selected.id) : null;
+  const selectedCustomer = selected?.type === "customer" ? customer.find((h) => h.properties?.customer_hex_id === selected.id) : null;
+  const selectedWorkers = selectedWorker ? workersByHex.get(selectedWorker.properties.worker_hex_id) || [] : [];
+  const categoryCounts = useMemo(() => Object.fromEntries(CATEGORIES.map((c) => [c, workers.filter((w) => categoryMatch(w.profession, c)).length])), [workers]);
+
+  useEffect(() => {
+    let disposed = false;
+    loadMapLibre().then((maplibre) => {
+      if (disposed || !mapEl.current || mapRef.current) return;
+      maplibreRef.current = maplibre;
+      const map = new maplibre.Map({ container: mapEl.current, style: MAP_STYLE, center: [75.8577, 22.7196], zoom: 11.5, attributionControl: true });
+      mapRef.current = map;
+      map.addControl(new maplibre.NavigationControl({ visualizePitch: true }), "top-right");
+      map.addControl(new maplibre.FullscreenControl({ container: mapEl.current }), "top-right");
+      map.on("load", () => refreshSourcesAndLayers(map));
+      map.on("click", "infixo-customer-fill", (e) => { const p = e.features?.[0]?.properties || {}; if (p.customer_hex_id) setSelected({ type: "customer", id: p.customer_hex_id }); });
+      map.on("click", "infixo-worker-line", (e) => { const p = e.features?.[0]?.properties || {}; if (p.worker_hex_id) setSelected({ type: "worker", id: p.worker_hex_id }); });
+      map.on("mouseenter", "infixo-customer-fill", () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", "infixo-customer-fill", () => { map.getCanvas().style.cursor = ""; });
+      map.on("mouseenter", "infixo-worker-line", () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", "infixo-worker-line", () => { map.getCanvas().style.cursor = ""; });
+    }).catch((e) => setError(e.message || "Interactive map library could not load."));
+    return () => { disposed = true; if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; } };
+  }, []);
+
+  useEffect(() => { if (mapRef.current?.isStyleLoaded()) refreshSourcesAndLayers(mapRef.current); }, [customer, workerHexes, boundary, layers, opacity, selected]);
+
+  function refreshSourcesAndLayers(map) {
+    const customerData = featureCollection(customer); const workerData = featureCollection(workerHexes); const boundaryData = boundary || featureCollection([]);
+    const ensureSource = (id, data) => { if (map.getSource(id)) map.getSource(id).setData(data); else map.addSource(id, { type: "geojson", data }); };
+    ensureSource("infixo-customers", customerData); ensureSource("infixo-workers", workerData); ensureSource("infixo-boundary", boundaryData);
+    const maskData = makeDisplayMask(boundary);
+    ensureSource("infixo-display-mask", maskData);
+    const add = (layer) => { if (!map.getLayer(layer.id)) map.addLayer(layer); else { if (layer.layout) map.setLayoutProperty(layer.id, "visibility", layer.layout.visibility || "visible"); for (const [k,v] of Object.entries(layer.paint || {})) map.setPaintProperty(layer.id, k, v); } };
+    add({ id: "infixo-customer-fill", type: "fill", source: "infixo-customers", layout: { visibility: layers.customer ? "visible" : "none" }, paint: { "fill-color": "#cfe3f5", "fill-opacity": opacity.customer } });
+    add({ id: "infixo-customer-line", type: "line", source: "infixo-customers", layout: { visibility: layers.customer ? "visible" : "none" }, paint: { "line-color": "#4d7ba6", "line-width": 0.7, "line-opacity": opacity.customer } });
+    add({ id: "infixo-worker-line", type: "line", source: "infixo-workers", layout: { visibility: layers.worker ? "visible" : "none" }, paint: { "line-color": "#0b2a4a", "line-width": 3, "line-opacity": opacity.worker } });
+    add({ id: "infixo-boundary-line", type: "line", source: "infixo-boundary", layout: { visibility: layers.boundary ? "visible" : "none" }, paint: { "line-color": "#c62828", "line-width": 2.5, "line-opacity": opacity.boundary } });
+    add({ id: "infixo-display-mask", type: "fill", source: "infixo-display-mask", paint: { "fill-color": "#f7f8fa", "fill-opacity": 0.88 } });
+    if (map.getLayer("infixo-boundary-line")) { map.moveLayer("infixo-boundary-line"); }
+    if (map.getLayer("infixo-customer-selected")) map.removeLayer("infixo-customer-selected");
+    if (map.getLayer("infixo-worker-selected")) map.removeLayer("infixo-worker-selected");
+    if (selected?.type === "customer") add({ id: "infixo-customer-selected", type: "line", source: "infixo-customers", filter: ["==", ["get", "customer_hex_id"], selected.id], paint: { "line-color": "#002d97", "line-width": 3.5 } });
+    if (selected?.type === "worker") add({ id: "infixo-worker-selected", type: "line", source: "infixo-workers", filter: ["==", ["get", "worker_hex_id"], selected.id], paint: { "line-color": "#002d97", "line-width": 5 } });
   }
 
-  return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div><h1>INFIXO MAP</h1><p>Customer demand layer + Worker supply planning layer</p></div>
-        <Link href="/admin/workers" className={styles.back}>Admin</Link>
-      </header>
+  useEffect(() => {
+    const map = mapRef.current; if (!map || !boundary?.features?.length || !map.isStyleLoaded()) return;
+    const coords = [];
+    for (const f of boundary.features) collectCoords(f.geometry, coords);
+    if (!coords.length) return;
+    const bounds = coords.reduce((b, p) => { b[0][0] = Math.min(b[0][0], p[0]); b[0][1] = Math.min(b[0][1], p[1]); b[1][0] = Math.max(b[1][0], p[0]); b[1][1] = Math.max(b[1][1], p[1]); return b; }, [[Infinity, Infinity], [-Infinity, -Infinity]]);
+    map.fitBounds(bounds, { padding: 40, duration: 500 });
+  }, [boundary]);
 
-      <section className={styles.stats}>
-        <Stat label="Total Workers" value={workers.length} />
-        <Stat label="Total Categories" value={CATEGORY_NAMES.length} />
-        <Stat label="Painters" value={categoryCounts.Painter} />
-        <Stat label="Plumbers" value={categoryCounts.Plumber} />
-        <Stat label="Electricians" value={categoryCounts.Electrician} />
-        <Stat label="Available" value={activeWorkers} />
-      </section>
+  function selectAndFly(item) {
+    if (!mapRef.current || !item) return;
+    setSelected(item);
+    const feature = item.type === "worker" ? workerHexes.find((h) => h.properties?.worker_hex_id === item.id) : customer.find((h) => h.properties?.customer_hex_id === item.id);
+    if (feature) mapRef.current.flyTo({ center: geometryCenter(feature), zoom: Math.max(mapRef.current.getZoom(), 13), speed: 1.2 });
+  }
 
-      <section className={styles.controls}>
-        <label><input type="checkbox" checked={customerOn} onChange={(event) => setCustomerOn(event.target.checked)} /> Customer Hex</label>
-        <label><input type="checkbox" checked={workerOn} onChange={(event) => setWorkerOn(event.target.checked)} /> Worker Hex</label>
-        <label><input type="checkbox" checked={boundaryOn} onChange={(event) => setBoundaryOn(event.target.checked)} /> IMC Boundary</label>
-        <form onSubmit={(event) => { event.preventDefault(); runSearch(); }}>
-          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search WH-01 or Customer Hex ID" />
-          <button disabled={searching}>{searching ? "Searching…" : "Search"}</button>
-        </form>
-      </section>
+  function runSearch() {
+    const q = normalize(search); if (!q) return;
+    const wh = workerHexes.find((h) => normalize(h.properties?.worker_hex_id) === q); if (wh) return selectAndFly({ type: "worker", id: wh.properties.worker_hex_id });
+    const ch = customer.find((h) => normalize(h.properties?.customer_hex_id) === q); if (ch) return selectAndFly({ type: "customer", id: ch.properties.customer_hex_id });
+    const w = workers.find((x) => [x.workerId, x.fullName, x.profession, x.ipuc, x.slug].some((v) => normalize(v).includes(q))); if (w) { const h = workerHexes.find((x) => pointInGeometry([w.longitude, w.latitude], x.geometry)); if (h) return selectAndFly({ type: "worker", id: h.properties.worker_hex_id }); }
+    setWarning("No matching Worker, Worker Hex, or Customer Hex found.");
+  }
 
-      {error && <div className={styles.error}>{error}</div>}
-      {configurationWarning && <div className={styles.warning}>{configurationWarning}</div>}
+  function toggle3d() { const next = !view3d; setView3d(next); mapRef.current?.easeTo({ pitch: next ? 55 : 0, bearing: next ? -12 : 0, duration: 700 }); }
+  function toggleFullscreen() { const el = mapEl.current?.parentElement; if (!el) return; if (!document.fullscreenElement) el.requestFullscreen?.(); else document.exitFullscreen?.(); setFullscreen(Boolean(!document.fullscreenElement)); }
 
-      <section className={styles.mapCard}>
-        {!projection ? <div className={styles.empty}>Loading finalized hex map…</div> : (
-          <>
-            <svg className={styles.map} viewBox="0 0 1000 760" role="img" aria-label="INFIXO Indore finalized Customer and Worker Hex map">
-              <defs>
-                <clipPath id="imc-clip">
-                  <path d={boundaryPath} />
-                </clipPath>
-              </defs>
-              <g clipPath="url(#imc-clip)">
-                {customerOn && customer.map((feature, index) => {
-                  const id = labelForCustomer(feature);
-                  const selectedNow = selectedCustomer && id === labelForCustomer(selectedCustomer);
-                  const childOfSelected = selectedWorker && selectedChildIds.has(id);
-                  const childOfHovered = hoveredWorker && hoveredChildIds.has(id);
-                  return <path key={`c-${id}-${index}`} d={featurePath(feature, projection.project)} onClick={() => setSelected({ type: "customer", id })} className={selectedNow || childOfSelected || childOfHovered ? styles.customerSelected : styles.customer} />;
-                })}
-                {workerOn && workerHexes.map((hex) => {
-                  const id = hex.properties?.worker_hex_id;
-                  const path = featurePath(hex, projection.project);
-                  const selectedNow = selectedWorker?.properties?.worker_hex_id === id;
-                  const hovered = false;
-                  return <g key={id} onClick={() => setSelected({ type: "worker", id })} onMouseEnter={() => setHoveredWorkerId(id)} onMouseLeave={() => setHoveredWorkerId(null)} className={selectedNow || hoveredWorkerId === id ? styles.workerSelected : styles.worker}>
-                    <path d={path} />
-                    <WorkerLabel hex={hex} project={projection.project} />
-                  </g>;
-                })}
-                {workerOn && workers.filter((worker) => Number.isFinite(worker.latitude) && Number.isFinite(worker.longitude)).map((worker) => {
-                  const hex = workerHexForPoint(workerHexes, worker.longitude, worker.latitude);
-                  const [x, y] = projection.project([worker.longitude, worker.latitude]);
-                  return <circle key={worker.id} cx={x} cy={y} r="5" className={styles.workerDot} onClick={() => hex && setSelected({ type: "worker", id: hex.properties?.worker_hex_id })} />;
-                })}
-              </g>
-              {boundaryOn && boundaryFeatures.map((feature, index) => <path key={`b-${index}`} d={featurePath(feature, projection.project)} className={styles.boundary} />)}
-            </svg>
-            <div className={styles.legend}>
-              <span><i className={`${styles.swatch} ${styles.swatchCustomer}`} /> Customer Hex</span>
-              <span><i className={`${styles.swatch} ${styles.swatchWorker}`} /> Worker Hex</span>
-              <span><i className={`${styles.swatch} ${styles.swatchBoundary}`} /> IMC Boundary</span>
-              <span><i className={`${styles.swatch} ${styles.swatchDot}`} /> Located Worker</span>
-            </div>
-          </>
-        )}
-      </section>
-
-      <section className={styles.detail}>
-        {!selected && <p className={styles.hint}>Tap a Customer Hex or Worker Hex to inspect it.</p>}
-        {selectedCustomer && <CustomerPanel feature={selectedCustomer} />}
-        {selectedWorker && <WorkerPanel hex={selectedWorker} workers={workersByHex.get(selectedWorker.properties?.worker_hex_id) || []} />}
-      </section>
-    </main>
-  );
+  return <main className={styles.page}>
+    <header className={styles.header}><div><h1>INFIXO MAP</h1><p>Indore — fixed Customer Hex + Worker Hex network</p></div><Link href="/admin/workers" className={styles.back}>Workers</Link></header>
+    <section className={styles.stats}><Stat label="Workers" value={workers.length}/><Stat label="Customer Hex" value={customer.length}/><Stat label="Worker Hex" value={workerHexes.length}/>{CATEGORIES.map((c) => <Stat key={c} label={`${c}s`} value={categoryCounts[c]}/>)}</section>
+    <section className={styles.toolbar}>
+      <div className={styles.search}><input value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === "Enter" && runSearch()} placeholder="Worker ID, name, WH-01 or Customer Hex ID"/><button onClick={runSearch}>Search</button></div>
+      <div className={styles.buttons}><button onClick={toggleFullscreen}>Full View</button><button onClick={toggle3d}>{view3d ? "2D" : "3D"}</button></div>
+    </section>
+    <section className={styles.layerBar}><LayerToggle label="Customer Hex" checked={layers.customer} onChange={() => setLayers((x) => ({...x, customer: !x.customer}))} opacity={opacity.customer} onOpacity={(v) => setOpacity((x) => ({...x, customer:v}))}/><LayerToggle label="Worker Hex" checked={layers.worker} onChange={() => setLayers((x) => ({...x, worker: !x.worker}))} opacity={opacity.worker} onOpacity={(v) => setOpacity((x) => ({...x, worker:v}))}/><LayerToggle label="IMC Boundary" checked={layers.boundary} onChange={() => setLayers((x) => ({...x, boundary: !x.boundary}))} opacity={opacity.boundary} onOpacity={(v) => setOpacity((x) => ({...x, boundary:v}))}/></section>
+    {error && <div className={styles.error}>{error}</div>}{warning && <div className={styles.warning}>{warning}</div>}
+    <section className={`${styles.mapShell} ${fullscreen ? styles.fullscreenShell : ""}`}><div ref={mapEl} className={styles.map}/>{loading && <div className={styles.loading}>Loading fixed INFIXO map…</div>}</section>
+    <section className={styles.detail}>{selectedCustomer ? <CustomerPanel feature={selectedCustomer} areaNames={areaNames}/> : selectedWorker ? <WorkerPanel hex={selectedWorker} workers={selectedWorkers} areaNames={areaNames}/> : <p className={styles.muted}>Map ready. Tap a Customer Hex or Worker Hex to inspect real areas and workers.</p>}</section>
+  </main>;
 }
 
-function WorkerLabel({ hex, project }) {
-  const p = hex?.properties || {};
-  const [x, y] = workerLabelPoint(hex);
-  const [px, py] = project([x, y]);
-  const count = Number(p.customer_hex_count || 0);
-  return <g className={styles.workerLabel} transform={`translate(${px.toFixed(2)} ${py.toFixed(2)})`} pointerEvents="none">
-    <rect x="-32" y="-13" width="64" height="30" rx="6" />
-    <text x="0" y="-1" className={styles.workerLabelId}>{p.worker_hex_id}</text>
-    <text x="0" y="10" className={styles.workerLabelCount}>{count} Customer Hex</text>
-  </g>;
+function LayerToggle({label,checked,onChange,opacity,onOpacity}) { return <div className={styles.layer}><label><input type="checkbox" checked={checked} onChange={onChange}/>{label}</label><input type="range" min="0.15" max="1" step="0.05" value={opacity} onChange={(e)=>onOpacity(Number(e.target.value))}/></div>; }
+function Stat({label,value}) { return <div className={styles.stat}><span>{label}</span><strong>{value}</strong></div>; }
+function CustomerPanel({feature,areaNames}) { const p=feature.properties||{}; const a=areaNames[p.customer_hex_id]||{}; return <><h2>{p.customer_hex_id}</h2><div className={styles.infoGrid}><div><small>Worker Hex</small><b>{p.worker_hex_id||"—"}</b></div><div><small>Area inside IMC</small><b>{p.area_inside_imc_km2??"—"} km²</b></div><div><small>Primary Ward</small><b>{a.primary_ward||"—"}</b></div><div><small>Related Wards</small><b>{(a.ward_names||[]).join(", ")||"—"}</b></div></div></>; }
+function WorkerPanel({hex,workers,areaNames}) { const p=hex.properties||{}; const areaSet=new Set(); for(const id of p.customer_hex_ids||[]){const a=areaNames[id]; for(const n of a?.ward_names||[]) areaSet.add(n);} return <><h2>{p.worker_hex_id}</h2><div className={styles.infoGrid}><div><small>Customer Hexes</small><b>{p.customer_hex_count}</b></div><div><small>Workers</small><b>{workers.length}</b></div><div className={styles.wide}><small>Real Areas / Wards</small><b>{Array.from(areaSet).join(", ")||"—"}</b></div></div><div className={styles.categoryRow}>{CATEGORIES.map(c=><span key={c}>{c}: <b>{workers.filter(w=>categoryMatch(w.profession,c)).length}</b></span>)}</div><div className={styles.workerList}>{workers.length?workers.map(w=><WorkerRow key={w.id} worker={w}/>):<p className={styles.muted}>No real worker is currently located inside this Worker Hex.</p>}</div></>; }
+function WorkerRow({worker}) { const [open,setOpen]=useState(false); const link=workerLink(worker); return <div className={styles.workerRow}><button className={styles.workerMain} onClick={()=>setOpen(!open)}><span><b>{worker.fullName||"Untitled Worker"}</b><small>{worker.profession||"—"} · ID: {worker.workerId||"—"}</small></span><em className={worker.isAvailable===true?styles.available:styles.status}>{worker.isAvailable===true?"Available":worker.isAvailable===false?"Unavailable":"Status not set"}</em></button>{open&&<div className={styles.workerExpanded}><div><span>Experience</span><b>{worker.experience||"—"}</b></div><div><span>Area</span><b>{worker.locality||worker.city||"—"}</b></div><div><span>Verification</span><b>{worker.verification?.identityVerified||worker.verification?.workVerified||worker.verification?.addressVerified?"Verified":"Not verified"}</b></div>{link?<Link href={link} target="_blank">Full Profile</Link>:<span className={styles.muted}>Profile link unavailable</span>}</div>}</div>; }
+function pointInRing(point,ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=Number(ring[i][0]),yi=Number(ring[i][1]),xj=Number(ring[j][0]),yj=Number(ring[j][1]);const hit=((yi>point[1])!==(yj>point[1]))&&(point[0]<((xj-xi)*(point[1]-yi))/((yj-yi)||Number.EPSILON)+xi);if(hit)inside=!inside;}return inside;}
+function pointInGeometry(point,g){if(!g)return false;if(g.type==="Polygon"){const r=g.coordinates||[];return !!r.length&&pointInRing(point,r[0])&&!r.slice(1).some(x=>pointInRing(point,x));}if(g.type==="MultiPolygon")return (g.coordinates||[]).some(p=>pointInGeometry(point,{type:"Polygon",coordinates:p}));return false;}
+function makeDisplayMask(boundary){
+  const outer=[[-180,-85], [180,-85], [180,85], [-180,85], [-180,-85]];
+  const polygons=[];
+  for(const f of boundary?.features||[]){
+    const g=f.geometry;
+    if(g?.type==="Polygon") polygons.push([outer,...(g.coordinates||[]).map((r)=>r.slice().reverse())]);
+    if(g?.type==="MultiPolygon") for(const poly of g.coordinates||[]) polygons.push([outer,...(poly||[]).map((r)=>r.slice().reverse())]);
+  }
+  return {type:"FeatureCollection",features:polygons.map((coordinates)=>({type:"Feature",properties:{},geometry:{type:"Polygon",coordinates}}))};
 }
-
-function Stat({ label, value }) { return <div className={styles.stat}><span>{label}</span><strong>{value}</strong></div>; }
-
-function CustomerPanel({ feature }) {
-  const p = feature.properties || {};
-  const id = labelForCustomer(feature);
-  return <div><div className={styles.panelTitle}>{id}</div><p>Worker Hex: <b>{p.worker_hex_id || "—"}</b></p><p>Area inside IMC: <b>{p.area_inside_imc_km2 ?? "—"} km²</b></p><div className={styles.grid3}><div>Queries<strong>0</strong></div><div>Painter Demand<strong>0</strong></div><div>Plumber Demand<strong>0</strong></div><div>Electrician Demand<strong>0</strong></div></div><p className={styles.note}>Demand counters stay at zero until real customer-query data is onboarded. No fake demand is inserted.</p></div>;
-}
-
-function WorkerPanel({ hex, workers }) {
-  const p = hex.properties || {};
-  const count = (name) => workers.filter((worker) => String(worker.profession || "").toLowerCase().includes(name)).length;
-  const ids = p.customer_hex_ids || [];
-  return <div><div className={styles.panelTitle}>{p.worker_hex_id}</div><p>Customer Hexes: <b>{p.customer_hex_count}</b> · Workers: <b>{workers.length}</b></p><p>Customer Hex IDs: <span className={styles.idList}>{ids.join(" · ")}</span></p><div className={styles.grid3}><div>Painter<strong>{count("painter")}</strong></div><div>Plumber<strong>{count("plumber")}</strong></div><div>Electrician<strong>{count("electrician")}</strong></div><div>Available<strong>{workers.filter((worker) => worker.isActive).length}</strong></div><div>Demand<strong>0</strong></div><div>Supply Gap<strong>—</strong></div></div><p className={styles.note}>Demand and target-based supply gaps remain unavailable until real customer-query data and category targets are onboarded. No fake values are inserted.</p><div className={styles.workerList}>{workers.length ? workers.map((worker) => <div key={worker.id} className={styles.workerRow}><div><b>{worker.workerId || "No Worker ID"}</b><span>{worker.fullName || "Untitled"} · {worker.profession || "—"}</span></div>{worker.slug && worker.ipuc ? <Link href={`/w/${worker.slug}/${worker.ipuc}`} target="_blank">View Profile</Link> : <span className={styles.muted}>No public link</span>}</div>) : <p className={styles.hint}>No located workers in this Worker Hex yet.</p>}</div></div>;
-}
+function collectCoords(g,out){if(!g)return;if(g.type==="Polygon")for(const r of g.coordinates||[])for(const p of r)out.push([Number(p[0]),Number(p[1])]);if(g.type==="MultiPolygon")for(const p of g.coordinates||[])collectCoords({type:"Polygon",coordinates:p},out);}
