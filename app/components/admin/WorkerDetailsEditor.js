@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import styles from "./Admin.module.css";
 
 export default function WorkerDetailsEditor({ worker, updateField, onSave, saving, saveMessage, saveError }) {
@@ -10,9 +11,58 @@ export default function WorkerDetailsEditor({ worker, updateField, onSave, savin
     workVerified: false,
     addressVerified: false,
   };
+  const [internalLocation, setInternalLocation] = useState({ fullAddress: "", pincode: "", latitude: "", longitude: "" });
+  const [locationSaving, setLocationSaving] = useState(false);
+  const [locationMessage, setLocationMessage] = useState("");
+  const [locationError, setLocationError] = useState("");
+
+  useEffect(() => {
+    if (!worker?.id) return;
+    let active = true;
+    fetch(`/api/admin/workers/${encodeURIComponent(worker.id)}`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((body) => {
+        if (!active || !body?.worker?.internal_location) return;
+        setInternalLocation({
+          fullAddress: body.worker.internal_location.fullAddress || "",
+          pincode: body.worker.internal_location.pincode || "",
+          latitude: body.worker.internal_location.latitude ?? "",
+          longitude: body.worker.internal_location.longitude ?? "",
+        });
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [worker?.id]);
+
+  const updateLocation = (key, value) => setInternalLocation((prev) => ({ ...prev, [key]: value }));
 
   const updateVerification = (key, val) => {
     updateField("verifications", { ...verifications, [key]: val });
+  };
+
+  const saveAll = async () => {
+    if (!worker?.id) {
+      await onSave();
+      return;
+    }
+    setLocationSaving(true);
+    setLocationMessage("");
+    setLocationError("");
+    try {
+      await onSave();
+      const res = await fetch(`/api/admin/workers/${encodeURIComponent(worker.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ internal_location: internalLocation }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || "Location save failed");
+      setLocationMessage("Location saved");
+    } catch (err) {
+      setLocationError(err?.message || "Location save failed");
+    } finally {
+      setLocationSaving(false);
+    }
   };
 
   return (
@@ -22,60 +72,53 @@ export default function WorkerDetailsEditor({ worker, updateField, onSave, savin
 
         <div className={styles.field}>
           <label className={styles.label}>Full Name</label>
-          <input
-            className={styles.input}
-            value={worker.fullName || ""}
-            onChange={(e) => updateField("fullName", e.target.value)}
-          />
+          <input className={styles.input} value={worker.fullName || ""} onChange={(e) => updateField("fullName", e.target.value)} />
         </div>
 
         <div className={styles.row2}>
           <div className={styles.field}>
             <label className={styles.label}>Gender</label>
-            <select
-              className={styles.select}
-              value={worker.gender || "Male"}
-              onChange={(e) => updateField("gender", e.target.value)}
-            >
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
+            <select className={styles.select} value={worker.gender || "Male"} onChange={(e) => updateField("gender", e.target.value)}>
+              <option>Male</option><option>Female</option><option>Other</option>
             </select>
           </div>
           <div className={styles.field}>
             <label className={styles.label}>Age</label>
-            <input
-              className={styles.input}
-              value={worker.age || ""}
-              onChange={(e) => updateField("age", e.target.value)}
-              placeholder="28 Years"
-            />
+            <input className={styles.input} value={worker.age || ""} onChange={(e) => updateField("age", e.target.value)} placeholder="28 Years" />
           </div>
         </div>
 
         <div className={styles.field}>
           <label className={styles.label}>Address</label>
-          <input
-            className={styles.input}
-            value={worker.address || ""}
-            onChange={(e) => updateField("address", e.target.value)}
-            placeholder="Indore, Madhya Pradesh"
-          />
+          <input className={styles.input} value={worker.address || ""} onChange={(e) => updateField("address", e.target.value)} placeholder="Indore, Madhya Pradesh" />
         </div>
 
         <div className={styles.field}>
           <label className={styles.label}>Languages</label>
-          <input
-            className={styles.input}
-            value={languagesText}
-            onChange={(e) =>
-              updateField(
-                "languages",
-                e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
-              )
-            }
-            placeholder="Hindi, English"
-          />
+          <input className={styles.input} value={languagesText} onChange={(e) => updateField("languages", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))} placeholder="Hindi, English" />
+        </div>
+      </div>
+
+      <div className={styles.card}>
+        <h3 className={styles.cardTitle}>Internal Location (Private)</h3>
+        <p className={styles.hint}>Used only for INFIXO map and matching. These exact location details are not shown on the public profile.</p>
+        <div className={styles.field}>
+          <label className={styles.label}>Full address</label>
+          <input className={styles.input} value={internalLocation.fullAddress} onChange={(e) => updateLocation("fullAddress", e.target.value)} placeholder="Exact worker location" />
+        </div>
+        <div className={styles.row2}>
+          <div className={styles.field}>
+            <label className={styles.label}>Pincode</label>
+            <input className={styles.input} inputMode="numeric" value={internalLocation.pincode} onChange={(e) => updateLocation("pincode", e.target.value)} placeholder="452001" />
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>Lat</label>
+            <input className={styles.input} inputMode="decimal" value={internalLocation.latitude} onChange={(e) => updateLocation("latitude", e.target.value)} placeholder="22.7196" />
+          </div>
+        </div>
+        <div className={styles.field}>
+          <label className={styles.label}>Lon</label>
+          <input className={styles.input} inputMode="decimal" value={internalLocation.longitude} onChange={(e) => updateLocation("longitude", e.target.value)} placeholder="75.8577" />
         </div>
       </div>
 
@@ -83,57 +126,25 @@ export default function WorkerDetailsEditor({ worker, updateField, onSave, savin
         <h3 className={styles.cardTitle}>About Me</h3>
         <div className={styles.field}>
           <label className={styles.label}>Content (one paragraph per line)</label>
-          <textarea
-            className={styles.textarea}
-            value={aboutText}
-            onChange={(e) =>
-              updateField(
-                "about",
-                e.target.value.split("\n").filter((p) => p.trim().length > 0)
-              )
-            }
-            rows={5}
-          />
+          <textarea className={styles.textarea} value={aboutText} onChange={(e) => updateField("about", e.target.value.split("\n").filter((p) => p.trim().length > 0))} rows={5} />
         </div>
       </div>
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>Infixo Verification</h3>
-        <div className={styles.checkRow}>
-          <input
-            type="checkbox"
-            checked={!!verifications.identityVerified}
-            onChange={(e) => updateVerification("identityVerified", e.target.checked)}
-            id="v-identity"
-          />
-          <label htmlFor="v-identity">Worker Verified</label>
-        </div>
-        <div className={styles.checkRow}>
-          <input
-            type="checkbox"
-            checked={!!verifications.workVerified}
-            onChange={(e) => updateVerification("workVerified", e.target.checked)}
-            id="v-work"
-          />
-          <label htmlFor="v-work">Work Verified</label>
-        </div>
-        <div className={styles.checkRow}>
-          <input
-            type="checkbox"
-            checked={!!verifications.addressVerified}
-            onChange={(e) => updateVerification("addressVerified", e.target.checked)}
-            id="v-address"
-          />
-          <label htmlFor="v-address">Address Verified</label>
-        </div>
+        <div className={styles.checkRow}><input type="checkbox" checked={!!verifications.identityVerified} onChange={(e) => updateVerification("identityVerified", e.target.checked)} id="v-identity" /><label htmlFor="v-identity">Worker Verified</label></div>
+        <div className={styles.checkRow}><input type="checkbox" checked={!!verifications.workVerified} onChange={(e) => updateVerification("workVerified", e.target.checked)} id="v-work" /><label htmlFor="v-work">Work Verified</label></div>
+        <div className={styles.checkRow}><input type="checkbox" checked={!!verifications.addressVerified} onChange={(e) => updateVerification("addressVerified", e.target.checked)} id="v-address" /><label htmlFor="v-address">Address Verified</label></div>
       </div>
 
       <div className={styles.saveRow}>
-        <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={onSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Worker Details"}
+        <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={saveAll} disabled={saving || locationSaving}>
+          {saving || locationSaving ? "Saving..." : "Save Worker Details"}
         </button>
         {saveMessage && <span className={styles.saveMsg}>{saveMessage}</span>}
+        {locationMessage && <span className={styles.saveMsg}>{locationMessage}</span>}
         {saveError && <span className={styles.saveMsgError}>{saveError}</span>}
+        {locationError && <span className={styles.saveMsgError}>{locationError}</span>}
       </div>
     </>
   );
