@@ -192,7 +192,7 @@ export default function MapClient() {
           {layers.worker && workerHexes.map(f => {
             const id = f.properties?.worker_hex_id;
             const selectedId = selectedWorker?.properties?.worker_hex_id === id;
-            return <path key={id} d={geometryPath(f.geometry, project)} fill={selectedId ? "#002d97" : "none"} fillOpacity={selectedId ? .12 : 0} stroke={selectedId ? "#002d97" : "#0b2a4a"} strokeWidth={(selectedId ? 6 : 3) / view.scale} onClick={e => { e.stopPropagation(); selectHex("worker", id); }} aria-label={id}/>;
+            return <path key={id} d={geometryPath(f.geometry, project)} fill={selectedId ? "#002d97" : "none"} fillOpacity={selectedId ? .12 : 0} stroke={selectedId ? "#002d97" : "#0b2a4a"} strokeWidth={(selectedId ? 6 : 3) / view.scale} onClick={e => { e.stopPropagation(); selectHex("worker", id); }} pointerEvents="stroke" aria-label={id}/>;
           })}
         </g>
         {layers.boundary && boundary?.features?.map((f,i) => <path key={`b${i}`} d={geometryPath(f.geometry, project)} fill="none" stroke="#d33" strokeWidth={2.5 / view.scale} fillRule="evenodd" pointerEvents="none"/>)}
