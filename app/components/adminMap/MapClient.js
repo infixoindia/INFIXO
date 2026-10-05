@@ -24,27 +24,39 @@ function loadMapLibre() {
   }
   if (window.__infixoMapLibrePromise) return window.__infixoMapLibrePromise;
 
-  const loadScript = (src) => new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-infixo-maplibre="${src}"]`);
+  // MapLibre GL JS v6 is ESM-only. There is no dist/maplibre-gl.js file anymore.
+  // Load the official ESM bundle through a module script and expose it to this
+  // client component. The module worker is auto-detected by MapLibre from the
+  // CDN module URL.
+  const loadModule = (baseUrl) => new Promise((resolve, reject) => {
+    const id = `infixo-maplibre-module-${baseUrl.includes("jsdelivr") ? "jsdelivr" : "unpkg"}`;
+    const existing = document.getElementById(id);
     if (existing) {
-      existing.addEventListener("load", () => resolve(window.maplibregl));
-      existing.addEventListener("error", () => reject(new Error("MapLibre script failed to load.")));
-      if (window.maplibregl) resolve(window.maplibregl);
+      const done = () => window.__infixoMapLibre ? resolve(window.__infixoMapLibre) : reject(new Error("MapLibre module loaded without maplibregl."));
+      existing.addEventListener("load", done, { once: true });
+      existing.addEventListener("error", () => reject(new Error(`MapLibre CDN failed: ${baseUrl}`)), { once: true });
+      if (window.__infixoMapLibre) done();
       return;
     }
     const script = document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.dataset.infixoMaplibre = src;
-    script.onload = () => window.maplibregl ? resolve(window.maplibregl) : reject(new Error("MapLibre loaded without maplibregl."));
-    script.onerror = () => reject(new Error(`MapLibre CDN failed: ${src}`));
+    script.id = id;
+    script.type = "module";
+    script.textContent = `import * as maplibregl from ${JSON.stringify(baseUrl)}; window.__infixoMapLibre = maplibregl; window.dispatchEvent(new Event("infixo-maplibre-ready"));`;
+    const ready = () => window.__infixoMapLibre ? resolve(window.__infixoMapLibre) : reject(new Error("MapLibre module loaded without maplibregl."));
+    const failed = () => reject(new Error(`MapLibre CDN failed: ${baseUrl}`));
+    window.addEventListener("infixo-maplibre-ready", ready, { once: true });
+    script.addEventListener("error", failed, { once: true });
     document.head.appendChild(script);
   });
 
+  const moduleUrls = [
+    `https://cdn.jsdelivr.net/npm/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.mjs`,
+    `https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.mjs`,
+  ];
   window.__infixoMapLibrePromise = (async () => {
     let lastError;
-    for (const src of MAPLIBRE_JS_URLS) {
-      try { return await loadScript(src); } catch (e) { lastError = e; }
+    for (const src of moduleUrls) {
+      try { return await loadModule(src); } catch (e) { lastError = e; }
     }
     throw lastError || new Error("MapLibre could not be loaded.");
   })();
