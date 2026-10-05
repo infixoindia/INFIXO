@@ -103,8 +103,18 @@ export async function PATCH(request, { params }) {
     if (typeof payload.is_active !== "undefined" && typeof payload.is_active !== "boolean") return NextResponse.json({ error: "is_active must be true or false" }, { status: 400 });
     const supabase = getAdminClient();
     const workerId = (await params).id;
-    const { data, error } = await supabase.from("workers").update(payload).eq("id", workerId).select().single();
-    if (error) throw error;
+    let data = null;
+    if (Object.keys(payload).length > 0) {
+      const { data: updated, error } = await supabase.from("workers").update(payload).eq("id", workerId).select().maybeSingle();
+      if (error) throw error;
+      if (!updated) throw new Error("Worker not found");
+      data = updated;
+    } else {
+      const { data: existing, error } = await supabase.from("workers").select("*").eq("id", workerId).maybeSingle();
+      if (error) throw error;
+      if (!existing) throw new Error("Worker not found");
+      data = existing;
+    }
     if (typeof internal_location !== "undefined") await saveInternalLocation(supabase, workerId, internal_location);
     return NextResponse.json({ worker: data });
   } catch (e) { return NextResponse.json({ error: e.message || "Failed to update worker" }, { status: 500 }); }
