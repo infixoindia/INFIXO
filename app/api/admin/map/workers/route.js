@@ -65,7 +65,7 @@ export async function GET() {
 
     const { data: areas, error: areaError } = await supabase
       .from("worker_service_areas")
-      .select("worker_id, latitude, longitude, city, locality, full_address, pincode, radius_km, created_at")
+      .select("worker_id, latitude, longitude, city, locality, radius_km")
       .order("created_at", { ascending: false });
 
     // If the optional location query fails, still return the worker list rather
@@ -101,8 +101,8 @@ export async function GET() {
         latitude: hasLocation ? lat : null,
         city: a?.city || "",
         locality: a?.locality || "",
-        fullAddress: a?.full_address || "",
-        pincode: a?.pincode || "",
+        fullAddress: "",
+        pincode: "",
         isAvailable: toBool(row.is_available ?? row.isAvailable),
         isActive: row.is_active !== false,
         workerHexId: match?.properties?.worker_hex_id || null,
