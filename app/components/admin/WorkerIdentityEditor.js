@@ -4,6 +4,8 @@ import { useState } from "react";
 import styles from "./Admin.module.css";
 import { uploadWorkerFile, deleteWorkerFile } from "@/lib/storageService";
 import { SKILL_CATEGORIES, resolveSkillCategory } from "@/lib/skillCategories";
+import PhotoCropper from "./PhotoCropper";
+import CroppedImage from "../CroppedImage/CroppedImage";
 
 export default function WorkerIdentityEditor({
   worker,
@@ -15,6 +17,7 @@ export default function WorkerIdentityEditor({
   saveLabel = "Save Identity",
 }) {
   const [uploading, setUploading] = useState(false);
+  const [cropIdx, setCropIdx] = useState(null);
   const heroSlides = worker.heroSlides || [];
 
   const serviceAreaText = Array.isArray(worker.serviceArea)
@@ -38,7 +41,9 @@ export default function WorkerIdentityEditor({
         workerId: worker.id,
         section: "slider",
       });
-      updateField("heroSlides", [...heroSlides, { image: url }]);
+      const added = [...heroSlides, { image: url }];
+      updateField("heroSlides", added);
+      setCropIdx(added.length - 1);
     } catch (err) {
       console.error(err);
       alert(`Image upload failed: ${err?.message || "Please try again."}`);
@@ -61,6 +66,7 @@ export default function WorkerIdentityEditor({
       const next = [...heroSlides];
       next[index] = { image: url };
       updateField("heroSlides", next);
+      setCropIdx(index);
       if (oldUrl) deleteWorkerFile(oldUrl);
     } catch (err) {
       console.error(err);
@@ -162,7 +168,7 @@ export default function WorkerIdentityEditor({
         <div className={styles.mediaGrid}>
           {heroSlides.map((slide, idx) => (
             <div className={styles.mediaItem} key={idx}>
-              <img src={slide.image} alt={`Slide ${idx + 1}`} />
+              {slide.crop ? <CroppedImage src={slide.image} crop={slide.crop} alt={`Slide ${idx + 1}`} /> : <img src={slide.image} alt={`Slide ${idx + 1}`} />}
               <label
                 className={styles.uploadBox}
                 style={{ position: "absolute", inset: 0, opacity: 0, zIndex: 1 }}
@@ -177,6 +183,13 @@ export default function WorkerIdentityEditor({
                 style={{ zIndex: 2 }}
               >
                 ✕
+              </button>
+              <button
+                type="button"
+                onClick={() => setCropIdx(idx)}
+                style={{ position: "absolute", bottom: 4, right: 4, zIndex: 2, border: "none", borderRadius: 5, background: "rgba(0,0,0,0.55)", color: "#fff", fontSize: "0.7rem", padding: "2px 7px", cursor: "pointer" }}
+              >
+                Crop
               </button>
               <div className={styles.mediaReorderBtns} style={{ zIndex: 2 }}>
                 <button type="button" onClick={() => handleMove(idx, -1)} disabled={idx === 0}>
@@ -198,8 +211,20 @@ export default function WorkerIdentityEditor({
             <input type="file" accept="image/*" onChange={handleAddImage} />
           </label>
         </div>
-        <p className={styles.hint}>Tap a photo to replace it. Use ↑ ↓ to reorder.</p>
+        <p className={styles.hint}>Tap a photo to replace it. Use ↑ ↓ to reorder. Use Crop to set what shows in the Identity Profile (original photo is kept).</p>
       </div>
+
+      {cropIdx !== null && heroSlides[cropIdx] && (
+        <PhotoCropper
+          src={heroSlides[cropIdx].image}
+          initialCrop={heroSlides[cropIdx].crop}
+          onCancel={() => setCropIdx(null)}
+          onApply={(crop) => {
+            updateField("heroSlides", heroSlides.map((s, i) => (i === cropIdx ? { ...s, crop } : s)));
+            setCropIdx(null);
+          }}
+        />
+      )}
 
       <div className={styles.saveRow}>
         <button className={`${styles.btn} ${styles.btnPrimary}`} onClick={onSave} disabled={saving}>

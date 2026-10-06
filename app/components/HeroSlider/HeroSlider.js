@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import styles from './HeroSlider.module.css';
+import CroppedImage from '../CroppedImage/CroppedImage';
 
 const ImagePreview = dynamic(() => import('../ImagePreview/ImagePreview'), {
   ssr: false,
@@ -20,7 +21,7 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
 
   const originalSlides = safeSlides.map((slide) => {
     if (typeof slide === 'string') return { image: slide };
-    return { image: slide.image || slide.url };
+    return { image: slide.image || slide.url, crop: slide.crop };
   });
 
   const totalOriginal = originalSlides.length;
@@ -138,12 +139,22 @@ export default function HeroSlider({ slides = DEFAULT_SLIDES, workerName = 'Work
         >
           {extendedSlides.map((slide, index) => (
             <div key={index} className={styles.slide}>
-              <img
-                src={slide.image}
-                alt={`${workerName} image ${index}`}
-                className={styles.slideImage}
-                loading={index === 1 ? 'eager' : 'lazy'}
-              />
+              {slide.crop ? (
+                <CroppedImage
+                  src={slide.image}
+                  crop={slide.crop}
+                  alt={`${workerName} image ${index}`}
+                  className={styles.slideImage}
+                  loading={index === 1 ? 'eager' : 'lazy'}
+                />
+              ) : (
+                <img
+                  src={slide.image}
+                  alt={`${workerName} image ${index}`}
+                  className={styles.slideImage}
+                  loading={index === 1 ? 'eager' : 'lazy'}
+                />
+              )}
             </div>
           ))}
         </div>
