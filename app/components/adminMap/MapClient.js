@@ -63,6 +63,7 @@ export default function MapClient() {
   const [workers, setWorkers] = useState([]);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
+  const [searchMessage, setSearchMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [drag, setDrag] = useState(null);
   const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
@@ -108,6 +109,7 @@ export default function MapClient() {
   const selectedWorkers = useMemo(() => {
     if (!selectedWorker) return [];
     return workers.filter(w => {
+      if (w.workerHexId) return normalize(w.workerHexId) === normalize(selectedWorker.properties?.worker_hex_id);
       const lon = +w.longitude, lat = +w.latitude;
       return Number.isFinite(lon) && Number.isFinite(lat) && pointInGeometry([lon, lat], selectedWorker.geometry);
     });
@@ -156,18 +158,25 @@ export default function MapClient() {
   function selectHex(type, id) { setSelected({ type, id }); }
 
   function runSearch() {
-    const q = normalize(search); if (!q) return;
+    const q = normalize(search);
+    if (!q) { setSearchMessage(""); return; }
     const wh = workerHexes.find(f => normalize(f.properties?.worker_hex_id) === q);
-    if (wh) return selectHex("worker", wh.properties.worker_hex_id);
+    if (wh) { selectHex("worker", wh.properties.worker_hex_id); setSearchMessage(`Found ${wh.properties.worker_hex_id}`); return; }
     const chByCode = customerByCode.get(q);
-    if (chByCode) return selectHex("customer", chByCode.properties.customer_hex_id);
+    if (chByCode) { selectHex("customer", chByCode.properties.customer_hex_id); setSearchMessage(`Found ${q.toUpperCase()}`); return; }
     const ch = customer.find(f => normalize(f.properties?.customer_hex_id) === q);
-    if (ch) return selectHex("customer", ch.properties.customer_hex_id);
+    if (ch) { selectHex("customer", ch.properties.customer_hex_id); setSearchMessage(`Found Customer Hex`); return; }
     const w = workers.find(x => [x.workerId, x.fullName, x.profession, x.ipuc, x.slug].some(v => normalize(v).includes(q)));
     if (w) {
-      const f = workerHexes.find(h => Number.isFinite(+w.longitude) && Number.isFinite(+w.latitude) && pointInGeometry([+w.longitude, +w.latitude], h.geometry));
-      if (f) selectHex("worker", f.properties.worker_hex_id);
+      const f = w.workerHexId
+        ? workerHexes.find(h => normalize(h.properties?.worker_hex_id) === normalize(w.workerHexId))
+        : workerHexes.find(h => Number.isFinite(+w.longitude) && Number.isFinite(+w.latitude) && pointInGeometry([+w.longitude, +w.latitude], h.geometry));
+      if (f) { selectHex("worker", f.properties.worker_hex_id); setSearchMessage(`Found ${w.fullName || w.workerId} • ${f.properties.worker_hex_id}`); return; }
+      setSearchMessage(`${w.fullName || w.workerId} found, but no Worker Hex matched this location`);
+      return;
     }
+    setSelected(null);
+    setSearchMessage(`No results for “${search.trim()}”`);
   }
 
   const clipPath = boundary?.features?.length ? geometryPath(boundary.features[0].geometry, project) : "";
@@ -175,7 +184,7 @@ export default function MapClient() {
   return <main style={S.page}>
     <header style={S.header}><div><h1 style={S.h1}>INFIXO MAP</h1><p style={S.sub}>Indore — fixed Customer Hex + Worker Hex network</p></div><Link href="/admin/workers" style={S.link}>Workers</Link></header>
     <section style={S.stats}><Stat label="Workers" value={workers.length}/><Stat label="Customer Hex" value={customer.length}/><Stat label="Worker Hex" value={workerHexes.length}/>{CATEGORIES.map(c => <Stat key={c} label={`${c}s`} value={categoryCounts[c]}/>)}</section>
-    <section style={S.toolbar}><div style={S.search}><input style={S.input} value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === "Enter" && runSearch()} placeholder="Worker ID, name, WH-01 or CH-36"/><button style={S.btn} onClick={runSearch}>Search</button></div><div style={S.buttons}><button style={S.btn} onClick={() => zoomAt(1.35)}>＋</button><button style={S.btn} onClick={() => zoomAt(.74)}>−</button><button style={S.btn} onClick={fitAll}>Reset</button></div></section>
+    <section style={S.toolbar}><div style={S.search}><input style={S.input} value={search} onChange={e => { setSearch(e.target.value); setSearchMessage(""); }} onKeyDown={e => e.key === "Enter" && runSearch()} placeholder="Worker ID, name, WH-01 or CH-36"/><button style={S.btn} onClick={runSearch}>Search</button>{searchMessage && <div style={{fontSize:12,fontWeight:700,color:searchMessage.startsWith("No results") ? "#b42318" : "#027a48",marginTop:5}}>{searchMessage}</div>}</div><div style={S.buttons}><button style={S.btn} onClick={() => zoomAt(1.35)}>＋</button><button style={S.btn} onClick={() => zoomAt(.74)}>−</button><button style={S.btn} onClick={fitAll}>Reset</button></div></section>
     <section style={S.layers}>{[["customer","Customer Hex"],["worker","Worker Hex"],["boundary","IMC Boundary"]].map(([k,l]) => <label key={k} style={S.toggle}><input type="checkbox" checked={layers[k]} onChange={() => setLayers(x => ({...x,[k]:!x[k]}))}/>{l}</label>)}</section>
     <section style={S.mapShell}>
       {loading ? <div style={S.loading}>Loading INFIXO map…</div> : <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={S.svg} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>

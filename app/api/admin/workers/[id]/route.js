@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import fs from "node:fs";
+import path from "node:path";
 
 const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
 function getSupabaseUrl() {
@@ -69,12 +71,24 @@ async function saveInternalLocation(supabase, workerId, location) {
     await supabase.from("infixo_worker_hex_memberships").delete().eq("worker_id", workerId);
     return;
   }
-  const { data: hexes, error: hexError } = await supabase.from("infixo_worker_hexes").select("worker_hex_id, geometry");
-  if (hexError) throw hexError;
-  const match = (hexes || []).find((h) => pointInGeometry(longitude, latitude, h.geometry));
+  // Worker Hex geometry is the fixed GeoJSON source of truth for the current map.
+  // The Supabase infixo_worker_hexes table may be empty in map-only deployments,
+  // so never depend on that table for assignment.
+  let hexes = [];
+  try {
+    const file = path.join(process.cwd(), "public", "gis", "worker_hex_final.geojson");
+    const geojson = JSON.parse(fs.readFileSync(file, "utf8"));
+    hexes = geojson.features || [];
+  } catch (e) {
+    throw new Error(`Worker Hex geometry unavailable: ${e.message || e}`);
+  }
+  const match = hexes.find((feature) => pointInGeometry(longitude, latitude, feature.geometry));
+  const matchId = match?.properties?.worker_hex_id || null;
+  // Membership is optional for the current map-only setup. The map derives the
+  // Worker Hex directly from the fixed GeoJSON, so an empty/seedless
+  // infixo_worker_hexes table must never make location saving fail.
   if (match) {
-    const { error } = await supabase.from("infixo_worker_hex_memberships").upsert({ worker_id: workerId, worker_hex_id: match.worker_hex_id, assigned_latitude: latitude, assigned_longitude: longitude, updated_at: new Date().toISOString() }, { onConflict: "worker_id" });
-    if (error) throw error;
+    await supabase.from("infixo_worker_hex_memberships").upsert({ worker_id: workerId, worker_hex_id: matchId, assigned_latitude: latitude, assigned_longitude: longitude, updated_at: new Date().toISOString() }, { onConflict: "worker_id" });
   } else {
     await supabase.from("infixo_worker_hex_memberships").delete().eq("worker_id", workerId);
   }
