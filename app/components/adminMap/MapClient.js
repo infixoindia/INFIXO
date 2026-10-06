@@ -68,6 +68,7 @@ export default function MapClient() {
   const [searchMessage, setSearchMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [drag, setDrag] = useState(null);
+  const lastClick = useRef({ id: null, t: 0, prevCustomer: null });
   const [view, setView] = useState({ scale: 1, x: 0, y: 0 });
   const [layers, setLayers] = useState({ customer: true, worker: true, boundary: true });
 
@@ -128,6 +129,11 @@ export default function MapClient() {
     });
   }, [workers, selectedWorker]);
 
+  const selectedCustomerWorkers = useMemo(() => {
+    if (!selectedCustomer) return [];
+    return workers.filter(w => pointInGeometry([+w.longitude, +w.latitude], selectedCustomer.geometry));
+  }, [workers, selectedCustomer]);
+
   const categoryCounts = useMemo(() => Object.fromEntries(CATEGORIES.map(c => [c, workers.filter(w => categoryMatch(w.profession, c)).length])), [workers]);
 
   const customerAreas = useMemo(() => {
@@ -170,6 +176,22 @@ export default function MapClient() {
   // Selecting a hex changes only selection/details. It NEVER zooms or moves the map.
   function selectHex(type, id) { setSelected({ type, id }); }
 
+  // Single click on any hex  => Worker Hex details only.
+  // Double click on a Customer Hex => that Customer Hex only.
+  // Double click on the already-selected Customer Hex => back to its Worker Hex.
+  function hexClick(f) {
+    const cid = f.properties?.customer_hex_id, wid = f.properties?.worker_hex_id;
+    if (!wid) { selectHex("customer", cid); return; }
+    const now = Date.now(), last = lastClick.current;
+    if (last.id === cid && now - last.t < 450) {
+      lastClick.current = { id: null, t: 0, prevCustomer: null };
+      if (last.prevCustomer === cid) selectHex("worker", wid); else selectHex("customer", cid);
+      return;
+    }
+    lastClick.current = { id: cid, t: now, prevCustomer: selected?.type === "customer" ? selected.id : null };
+    selectHex("worker", wid);
+  }
+
   function runSearch() {
     // Search over ALL loaded workers so a worker without Lat/Lon gets an explicit message, not "No results".
     const r = searchMap({ query: search, workers: allWorkers, workerHexes, customer });
@@ -196,8 +218,8 @@ export default function MapClient() {
             const sourceId = f.properties?.customer_hex_id;
             const code = customerCode(i);
             const selectedId = selected?.type === "customer" && selected.id === sourceId;
-            const relatedWorker = selected?.type === "customer" && selectedWorker?.properties?.worker_hex_id === f.properties?.worker_hex_id;
-            return <path key={sourceId} d={geometryPath(f.geometry, project)} fill={selectedId ? "#ff9f1c" : relatedWorker ? "#b9d8f2" : "#cfe3f5"} fillOpacity={selectedId ? .98 : .84} stroke={selectedId ? "#d35400" : "#4d7ba6"} strokeWidth={(selectedId ? 3.5 : 0.7) / view.scale} onClick={e => { e.stopPropagation(); selectHex("customer", sourceId); }} aria-label={code}/>;
+            const relatedWorker = !!selectedWorker && selectedWorker.properties?.worker_hex_id === f.properties?.worker_hex_id;
+            return <path key={sourceId} d={geometryPath(f.geometry, project)} fill={selectedId ? "#ff9f1c" : relatedWorker ? "#b9d8f2" : "#cfe3f5"} fillOpacity={selectedId ? .98 : .84} stroke={selectedId ? "#d35400" : "#4d7ba6"} strokeWidth={(selectedId ? 3.5 : 0.7) / view.scale} onClick={e => { e.stopPropagation(); hexClick(f); }} aria-label={code}/>;
           })}
           {layers.worker && workerHexes.map(f => {
             const id = f.properties?.worker_hex_id;
@@ -207,26 +229,26 @@ export default function MapClient() {
         </g>
         {layers.boundary && boundary?.features?.map((f,i) => <path key={`b${i}`} d={geometryPath(f.geometry, project)} fill="none" stroke="#d33" strokeWidth={2.5 / view.scale} fillRule="evenodd" pointerEvents="none"/>)}
       </svg>}
-      <div style={S.mapHint}>Drag to move • Pinch / wheel to zoom • Tap a hex for area details</div>
+      <div style={S.mapHint}>Drag to move • Pinch / wheel to zoom • Tap = Worker Hex • Double-tap a Customer Hex = its details • Double-tap again = back</div>
     </section>
-    <section style={S.detail}>{selectedCustomer ? <CustomerPanel feature={selectedCustomer} worker={selectedWorker} workers={selectedWorkers} areaNames={areaNames} workerAreas={workerAreas} customerAreas={customerAreas} workerAreaKm2={workerAreaKm2} code={customerBySourceId.get(selectedCustomer.properties?.customer_hex_id)?.code}/> : selectedWorker ? <WorkerPanel hex={selectedWorker} workers={selectedWorkers} areaNames={areaNames} workerAreas={workerAreas} workerAreaKm2={workerAreaKm2} customerBySourceId={customerBySourceId}/>: <p style={S.muted}>Tap a Customer Hex or Worker Hex to see the real area/ward names.</p>}</section>
+    <section style={S.detail}>{selectedCustomer ? <CustomerPanel feature={selectedCustomer} worker={selectedWorker} workers={selectedCustomerWorkers} areaNames={areaNames} workerAreas={workerAreas} customerAreas={customerAreas} workerAreaKm2={workerAreaKm2} code={customerBySourceId.get(selectedCustomer.properties?.customer_hex_id)?.code}/> : selectedWorker ? <WorkerPanel hex={selectedWorker} workers={selectedWorkers} areaNames={areaNames} workerAreas={workerAreas} workerAreaKm2={workerAreaKm2} customerBySourceId={customerBySourceId}/>: <p style={S.muted}>Tap a Customer Hex or Worker Hex to see the real area/ward names.</p>}</section>
   </main>;
 }
 
 function Stat({label,value}) { return <div style={S.stat}><span>{label}</span><strong>{value}</strong></div>; }
 function AreaList({title, areas}) { return <div style={S.areaBox}><div style={S.sectionLabel}>{title}</div>{areas.length ? <div style={S.areaList}>{areas.map((a,i)=><div key={`${a}-${i}`} style={S.areaRow}><span>{a}</span></div>)}</div> : <div style={S.none}>—</div>}</div>; }
-function WorkersBox({hexId, workers}) {
-  return <div style={S.areaBox}><div style={S.sectionLabel}>Workers on board in {hexId}: {workers.length}</div><div style={S.cats}>{CATEGORIES.map(c=><span key={c}>{c}: <b>{workers.filter(w=>categoryMatch(w.profession,c)).length}</b></span>)}</div>{workers.length>0 ? <div style={S.workerList}>{workers.map(w=><WorkerRow key={w.id} worker={w}/>)}</div> : <div style={S.none}>No workers on board</div>}</div>;
+function WorkersBox({label, workers}) {
+  return <div style={S.areaBox}><div style={S.sectionLabel}>Workers on board in {label}: {workers.length}</div><div style={S.cats}>{CATEGORIES.map(c=><span key={c}>{c}: <b>{workers.filter(w=>categoryMatch(w.profession,c)).length}</b></span>)}</div>{workers.length>0 ? <div style={S.workerList}>{workers.map(w=><WorkerRow key={w.id} worker={w}/>)}</div> : <div style={S.none}>No workers on board</div>}</div>;
 }
-function CustomerPanel({feature,worker,workers,workerAreas,customerAreas,workerAreaKm2,code}) {
+function CustomerPanel({feature,workers,customerAreas,code}) {
   const p=feature.properties||{};
-  return <><h2 style={S.detailTitle}>Customer Hex {code || p.customer_hex_id}</h2><div style={S.summary}><Info k="Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hex" v={code || p.customer_hex_id}/><Info k="Worker Hex Area Inside IMC" v={workerAreaKm2 != null ? `${workerAreaKm2.toFixed(3)} km²` : "—"}/><Info k="Customer Hex Area Inside IMC" v={p.area_inside_imc_km2 != null ? `${p.area_inside_imc_km2} km²` : "—"}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Worker Hex ${p.worker_hex_id} — Areas`} areas={workerAreas}/><AreaList title={`Customer Hex ${code || p.customer_hex_id} — Areas`} areas={customerAreas}/></div><div style={S.col}><WorkersBox hexId={p.worker_hex_id} workers={workers || []}/></div></div></>;
+  return <><h2 style={S.detailTitle}>Customer Hex {code || p.customer_hex_id}</h2><div style={S.summary}><Info k="Customer Hex" v={code || p.customer_hex_id}/><Info k="Inside Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hex Area Inside IMC" v={p.area_inside_imc_km2 != null ? `${p.area_inside_imc_km2} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Customer Hex ${code || p.customer_hex_id} — Areas`} areas={customerAreas}/></div><div style={S.col}><WorkersBox label={code || p.customer_hex_id} workers={workers}/></div></div></>;
 }
 function WorkerPanel({hex,workers,workerAreas,workerAreaKm2,customerBySourceId}) {
   const p=hex.properties||{};
-  return <><h2 style={S.detailTitle}>Worker Hex {p.worker_hex_id}</h2><div style={S.summary}><Info k="Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hexes" v={p.customer_hex_count}/><Info k="Area Inside IMC" v={workerAreaKm2 != null ? `${workerAreaKm2.toFixed(3)} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Worker Hex ${p.worker_hex_id} — Areas`} areas={workerAreas}/></div><div style={S.col}><WorkersBox hexId={p.worker_hex_id} workers={workers}/><div style={S.customerList}><div style={S.sectionLabel}>Customer Hexes inside {p.worker_hex_id}</div>{(p.customer_hex_ids||[]).map(id => <div key={id} style={S.customerRow}><b>{customerBySourceId.get(id)?.code || id}</b><span>{customerBySourceId.get(id)?.feature?.properties?.area_inside_imc_km2 != null ? `${customerBySourceId.get(id).feature.properties.area_inside_imc_km2} km²` : "—"}</span></div>)}</div></div></div></>;
+  return <><h2 style={S.detailTitle}>Worker Hex {p.worker_hex_id}</h2><div style={S.summary}><Info k="Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hexes" v={p.customer_hex_count}/><Info k="Area Inside IMC" v={workerAreaKm2 != null ? `${workerAreaKm2.toFixed(3)} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Worker Hex ${p.worker_hex_id} — Areas`} areas={workerAreas}/></div><div style={S.col}><WorkersBox label={p.worker_hex_id} workers={workers}/><div style={S.customerList}><div style={S.sectionLabel}>Customer Hexes inside {p.worker_hex_id}</div>{(p.customer_hex_ids||[]).map(id => <div key={id} style={S.customerRow}><b>{customerBySourceId.get(id)?.code || id}</b><span>{customerBySourceId.get(id)?.feature?.properties?.area_inside_imc_km2 != null ? `${customerBySourceId.get(id).feature.properties.area_inside_imc_km2} km²` : "—"}</span></div>)}</div></div></div></>;
 }
 function Info({k,v}) { return <div style={S.info}><small>{k}</small><b>{v||"—"}</b></div>; }
-function WorkerRow({worker}) { const link=workerLink(worker); return <div style={S.worker}><div style={{minWidth:0,display:"flex",flexDirection:"column",gap:2}}><b>{worker.fullName||"Untitled Worker"}</b><small>{worker.profession||"—"}</small><small>ID: {worker.workerId||"—"}</small></div>{link&&<Link href={link} target="_blank" style={S.profile}>Full Profile</Link>}</div>; }
+function WorkerRow({worker}) { const link=workerLink(worker); return <div style={S.worker}><b style={{fontSize:13}}>{worker.fullName||"Untitled Worker"}</b><span style={S.sep}>•</span><small>{worker.profession||"—"}</small><span style={S.sep}>•</span><small>ID: {worker.workerId||"—"}</small>{link&&<Link href={link} target="_blank" style={{...S.profile,marginLeft:"auto"}}>Full Profile</Link>}</div>; }
 
-const S={page:{minHeight:"100vh",background:"#f7f8fa",padding:"16px",fontFamily:"Arial,sans-serif",color:"#172033"},header:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12},h1:{margin:0,fontSize:24,color:"#001f6b"},sub:{margin:"4px 0 0",color:"#667085",fontSize:13},link:{textDecoration:"none",fontWeight:700,color:"#002d97"},stats:{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:8,marginBottom:10},stat:{background:"white",border:"1px solid #e5e7eb",borderRadius:10,padding:"8px 10px",display:"flex",flexDirection:"column",gap:3},toolbar:{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"},search:{display:"flex",gap:6,flex:1,minWidth:240},input:{flex:1,minWidth:0,border:"1px solid #d0d5dd",borderRadius:9,padding:"10px 12px",fontSize:14},btn:{border:0,borderRadius:9,padding:"9px 13px",background:"#002d97",color:"white",fontWeight:700,cursor:"pointer"},buttons:{display:"flex",gap:6},layers:{display:"flex",gap:12,flexWrap:"wrap",marginBottom:8},toggle:{background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:"7px 10px",fontSize:13,fontWeight:600},mapShell:{position:"relative",background:"#eef3f8",border:"1px solid #d8dee8",borderRadius:14,overflow:"hidden",touchAction:"none",minHeight:360},svg:{width:"100%",height:"min(68vh,620px)",display:"block",cursor:"grab",touchAction:"none"},loading:{height:420,display:"grid",placeItems:"center",color:"#667085"},mapHint:{position:"absolute",bottom:8,left:8,background:"rgba(255,255,255,.9)",borderRadius:8,padding:"6px 9px",fontSize:11,color:"#667085",pointerEvents:"none"},detail:{marginTop:10,background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:14},detailTitle:{margin:"0 0 12px",color:"#001f6b"},summary:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,marginBottom:10},info:{background:"#f7f8fa",borderRadius:9,padding:10,display:"flex",flexDirection:"column",gap:3},twoCols:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,alignItems:"start"},col:{minWidth:0,display:"flex",flexDirection:"column",gap:8},areaBox:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},sectionLabel:{fontWeight:800,color:"#001f6b",marginBottom:7,fontSize:13},areaList:{display:"grid",gap:4},areaRow:{display:"block",background:"white",border:"1px solid #e5e7eb",borderRadius:8,padding:"5px 7px",fontSize:12,lineHeight:1.25,overflowWrap:"anywhere"},none:{color:"#667085"},customerList:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},customerRow:{display:"flex",justifyContent:"space-between",padding:"7px 8px",background:"white",borderBottom:"1px solid #e5e7eb"},cats:{display:"flex",gap:8,flexWrap:"wrap",marginBottom:6,fontSize:12},workerList:{display:"grid",gap:6},worker:{display:"flex",flexDirection:"column",gap:6,background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:8,fontSize:12,overflowWrap:"anywhere"},profile:{color:"#002d97",fontWeight:700,fontSize:12},muted:{color:"#667085"}};
+const S={page:{minHeight:"100vh",background:"#f7f8fa",padding:"16px",fontFamily:"Arial,sans-serif",color:"#172033"},header:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12},h1:{margin:0,fontSize:24,color:"#001f6b"},sub:{margin:"4px 0 0",color:"#667085",fontSize:13},link:{textDecoration:"none",fontWeight:700,color:"#002d97"},stats:{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:8,marginBottom:10},stat:{background:"white",border:"1px solid #e5e7eb",borderRadius:10,padding:"8px 10px",display:"flex",flexDirection:"column",gap:3},toolbar:{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"},search:{display:"flex",gap:6,flex:1,minWidth:240},input:{flex:1,minWidth:0,border:"1px solid #d0d5dd",borderRadius:9,padding:"10px 12px",fontSize:14},btn:{border:0,borderRadius:9,padding:"9px 13px",background:"#002d97",color:"white",fontWeight:700,cursor:"pointer"},buttons:{display:"flex",gap:6},layers:{display:"flex",gap:12,flexWrap:"wrap",marginBottom:8},toggle:{background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:"7px 10px",fontSize:13,fontWeight:600},mapShell:{position:"relative",background:"#eef3f8",border:"1px solid #d8dee8",borderRadius:14,overflow:"hidden",touchAction:"none",minHeight:360},svg:{width:"100%",height:"min(68vh,620px)",display:"block",cursor:"grab",touchAction:"none"},loading:{height:420,display:"grid",placeItems:"center",color:"#667085"},mapHint:{position:"absolute",bottom:8,left:8,background:"rgba(255,255,255,.9)",borderRadius:8,padding:"6px 9px",fontSize:11,color:"#667085",pointerEvents:"none"},detail:{marginTop:10,background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:14},detailTitle:{margin:"0 0 12px",color:"#001f6b"},summary:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,marginBottom:10},info:{background:"#f7f8fa",borderRadius:9,padding:10,display:"flex",flexDirection:"column",gap:3},twoCols:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,alignItems:"start"},col:{minWidth:0,display:"flex",flexDirection:"column",gap:8},areaBox:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},sectionLabel:{fontWeight:800,color:"#001f6b",marginBottom:7,fontSize:13},areaList:{display:"grid",gap:4},areaRow:{display:"block",background:"white",border:"1px solid #e5e7eb",borderRadius:8,padding:"5px 7px",fontSize:12,lineHeight:1.25,overflowWrap:"anywhere"},none:{color:"#667085"},customerList:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},customerRow:{display:"flex",justifyContent:"space-between",padding:"7px 8px",background:"white",borderBottom:"1px solid #e5e7eb"},cats:{display:"flex",gap:8,flexWrap:"wrap",marginBottom:6,fontSize:12},workerList:{display:"grid",gap:6},worker:{display:"flex",flexDirection:"row",flexWrap:"wrap",alignItems:"center",gap:6,background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:8,fontSize:12,overflowWrap:"anywhere"},sep:{color:"#98a2b3"},profile:{color:"#002d97",fontWeight:700,fontSize:12},muted:{color:"#667085"}};
