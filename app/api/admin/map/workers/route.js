@@ -10,9 +10,16 @@ export const revalidate = 0;
 const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
 const NO_STORE = { "Cache-Control": "no-store, max-age=0" };
 
+// Same URL cleaning as /api/admin/workers/[id] (strips stray quotes/spaces, validates, falls back).
+function getSupabaseUrl() {
+  const raw = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim().replace(/^["']|["']$/g, "").trim();
+  try { const parsed = new URL(raw); if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.toString().replace(/\/$/, ""); } catch {}
+  return DEFAULT_SUPABASE_URL;
+}
+function cleanKey(v) { return String(v || "").trim().replace(/^["']|["']$/g, "").trim(); }
 function getSupabaseServerClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
+  const url = getSupabaseUrl();
+  const key = cleanKey(process.env.SUPABASE_SERVICE_ROLE_KEY) || cleanKey(process.env.SUPABASE_SECRET_KEY) || cleanKey(process.env.SUPABASE_SERVICE_KEY);
   if (!key) return null;
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
