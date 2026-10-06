@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { searchMap } from "@/lib/mapSearch";
+import { pointInGeometry as pointInGeometryEdgeSafe } from "@/lib/mapWorkers";
 
 const CATEGORIES = ["Painter", "Plumber", "Electrician"];
 const DEFAULT_CENTER = [75.8577, 22.7196];
@@ -129,10 +130,25 @@ export default function MapClient() {
     });
   }, [workers, selectedWorker]);
 
+  // Each located worker belongs to exactly ONE Customer Hex (edge-safe point-in-polygon on the GeoJSON).
+  const workerCustomer = useMemo(() => {
+    const m = new Map();
+    for (const w of workers) {
+      const idx = customer.findIndex(f => pointInGeometryEdgeSafe([+w.longitude, +w.latitude], f.geometry));
+      if (idx >= 0) m.set(w.id, { sourceId: customer[idx].properties?.customer_hex_id, code: customerCode(idx) });
+    }
+    return m;
+  }, [workers, customer]);
+  const customerWorkerCounts = useMemo(() => {
+    const m = new Map();
+    for (const v of workerCustomer.values()) m.set(v.sourceId, (m.get(v.sourceId) || 0) + 1);
+    return m;
+  }, [workerCustomer]);
   const selectedCustomerWorkers = useMemo(() => {
     if (!selectedCustomer) return [];
-    return workers.filter(w => pointInGeometry([+w.longitude, +w.latitude], selectedCustomer.geometry));
-  }, [workers, selectedCustomer]);
+    const sid = selectedCustomer.properties?.customer_hex_id;
+    return workers.filter(w => workerCustomer.get(w.id)?.sourceId === sid);
+  }, [workers, selectedCustomer, workerCustomer]);
 
   const categoryCounts = useMemo(() => Object.fromEntries(CATEGORIES.map(c => [c, workers.filter(w => categoryMatch(w.profession, c)).length])), [workers]);
 
@@ -176,20 +192,23 @@ export default function MapClient() {
   // Selecting a hex changes only selection/details. It NEVER zooms or moves the map.
   function selectHex(type, id) { setSelected({ type, id }); }
 
-  // Single click on any hex  => Worker Hex details only.
-  // Double click on a Customer Hex => that Customer Hex only.
-  // Double click on the already-selected Customer Hex => back to its Worker Hex.
+  // Worker mode:   single click = Worker Hex; double click on a Customer Hex = that Customer Hex.
+  // Customer mode: single click on another Customer Hex of the SAME Worker Hex = switch Customer Hex;
+  //                double click on the selected Customer Hex = back to its Worker Hex;
+  //                single click on a hex of a different Worker Hex = that Worker Hex.
   function hexClick(f) {
     const cid = f.properties?.customer_hex_id, wid = f.properties?.worker_hex_id;
     if (!wid) { selectHex("customer", cid); return; }
     const now = Date.now(), last = lastClick.current;
+    const selCust = selected?.type === "customer" ? selected.id : null;
     if (last.id === cid && now - last.t < 450) {
       lastClick.current = { id: null, t: 0, prevCustomer: null };
       if (last.prevCustomer === cid) selectHex("worker", wid); else selectHex("customer", cid);
       return;
     }
-    lastClick.current = { id: cid, t: now, prevCustomer: selected?.type === "customer" ? selected.id : null };
-    selectHex("worker", wid);
+    lastClick.current = { id: cid, t: now, prevCustomer: selCust };
+    if (selCust && selectedCustomer?.properties?.worker_hex_id === wid) selectHex("customer", cid);
+    else selectHex("worker", wid);
   }
 
   function runSearch() {
@@ -231,24 +250,24 @@ export default function MapClient() {
       </svg>}
       <div style={S.mapHint}>Drag to move • Pinch / wheel to zoom • Tap = Worker Hex • Double-tap a Customer Hex = its details • Double-tap again = back</div>
     </section>
-    <section style={S.detail}>{selectedCustomer ? <CustomerPanel feature={selectedCustomer} worker={selectedWorker} workers={selectedCustomerWorkers} areaNames={areaNames} workerAreas={workerAreas} customerAreas={customerAreas} workerAreaKm2={workerAreaKm2} code={customerBySourceId.get(selectedCustomer.properties?.customer_hex_id)?.code}/> : selectedWorker ? <WorkerPanel hex={selectedWorker} workers={selectedWorkers} areaNames={areaNames} workerAreas={workerAreas} workerAreaKm2={workerAreaKm2} customerBySourceId={customerBySourceId}/>: <p style={S.muted}>Tap a Customer Hex or Worker Hex to see the real area/ward names.</p>}</section>
+    <section style={S.detail}>{selectedCustomer ? <CustomerPanel feature={selectedCustomer} worker={selectedWorker} workers={selectedCustomerWorkers} chByWorker={workerCustomer} areaNames={areaNames} workerAreas={workerAreas} customerAreas={customerAreas} workerAreaKm2={workerAreaKm2} code={customerBySourceId.get(selectedCustomer.properties?.customer_hex_id)?.code}/> : selectedWorker ? <WorkerPanel hex={selectedWorker} workers={selectedWorkers} chByWorker={workerCustomer} customerCounts={customerWorkerCounts} areaNames={areaNames} workerAreas={workerAreas} workerAreaKm2={workerAreaKm2} customerBySourceId={customerBySourceId}/>: <p style={S.muted}>Tap a Customer Hex or Worker Hex to see the real area/ward names.</p>}</section>
   </main>;
 }
 
 function Stat({label,value}) { return <div style={S.stat}><span>{label}</span><strong>{value}</strong></div>; }
 function AreaList({title, areas}) { return <div style={S.areaBox}><div style={S.sectionLabel}>{title}</div>{areas.length ? <div style={S.areaList}>{areas.map((a,i)=><div key={`${a}-${i}`} style={S.areaRow}><span>{a}</span></div>)}</div> : <div style={S.none}>—</div>}</div>; }
-function WorkersBox({label, workers}) {
-  return <div style={S.areaBox}><div style={S.sectionLabel}>Workers on board in {label}: {workers.length}</div><div style={S.cats}>{CATEGORIES.map(c=><span key={c}>{c}: <b>{workers.filter(w=>categoryMatch(w.profession,c)).length}</b></span>)}</div>{workers.length>0 ? <div style={S.workerList}>{workers.map(w=><WorkerRow key={w.id} worker={w}/>)}</div> : <div style={S.none}>No workers on board</div>}</div>;
+function WorkersBox({label, workers, chByWorker}) {
+  return <div style={S.areaBox}><div style={S.sectionLabel}>Workers on board in {label}: {workers.length}</div><div style={S.cats}>{CATEGORIES.map(c=><span key={c}>{c}: <b>{workers.filter(w=>categoryMatch(w.profession,c)).length}</b></span>)}</div>{workers.length>0 ? <div style={S.workerList}>{workers.map(w=><WorkerRow key={w.id} worker={w} chCode={chByWorker?.get(w.id)?.code}/>)}</div> : <div style={S.none}>No workers on board</div>}</div>;
 }
-function CustomerPanel({feature,workers,customerAreas,code}) {
+function CustomerPanel({feature,workers,customerAreas,code,chByWorker}) {
   const p=feature.properties||{};
-  return <><h2 style={S.detailTitle}>Customer Hex {code || p.customer_hex_id}</h2><div style={S.summary}><Info k="Customer Hex" v={code || p.customer_hex_id}/><Info k="Inside Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hex Area Inside IMC" v={p.area_inside_imc_km2 != null ? `${p.area_inside_imc_km2} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Customer Hex ${code || p.customer_hex_id} — Areas`} areas={customerAreas}/></div><div style={S.col}><WorkersBox label={code || p.customer_hex_id} workers={workers}/></div></div></>;
+  return <><h2 style={S.detailTitle}>Customer Hex {code || p.customer_hex_id}</h2><div style={S.summary}><Info k="Customer Hex" v={code || p.customer_hex_id}/><Info k="Inside Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hex Area Inside IMC" v={p.area_inside_imc_km2 != null ? `${p.area_inside_imc_km2} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Customer Hex ${code || p.customer_hex_id} — Areas`} areas={customerAreas}/></div><div style={S.col}><WorkersBox label={code || p.customer_hex_id} workers={workers} chByWorker={chByWorker}/></div></div></>;
 }
-function WorkerPanel({hex,workers,workerAreas,workerAreaKm2,customerBySourceId}) {
+function WorkerPanel({hex,workers,workerAreas,workerAreaKm2,customerBySourceId,chByWorker,customerCounts}) {
   const p=hex.properties||{};
-  return <><h2 style={S.detailTitle}>Worker Hex {p.worker_hex_id}</h2><div style={S.summary}><Info k="Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hexes" v={p.customer_hex_count}/><Info k="Area Inside IMC" v={workerAreaKm2 != null ? `${workerAreaKm2.toFixed(3)} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Worker Hex ${p.worker_hex_id} — Areas`} areas={workerAreas}/></div><div style={S.col}><WorkersBox label={p.worker_hex_id} workers={workers}/><div style={S.customerList}><div style={S.sectionLabel}>Customer Hexes inside {p.worker_hex_id}</div>{(p.customer_hex_ids||[]).map(id => <div key={id} style={S.customerRow}><b>{customerBySourceId.get(id)?.code || id}</b><span>{customerBySourceId.get(id)?.feature?.properties?.area_inside_imc_km2 != null ? `${customerBySourceId.get(id).feature.properties.area_inside_imc_km2} km²` : "—"}</span></div>)}</div></div></div></>;
+  return <><h2 style={S.detailTitle}>Worker Hex {p.worker_hex_id}</h2><div style={S.summary}><Info k="Worker Hex" v={p.worker_hex_id}/><Info k="Customer Hexes" v={p.customer_hex_count}/><Info k="Area Inside IMC" v={workerAreaKm2 != null ? `${workerAreaKm2.toFixed(3)} km²` : "—"}/><Info k="Workers" v={workers.length}/></div><div style={S.twoCols}><div style={S.col}><AreaList title={`Worker Hex ${p.worker_hex_id} — Areas`} areas={workerAreas}/></div><div style={S.col}><WorkersBox label={p.worker_hex_id} workers={workers} chByWorker={chByWorker}/><div style={S.customerList}><div style={S.sectionLabel}>Customer Hexes inside {p.worker_hex_id} — workers</div>{(p.customer_hex_ids||[]).map(id => <div key={id} style={S.customerRow}><b>{customerBySourceId.get(id)?.code || id}</b><span style={{display:"flex",gap:14,alignItems:"baseline"}}><small>{customerBySourceId.get(id)?.feature?.properties?.area_inside_imc_km2 != null ? `${customerBySourceId.get(id).feature.properties.area_inside_imc_km2} km²` : "—"}</small><b style={{minWidth:20,textAlign:"right"}}>{customerCounts?.get(id) || 0}</b></span></div>)}</div></div></div></>;
 }
 function Info({k,v}) { return <div style={S.info}><small>{k}</small><b>{v||"—"}</b></div>; }
-function WorkerRow({worker}) { const link=workerLink(worker); return <div style={S.worker}><b style={{fontSize:13}}>{worker.fullName||"Untitled Worker"}</b><span style={S.sep}>•</span><small>{worker.profession||"—"}</small><span style={S.sep}>•</span><small>ID: {worker.workerId||"—"}</small>{link&&<Link href={link} target="_blank" style={{...S.profile,marginLeft:"auto"}}>Full Profile</Link>}</div>; }
+function WorkerRow({worker, chCode}) { const link=workerLink(worker); return <div style={S.worker}><b style={{fontSize:13}}>{worker.fullName||"Untitled Worker"}</b><span style={S.sep}>•</span><small>{worker.profession||"—"}</small><span style={S.sep}>•</span><small>ID: {worker.workerId||"—"}</small><span style={S.sep}>•</span><b style={{fontSize:12,color:"#001f6b"}}>{chCode||"—"}</b>{link&&<Link href={link} target="_blank" style={{...S.profile,marginLeft:"auto"}}>Full Profile</Link>}</div>; }
 
 const S={page:{minHeight:"100vh",background:"#f7f8fa",padding:"16px",fontFamily:"Arial,sans-serif",color:"#172033"},header:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12},h1:{margin:0,fontSize:24,color:"#001f6b"},sub:{margin:"4px 0 0",color:"#667085",fontSize:13},link:{textDecoration:"none",fontWeight:700,color:"#002d97"},stats:{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:8,marginBottom:10},stat:{background:"white",border:"1px solid #e5e7eb",borderRadius:10,padding:"8px 10px",display:"flex",flexDirection:"column",gap:3},toolbar:{display:"flex",gap:8,marginBottom:8,flexWrap:"wrap"},search:{display:"flex",gap:6,flex:1,minWidth:240},input:{flex:1,minWidth:0,border:"1px solid #d0d5dd",borderRadius:9,padding:"10px 12px",fontSize:14},btn:{border:0,borderRadius:9,padding:"9px 13px",background:"#002d97",color:"white",fontWeight:700,cursor:"pointer"},buttons:{display:"flex",gap:6},layers:{display:"flex",gap:12,flexWrap:"wrap",marginBottom:8},toggle:{background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:"7px 10px",fontSize:13,fontWeight:600},mapShell:{position:"relative",background:"#eef3f8",border:"1px solid #d8dee8",borderRadius:14,overflow:"hidden",touchAction:"none",minHeight:360},svg:{width:"100%",height:"min(68vh,620px)",display:"block",cursor:"grab",touchAction:"none"},loading:{height:420,display:"grid",placeItems:"center",color:"#667085"},mapHint:{position:"absolute",bottom:8,left:8,background:"rgba(255,255,255,.9)",borderRadius:8,padding:"6px 9px",fontSize:11,color:"#667085",pointerEvents:"none"},detail:{marginTop:10,background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:14},detailTitle:{margin:"0 0 12px",color:"#001f6b"},summary:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,marginBottom:10},info:{background:"#f7f8fa",borderRadius:9,padding:10,display:"flex",flexDirection:"column",gap:3},twoCols:{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8,alignItems:"start"},col:{minWidth:0,display:"flex",flexDirection:"column",gap:8},areaBox:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},sectionLabel:{fontWeight:800,color:"#001f6b",marginBottom:7,fontSize:13},areaList:{display:"grid",gap:4},areaRow:{display:"block",background:"white",border:"1px solid #e5e7eb",borderRadius:8,padding:"5px 7px",fontSize:12,lineHeight:1.25,overflowWrap:"anywhere"},none:{color:"#667085"},customerList:{background:"#f7f8fa",borderRadius:10,padding:8,marginBottom:0},customerRow:{display:"flex",justifyContent:"space-between",padding:"7px 8px",background:"white",borderBottom:"1px solid #e5e7eb"},cats:{display:"flex",gap:8,flexWrap:"wrap",marginBottom:6,fontSize:12},workerList:{display:"grid",gap:6},worker:{display:"flex",flexDirection:"row",flexWrap:"wrap",alignItems:"center",gap:6,background:"white",border:"1px solid #e5e7eb",borderRadius:9,padding:8,fontSize:12,overflowWrap:"anywhere"},sep:{color:"#98a2b3"},profile:{color:"#002d97",fontWeight:700,fontSize:12},muted:{color:"#667085"}};
