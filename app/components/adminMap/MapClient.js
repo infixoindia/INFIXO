@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { searchMap } from "@/lib/mapSearch";
 
 const CATEGORIES = ["Painter", "Plumber", "Electrician"];
 const DEFAULT_CENTER = [75.8577, 22.7196];
@@ -60,7 +61,8 @@ export default function MapClient() {
   const [workerHexes, setWorkerHexes] = useState([]);
   const [boundary, setBoundary] = useState(null);
   const [areaNames, setAreaNames] = useState({});
-  const [workers, setWorkers] = useState([]);
+  const [allWorkers, setAllWorkers] = useState([]);
+  const [workerLoadError, setWorkerLoadError] = useState("");
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
@@ -86,9 +88,20 @@ export default function MapClient() {
       if (a.status === "fulfilled") setAreaNames(a.value || {});
       setLoading(false);
     });
-    get("/api/admin/map/workers").then(x => { if (!cancelled) setWorkers(x?.workers || []); }).catch(() => {});
+    fetch("/api/admin/map/workers", { cache: "no-store" })
+      .then(async r => {
+        let x = null;
+        try { x = await r.json(); } catch { throw new Error(r.redirected ? "Admin session expired — log in again" : `Worker API returned non-JSON (${r.status})`); }
+        if (!r.ok) throw new Error(x?.error || `Worker API ${r.status}`);
+        if (x?.error) throw new Error(x.error);
+        if (!cancelled) { setAllWorkers(x?.workers || []); setWorkerLoadError(""); }
+      })
+      .catch(e => { if (!cancelled) setWorkerLoadError(e?.message || "Failed to load workers"); });
     return () => { cancelled = true; };
   }, []);
+
+  // Single source of truth for count/search/hex panel: workers that have valid coordinates.
+  const workers = useMemo(() => allWorkers.filter(w => w.latitude !== null && w.longitude !== null && Number.isFinite(+w.latitude) && Number.isFinite(+w.longitude)), [allWorkers]);
 
   const customerBySourceId = useMemo(() => new Map(customer.map((f, i) => [f.properties?.customer_hex_id, { feature: f, code: customerCode(i) }])), [customer]);
   const customerByCode = useMemo(() => new Map(customer.map((f, i) => [customerCode(i).toLowerCase(), f])), [customer]);
@@ -158,25 +171,13 @@ export default function MapClient() {
   function selectHex(type, id) { setSelected({ type, id }); }
 
   function runSearch() {
-    const q = normalize(search);
-    if (!q) { setSearchMessage(""); return; }
-    const wh = workerHexes.find(f => normalize(f.properties?.worker_hex_id) === q);
-    if (wh) { selectHex("worker", wh.properties.worker_hex_id); setSearchMessage(`Found ${wh.properties.worker_hex_id}`); return; }
-    const chByCode = customerByCode.get(q);
-    if (chByCode) { selectHex("customer", chByCode.properties.customer_hex_id); setSearchMessage(`Found ${q.toUpperCase()}`); return; }
-    const ch = customer.find(f => normalize(f.properties?.customer_hex_id) === q);
-    if (ch) { selectHex("customer", ch.properties.customer_hex_id); setSearchMessage(`Found Customer Hex`); return; }
-    const w = workers.find(x => [x.workerId, x.fullName, x.profession, x.ipuc, x.slug].some(v => normalize(v).includes(q)));
-    if (w) {
-      const f = w.workerHexId
-        ? workerHexes.find(h => normalize(h.properties?.worker_hex_id) === normalize(w.workerHexId))
-        : workerHexes.find(h => Number.isFinite(+w.longitude) && Number.isFinite(+w.latitude) && pointInGeometry([+w.longitude, +w.latitude], h.geometry));
-      if (f) { selectHex("worker", f.properties.worker_hex_id); setSearchMessage(`Found ${w.fullName || w.workerId} • ${f.properties.worker_hex_id}`); return; }
-      setSearchMessage(`${w.fullName || w.workerId} found, but no Worker Hex matched this location`);
-      return;
-    }
-    setSelected(null);
-    setSearchMessage(`No results for “${search.trim()}”`);
+    // Search over ALL loaded workers so a worker without Lat/Lon gets an explicit message, not "No results".
+    const r = searchMap({ query: search, workers: allWorkers, workerHexes, customer });
+    if (r.kind === "empty") { setSearchMessage(""); return; }
+    if (r.kind === "worker-hex" || r.kind === "worker") selectHex("worker", r.hexId);
+    else if (r.kind === "customer-hex") selectHex("customer", r.hexId);
+    else if (r.kind === "none") setSelected(null);
+    setSearchMessage(r.message);
   }
 
   const clipPath = boundary?.features?.length ? geometryPath(boundary.features[0].geometry, project) : "";
@@ -184,7 +185,7 @@ export default function MapClient() {
   return <main style={S.page}>
     <header style={S.header}><div><h1 style={S.h1}>INFIXO MAP</h1><p style={S.sub}>Indore — fixed Customer Hex + Worker Hex network</p></div><Link href="/admin/workers" style={S.link}>Workers</Link></header>
     <section style={S.stats}><Stat label="Workers" value={workers.length}/><Stat label="Customer Hex" value={customer.length}/><Stat label="Worker Hex" value={workerHexes.length}/>{CATEGORIES.map(c => <Stat key={c} label={`${c}s`} value={categoryCounts[c]}/>)}</section>
-    <section style={S.toolbar}><div style={S.search}><input style={S.input} value={search} onChange={e => { setSearch(e.target.value); setSearchMessage(""); }} onKeyDown={e => e.key === "Enter" && runSearch()} placeholder="Worker ID, name, WH-01 or CH-36"/><button style={S.btn} onClick={runSearch}>Search</button>{searchMessage && <div style={{fontSize:12,fontWeight:700,color:searchMessage.startsWith("No results") ? "#b42318" : "#027a48",marginTop:5}}>{searchMessage}</div>}</div><div style={S.buttons}><button style={S.btn} onClick={() => zoomAt(1.35)}>＋</button><button style={S.btn} onClick={() => zoomAt(.74)}>−</button><button style={S.btn} onClick={fitAll}>Reset</button></div></section>
+    <section style={S.toolbar}><div style={S.search}><input style={S.input} value={search} onChange={e => { setSearch(e.target.value); setSearchMessage(""); }} onKeyDown={e => e.key === "Enter" && runSearch()} placeholder="Worker ID, name, WH-01 or CH-36"/><button style={S.btn} onClick={runSearch}>Search</button>{workerLoadError && <div style={{fontSize:12,fontWeight:700,color:"#b42318",marginTop:5}}>Workers not loaded: {workerLoadError}</div>}{searchMessage && <div style={{fontSize:12,fontWeight:700,color:/^No results|no map location/.test(searchMessage) ? "#b42318" : "#027a48",marginTop:5}}>{searchMessage}</div>}</div><div style={S.buttons}><button style={S.btn} onClick={() => zoomAt(1.35)}>＋</button><button style={S.btn} onClick={() => zoomAt(.74)}>−</button><button style={S.btn} onClick={fitAll}>Reset</button></div></section>
     <section style={S.layers}>{[["customer","Customer Hex"],["worker","Worker Hex"],["boundary","IMC Boundary"]].map(([k,l]) => <label key={k} style={S.toggle}><input type="checkbox" checked={layers[k]} onChange={() => setLayers(x => ({...x,[k]:!x[k]}))}/>{l}</label>)}</section>
     <section style={S.mapShell}>
       {loading ? <div style={S.loading}>Loading INFIXO map…</div> : <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} style={S.svg} onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp}>
