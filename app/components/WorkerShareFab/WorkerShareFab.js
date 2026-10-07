@@ -352,37 +352,48 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
-            aria-label="Share Identity & Skill Profile"
+            aria-label="Scan this QR code to view my profile"
             style={{
               width: "100%",
               maxWidth: "760px",
-              maxHeight: "84vh",
+              maxHeight: "92vh",
               overflowY: "auto",
-              background: "#242424",
+              background: "#ffffff",
               borderRadius: "28px 28px 0 0",
-              padding: "28px 18px 72px",
+              padding: "10px 22px calc(26px + env(safe-area-inset-bottom, 0px))",
               textAlign: "center",
               boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
             }}
           >
+            <div
+              aria-hidden="true"
+              style={{
+                width: "44px",
+                height: "5px",
+                borderRadius: "999px",
+                background: "#d4d6da",
+                margin: "0 auto 26px",
+              }}
+            />
+
             <p
               style={{
-                margin: "0 0 20px",
-                fontSize: "17px",
-                lineHeight: 1.2,
-                fontWeight: 700,
-                color: "#f5f5f5",
+                margin: "0 auto 22px",
+                maxWidth: "300px",
+                fontSize: "22px",
+                lineHeight: 1.25,
+                fontWeight: 600,
+                color: "#1b1b1f",
               }}
             >
-              Share Identity &amp; Skill Profile
+              Scan this QR code to view my profile
             </p>
 
             <div
               style={{
-                width: "min(58vw, 270px)",
-                margin: "0 auto 22px",
-                padding: "11px",
+                width: "min(62vw, 300px)",
+                margin: "0 auto 18px",
                 background: "#ffffff",
               }}
             >
@@ -393,25 +404,36 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               />
             </div>
 
+            <p
+              style={{
+                margin: "0 auto 26px",
+                maxWidth: "270px",
+                fontSize: "13px",
+                lineHeight: 1.4,
+                color: "#a3a7ae",
+              }}
+            >
+              Place your camera over the entire QR code to start scanning
+            </p>
+
             <button
               type="button"
               onClick={() => setShowQr(false)}
               style={{
                 display: "block",
-                width: "min(52%, 190px)",
-                maxWidth: "190px",
-                margin: "8px auto 0",
+                width: "100%",
+                margin: "0 auto",
                 border: "none",
-                background: "#087FE5",
+                background: "#0b0b0d",
                 color: "#ffffff",
-                fontSize: "15px",
+                fontSize: "17px",
                 fontWeight: 700,
-                padding: "8px 14px",
+                padding: "17px 14px",
                 borderRadius: "999px",
                 cursor: "pointer",
               }}
             >
-              Done
+              Close
             </button>
 
             <style>{`
