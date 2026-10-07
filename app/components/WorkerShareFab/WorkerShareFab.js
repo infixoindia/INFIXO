@@ -28,6 +28,40 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showQr, setShowQr] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [qrDragY, setQrDragY] = useState(0);
+  const qrDrag = useRef(null);
+
+  const closeQr = () => { setShowQr(false); setQrDragY(0); };
+  const startQrDrag = (e) => {
+    qrDrag.current = { y: e.clientY, moved: false };
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const moveQrDrag = (e) => {
+    const d = qrDrag.current;
+    if (!d) return;
+    const dy = e.clientY - d.y;
+    if (Math.abs(dy) > 6) d.moved = true;
+    setQrDragY(Math.max(0, dy));
+  };
+  const endQrDrag = (e) => {
+    const d = qrDrag.current;
+    qrDrag.current = null;
+    if (!d) return;
+    if (!d.moved || e.clientY - d.y > 90) closeQr();
+    else setQrDragY(0);
+  };
+  const cancelQrDrag = () => { qrDrag.current = null; setQrDragY(0); };
+
+  // While the sheet is open, stop the browser's pull-to-refresh from firing
+  // when the sheet is dragged down.
+  useEffect(() => {
+    if (!showQr) return undefined;
+    const h = document.documentElement, b = document.body;
+    const ph = h.style.overscrollBehaviorY, pb = b.style.overscrollBehaviorY;
+    h.style.overscrollBehaviorY = "contain";
+    b.style.overscrollBehaviorY = "contain";
+    return () => { h.style.overscrollBehaviorY = ph; b.style.overscrollBehaviorY = pb; };
+  }, [showQr]);
   const posRef = useRef(null);
   const drag = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origLeft: 0, origTop: 0, pointerId: null });
 
@@ -336,8 +370,9 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
       {/* QR share sheet — styled to match the supplied Wi-Fi QR reference. */}
       {showQr && qrDataUrl && (
         <div
-          onClick={() => setShowQr(false)}
+          onClick={closeQr}
           style={{
+            touchAction: "none",
             position: "fixed",
             inset: 0,
             background: "rgba(0,0,0,0.58)",
@@ -357,84 +392,102 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               width: "100%",
               maxWidth: "760px",
               maxHeight: "92vh",
-              overflowY: "auto",
-              background: "#ffffff",
-              borderRadius: "28px 28px 0 0",
-              padding: "10px 22px calc(26px + env(safe-area-inset-bottom, 0px))",
-              textAlign: "center",
-              boxShadow: "0 -12px 40px rgba(0,0,0,0.35)",
+              display: "flex",
+              flexDirection: "column",
               animation: "infixoQrSheetUp 0.32s cubic-bezier(.2,.8,.2,1) both",
             }}
           >
             <div
-              aria-hidden="true"
               style={{
-                width: "44px",
-                height: "5px",
-                borderRadius: "999px",
-                background: "#d4d6da",
-                margin: "0 auto 26px",
-              }}
-            />
-
-            <p
-              style={{
-                margin: "0 auto 22px",
-                maxWidth: "300px",
-                fontSize: "22px",
-                lineHeight: 1.25,
-                fontWeight: 600,
-                color: "#1b1b1f",
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0,
+                transform: `translateY(${qrDragY}px)`,
+                transition: qrDrag.current ? "none" : "transform 0.22s ease",
               }}
             >
-              Scan this QR code to view my profile
-            </p>
+              {/* Top edge: rounded corners + curved scoop around the grey handle. Drag/tap here to close. */}
+              <div
+                onPointerDown={startQrDrag}
+                onPointerMove={moveQrDrag}
+                onPointerUp={endQrDrag}
+                onPointerCancel={cancelQrDrag}
+                style={{ position: "relative", display: "flex", height: "32px", touchAction: "none", cursor: "grab", flexShrink: 0 }}
+              >
+                <div style={{ flex: 1, background: "#ffffff", borderTopLeftRadius: "28px" }} />
+                <svg width="168" height="32" viewBox="0 0 168 32" style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
+                  <path d="M0 0 C26 0 34 16 84 16 C134 16 142 0 168 0 L168 32 L0 32 Z" fill="#ffffff" />
+                </svg>
+                <div style={{ flex: 1, background: "#ffffff", borderTopRightRadius: "28px" }} />
+                <div
+                  aria-label="Close"
+                  style={{ position: "absolute", left: "50%", top: "21px", width: "40px", height: "5px", marginLeft: "-20px", borderRadius: "999px", background: "#d4d6da" }}
+                />
+              </div>
 
-            <div
-              style={{
-                width: "min(62vw, 300px)",
-                margin: "0 auto 18px",
-                background: "#ffffff",
-              }}
-            >
-              <img
-                src={qrDataUrl}
-                alt="Identity & Skill Profile QR code"
-                style={{ width: "100%", display: "block", aspectRatio: "1 / 1" }}
-              />
+              <div
+                style={{
+                  background: "#ffffff",
+                  overflowY: "auto",
+                  overscrollBehavior: "contain",
+                  padding: "6px 22px calc(18px + env(safe-area-inset-bottom, 0px))",
+                  textAlign: "center",
+                }}
+              >
+                <p
+                  style={{
+                    margin: "0 auto 16px",
+                    maxWidth: "260px",
+                    fontSize: "18px",
+                    lineHeight: 1.25,
+                    fontWeight: 600,
+                    color: "#1b1b1f",
+                  }}
+                >
+                  Scan this QR code to view my profile
+                </p>
+
+                <div style={{ width: "min(46vw, 210px)", margin: "0 auto 12px", background: "#ffffff" }}>
+                  <img
+                    src={qrDataUrl}
+                    alt="Identity & Skill Profile QR code"
+                    style={{ width: "100%", display: "block", aspectRatio: "1 / 1" }}
+                  />
+                </div>
+
+                <p
+                  style={{
+                    margin: "0 auto 20px",
+                    maxWidth: "230px",
+                    fontSize: "11.5px",
+                    lineHeight: 1.4,
+                    color: "#a3a7ae",
+                  }}
+                >
+                  Place your camera over the entire QR code to start scanning
+                </p>
+
+                <button
+                  type="button"
+                  onClick={closeQr}
+                  style={{
+                    display: "block",
+                    width: "88%",
+                    margin: "0 auto",
+                    border: "none",
+                    background: "#0b0b0d",
+                    color: "#ffffff",
+                    fontSize: "15px",
+                    fontWeight: 700,
+                    padding: "14px 14px",
+                    borderRadius: "999px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Close
+                </button>
+              </div>
             </div>
-
-            <p
-              style={{
-                margin: "0 auto 26px",
-                maxWidth: "270px",
-                fontSize: "13px",
-                lineHeight: 1.4,
-                color: "#a3a7ae",
-              }}
-            >
-              Place your camera over the entire QR code to start scanning
-            </p>
-
-            <button
-              type="button"
-              onClick={() => setShowQr(false)}
-              style={{
-                display: "block",
-                width: "100%",
-                margin: "0 auto",
-                border: "none",
-                background: "#0b0b0d",
-                color: "#ffffff",
-                fontSize: "17px",
-                fontWeight: 700,
-                padding: "17px 14px",
-                borderRadius: "999px",
-                cursor: "pointer",
-              }}
-            >
-              Close
-            </button>
 
             <style>{`
               @keyframes infixoQrSheetUp {
