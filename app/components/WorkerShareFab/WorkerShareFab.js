@@ -370,7 +370,6 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
       {/* QR share sheet — styled to match the supplied Wi-Fi QR reference. */}
       {showQr && qrDataUrl && (
         <div
-          onClick={closeQr}
           style={{
             touchAction: "none",
             position: "fixed",
@@ -409,11 +408,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
               {/* Top edge: rounded corners + smooth wave scoop; the grey handle sits INSIDE the scoop.
                   Drag/tap here to close. Pieces overlap by 1px so no seam line shows. */}
               <div
-                onPointerDown={startQrDrag}
-                onPointerMove={moveQrDrag}
-                onPointerUp={endQrDrag}
-                onPointerCancel={cancelQrDrag}
-                style={{ position: "relative", display: "flex", height: "36px", touchAction: "none", cursor: "grab", flexShrink: 0 }}
+                style={{ position: "relative", display: "flex", height: "36px", touchAction: "none", flexShrink: 0 }}
               >
                 <div style={{ position: "absolute", left: 0, right: 0, top: "26px", bottom: 0, background: "#ffffff" }} />
                 <div style={{ flex: 1, background: "#ffffff", borderTopLeftRadius: "28px", marginRight: "-1px" }} />
@@ -422,9 +417,16 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
                 </svg>
                 <div style={{ flex: 1, background: "#ffffff", borderTopRightRadius: "28px", marginLeft: "-1px" }} />
                 <div
+                  role="button"
                   aria-label="Close"
-                  style={{ position: "absolute", left: "50%", top: "8px", width: "40px", height: "5px", marginLeft: "-20px", borderRadius: "999px", background: "#dcdee2" }}
-                />
+                  onPointerDown={startQrDrag}
+                  onPointerMove={moveQrDrag}
+                  onPointerUp={endQrDrag}
+                  onPointerCancel={cancelQrDrag}
+                  style={{ position: "absolute", left: "50%", top: 0, width: "88px", height: "30px", marginLeft: "-44px", touchAction: "none", cursor: "grab" }}
+                >
+                  <div style={{ position: "absolute", left: "50%", top: "8px", width: "40px", height: "5px", marginLeft: "-20px", borderRadius: "999px", background: "#dcdee2" }} />
+                </div>
               </div>
 
               <div
