@@ -406,22 +406,24 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
                 transition: qrDrag.current ? "none" : "transform 0.22s ease",
               }}
             >
-              {/* Top edge: rounded corners + curved scoop around the grey handle. Drag/tap here to close. */}
+              {/* Top edge: rounded corners + smooth wave scoop; the grey handle sits INSIDE the scoop.
+                  Drag/tap here to close. Pieces overlap by 1px so no seam line shows. */}
               <div
                 onPointerDown={startQrDrag}
                 onPointerMove={moveQrDrag}
                 onPointerUp={endQrDrag}
                 onPointerCancel={cancelQrDrag}
-                style={{ position: "relative", display: "flex", height: "32px", touchAction: "none", cursor: "grab", flexShrink: 0 }}
+                style={{ position: "relative", display: "flex", height: "36px", touchAction: "none", cursor: "grab", flexShrink: 0 }}
               >
-                <div style={{ flex: 1, background: "#ffffff", borderTopLeftRadius: "28px" }} />
-                <svg width="168" height="32" viewBox="0 0 168 32" style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
-                  <path d="M0 0 C26 0 34 16 84 16 C134 16 142 0 168 0 L168 32 L0 32 Z" fill="#ffffff" />
+                <div style={{ position: "absolute", left: 0, right: 0, top: "26px", bottom: 0, background: "#ffffff" }} />
+                <div style={{ flex: 1, background: "#ffffff", borderTopLeftRadius: "28px", marginRight: "-1px" }} />
+                <svg width="192" height="36" viewBox="0 0 192 36" style={{ display: "block", flexShrink: 0, position: "relative" }} aria-hidden="true">
+                  <path d="M0 0 C32 0 46 22 96 22 C146 22 160 0 192 0 L192 36 L0 36 Z" fill="#ffffff" />
                 </svg>
-                <div style={{ flex: 1, background: "#ffffff", borderTopRightRadius: "28px" }} />
+                <div style={{ flex: 1, background: "#ffffff", borderTopRightRadius: "28px", marginLeft: "-1px" }} />
                 <div
                   aria-label="Close"
-                  style={{ position: "absolute", left: "50%", top: "21px", width: "40px", height: "5px", marginLeft: "-20px", borderRadius: "999px", background: "#d4d6da" }}
+                  style={{ position: "absolute", left: "50%", top: "8px", width: "40px", height: "5px", marginLeft: "-20px", borderRadius: "999px", background: "#dcdee2" }}
                 />
               </div>
 
@@ -430,7 +432,7 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
                   background: "#ffffff",
                   overflowY: "auto",
                   overscrollBehavior: "contain",
-                  padding: "6px 22px calc(18px + env(safe-area-inset-bottom, 0px))",
+                  padding: "2px 22px calc(18px + env(safe-area-inset-bottom, 0px))",
                   textAlign: "center",
                 }}
               >
