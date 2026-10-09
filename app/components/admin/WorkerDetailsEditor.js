@@ -127,6 +127,10 @@ export default function WorkerDetailsEditor({ worker, updateField, onSave, savin
         <div className={styles.field}>
           <label className={styles.label}>Content (one paragraph per line)</label>
           <textarea className={styles.textarea} value={aboutText} onChange={(e) => updateField("about", e.target.value.split("\n").filter((p) => p.trim().length > 0))} rows={5} />
+          <p className={styles.hint}>One point per line. Keep each point to about 3 lines (~110 characters). The first 3 points show on the profile; more points appear under "Show more".</p>
+          {(worker.about || []).map((p, i) => p.length > 110 ? (
+            <p key={i} className={styles.hint} style={{ color: "#b42318" }}>Point {i + 1} is long ({p.length}/110 characters) and may take more than 3 lines.</p>
+          ) : null)}
         </div>
       </div>
 

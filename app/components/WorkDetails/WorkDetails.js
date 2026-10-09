@@ -1,6 +1,7 @@
 import Link from "next/link";
 import styles from "./WorkDetails.module.css";
 import { resolveSkillCategory } from "@/lib/skillCategories";
+import ServiceChips from "./ServiceChips";
 
 export default function WorkDetails({ worker, backHref = "/" }) {
   const skillCategory = resolveSkillCategory(worker?.profession);
@@ -64,12 +65,7 @@ export default function WorkDetails({ worker, backHref = "/" }) {
   <div className={styles.label}>Services</div>
 
   <div className={styles.value}>
-    {services.map((service, idx) => (
-      <div className={styles.serviceChip} key={idx}>
-        <span className={styles.tick}>✓</span>
-        <span className={styles.serviceText}>{service}</span>
-      </div>
-    ))}
+    <ServiceChips services={services} />
 
  </div>
 </div>

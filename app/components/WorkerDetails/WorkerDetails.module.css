@@ -204,6 +204,22 @@
 }
 
 
+.aboutMore{
+  appearance:none;
+  -webkit-appearance:none;
+  display:inline-block;
+  margin:16px 0 0 18px;
+  padding:7px 16px;
+  border-radius:999px;
+  border:1px solid #C9DEFF;
+  background:linear-gradient(180deg,#FFFFFF 0%,#EEF5FF 100%);
+  color:#1D4ED8;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
 .aboutBody p:last-child{
   margin-bottom:0;
 }

@@ -148,6 +148,16 @@
   width:fit-content;
 }
 
+.moreChip{
+  appearance:none;
+  -webkit-appearance:none;
+  font-family:inherit;
+  font-size:10px;
+  font-weight:700;
+  padding:5px 12px;
+  cursor:pointer;
+}
+
 .tick{
   width:18px;
   height:18px;
