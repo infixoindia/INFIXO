@@ -90,6 +90,37 @@
   color: rgba(255, 255, 255, 0.88);
 }
 
+.timeLabel {
+  margin: 0 0 8px 2px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.times {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.time {
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.timeOn {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #fff;
+  color: #0b2e8a;
+  font-weight: 700;
+}
+
 .field {
   position: relative;
   display: flex;

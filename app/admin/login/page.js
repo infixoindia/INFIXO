@@ -10,10 +10,11 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
+  const [minutes, setMinutes] = useState(10);
 
   async function submit(e) {
     e.preventDefault(); setLoading(true); setError("");
-    const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password }) });
+    const res = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password, minutes }) });
     if (res.ok) router.replace("/admin/workers");
     else { const body = await res.json().catch(() => ({})); setError(body.error || "Login failed"); }
     setLoading(false);
@@ -33,6 +34,22 @@ export default function AdminLoginPage() {
         <form onSubmit={submit} className={styles.card}>
           <h1 className={styles.title}>Admin Login</h1>
           <p className={styles.sub}>Enter your password to access your panel.</p>
+
+          <div className={styles.timeLabel}>Stay signed in for</div>
+          <div className={styles.times} role="radiogroup" aria-label="Session time">
+            {[1, 5, 10, 30].map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={minutes === m}
+                className={`${styles.time} ${minutes === m ? styles.timeOn : ""}`}
+                onClick={() => setMinutes(m)}
+              >
+                {m} min
+              </button>
+            ))}
+          </div>
 
           <div className={styles.field}>
             <span className={styles.fieldIcon} aria-hidden="true">
