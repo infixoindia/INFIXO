@@ -1,0 +1,311 @@
+'use client';
+// GENERATED from app/components/WorkDetails/WorkDetails.js. See scripts/generate-demo-components.py.
+import {useDemoText} from '../DemoLocale';
+import Link from "next/link";
+import styles from "../../../components/WorkDetails/WorkDetails.module.css";
+import { resolveSkillCategory } from "@/lib/skillCategories";
+import ServiceChips from "./ServiceChips.js";
+
+export default function WorkDetails({ worker, backHref = "/" }) {
+  const tr = useDemoText();
+  const skillCategory = ({...resolveSkillCategory(worker?.profession),label:worker?.profession});
+  const services = worker?.services || [];
+  const whyChooseMe = worker?.whyChooseMe || [];
+  const shift = worker?.workingShift || { day: false, night: false };
+  const serviceArea = Array.isArray(worker?.serviceArea)
+    ? worker.serviceArea.join(", ")
+    : worker?.serviceArea || "";
+
+  return (
+    <section className={styles.wrapper}>
+
+      <div className={styles.header}>
+
+    <Link href={backHref} className={styles.backLink}>
+  <svg
+    className={styles.backArrow}
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <path
+      d="M15 5L8 12L15 19"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+
+</Link>
+
+
+        <h2>{tr("Work Details")}</h2>
+        <p>{tr("Everything about the work.")}</p>
+      </div>
+
+      <div className={styles.card}>
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Primary Skill")}</div>
+
+  <div className={styles.value}>
+   <div className={styles.primaryBadge}>
+  {skillCategory?.image ? (
+    <img
+      className={styles.skillImage}
+      src={skillCategory.image}
+      alt=""
+      aria-hidden="true"
+    />
+  ) : (
+    skillCategory?.Icon && <skillCategory.Icon className={styles.skillIcon} />
+  )}
+  <span>{tr(skillCategory?.label)}</span>
+</div>
+</div>
+</div>
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Services")}</div>
+
+  <div className={styles.value}>
+    <ServiceChips services={services} />
+
+ </div>
+</div>
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Experience")}</div>
+
+  <div className={styles.value}>
+    <div
+    className={styles.experienceBadge}>
+     <svg
+  className={styles.expIcon}
+  viewBox="0 0 64 64"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="badgeFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#E9FFFC"/>
+      <stop offset="100%" stopColor="#CFF7F2"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonLeft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#19B7A4"/>
+      <stop offset="100%" stopColor="#0F8E82"/>
+    </linearGradient>
+
+    <linearGradient id="ribbonRight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#0F8E82"/>
+      <stop offset="100%" stopColor="#0A6D66"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M22 39 L18 58 L30 49 L29 39 Z" fill="url(#ribbonLeft)"/>
+  <path d="M42 39 L46 58 L34 49 L35 39 Z" fill="url(#ribbonRight)"/>
+
+  <circle
+    cx="32"
+    cy="24"
+    r="16"
+    fill="url(#badgeFill)"
+    stroke="#0F8E82"
+    strokeWidth="3"
+  />
+
+  <circle
+    cx="32"
+    cy="24"
+    r="10.5"
+    fill="#FFFFFF"
+    stroke="#0F8E82"
+    strokeWidth="2"
+  />
+
+  <path
+    d="M32 16
+       L34.4 21
+       L40 21.8
+       L36 25.6
+       L37 31
+       L32 28.3
+       L27 31
+       L28 25.6
+       L24 21.8
+       L29.6 21
+       Z"
+    fill="#0F8E82"
+  />
+</svg>
+
+<span>
+    {worker?.experience}
+  </span>
+</div>
+</div>
+</div>
+
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Working Hours")}</div>
+
+  <div className={styles.value}>
+    <div className={styles.workingHoursBadge}>
+
+      <svg
+        className={styles.workingHoursIcon}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 7v5l3 2"/>
+      </svg>
+
+      <span className={styles.workingHoursText}>
+        {worker?.workingHours}
+      </span>
+
+    </div>
+  </div>
+</div>
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Working Shift")}</div>
+
+  <div className={styles.value}>
+    <div className={styles.shiftBadges}>
+
+      {shift.day && (
+      <div className={styles.dayBadge}>
+        <svg
+  className={styles.sunIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <radialGradient id="sunGradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stopColor="#FFD95C"/>
+      <stop offset="100%" stopColor="#F5A300"/>
+    </radialGradient>
+  </defs>
+
+  {/* Rays */}
+  <g stroke="#F5A300" strokeWidth="2" strokeLinecap="round">
+    <line x1="12" y1="2"  x2="12" y2="5"/>
+    <line x1="12" y1="19" x2="12" y2="22"/>
+    <line x1="2"  y1="12" x2="5"  y2="12"/>
+    <line x1="19" y1="12" x2="22" y2="12"/>
+    <line x1="4.5" y1="4.5" x2="6.8" y2="6.8"/>
+    <line x1="17.2" y1="17.2" x2="19.5" y2="19.5"/>
+    <line x1="17.2" y1="6.8" x2="19.5" y2="4.5"/>
+    <line x1="4.5" y1="19.5" x2="6.8" y2="17.2"/>
+  </g>
+
+  {/* Sun */}
+  <circle cx="12" cy="12" r="5" fill="url(#sunGradient)"/>
+</svg>
+        <span>{worker?.shiftLabel}</span>
+      </div>
+      )}
+
+      {shift.night && (
+      <div className={styles.nightBadge}>
+<svg
+  className={styles.moonIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <mask id="moon-mask">
+      <rect width="24" height="24" fill="white"/>
+      <circle cx="15.5" cy="10" r="7.5" fill="black"/>
+    </mask>
+  </defs>
+
+  <circle
+    cx="11"
+    cy="12"
+    r="8"
+    fill="#FFFFFF"
+    mask="url(#moon-mask)"
+  />
+</svg>
+        <span>{tr("Night")}</span>
+      </div>
+      )}
+
+    </div>
+  </div>
+</div>
+
+        <div className={styles.row}>
+  <div className={styles.label}>{tr("Service Area")}</div>
+
+  <div className={styles.value}>
+    <div className={styles.serviceAreaBadge}>
+      <svg
+  className={styles.locationIcon}
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="pinGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor="#8A5A32"/>
+      <stop offset="100%" stopColor="#5C3A21"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M12 2C8.7 2 6 4.7 6 8c0 4.4 6 12 6 12s6-7.6 6-12c0-3.3-2.7-6-6-6z"
+    fill="url(#pinGradient)"
+  />
+
+  <circle
+    cx="12"
+    cy="8"
+    r="2.5"
+    fill="#FFFFFF"
+  />
+</svg>
+      <span>{serviceArea}</span>
+    </div>
+  </div>
+</div>
+
+
+ <div className={styles.whyCard}>
+
+  <div className={styles.whyHeader}>
+
+    <div className={styles.whyTitle}>{tr("Why Choose Me")}</div>
+
+    <div className={styles.whySubtitle}>{tr("Reasons to choose this worker")}</div>
+
+  </div>
+
+  <div className={styles.whyBody}>
+
+    <div className={styles.whyList}>
+
+      {whyChooseMe.map((reason, idx) => (
+        <div className={styles.whyBadge} key={idx}>
+          {reason}
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
+
+      </div>
+
+    </section>
+  );
+}

@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
 
       <div className={styles.content}>
         <div className={styles.logoChip}>
-          <img className={styles.logo} src="/images/infixo-logo-transparent.png" alt="Infixo" />
+          <img className={styles.logo} src="/images/infixo-official-logo.png" alt="Infixo" />
         </div>
         <div className={styles.panelLabel}>Admin Panel</div>
 

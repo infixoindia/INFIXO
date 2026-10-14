@@ -39,6 +39,8 @@ export default function WorkersListPage() {
         🗺️ INFIXO MAP
       </Link>
 
+      <Link href="/admin/leads" className={styles.fabAdd}>Worker Acquisition Leads</Link>
+
       {loading && <p>Loading…</p>}
 
       {!loading && workers.length === 0 && (

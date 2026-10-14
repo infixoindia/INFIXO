@@ -1,0 +1,4 @@
+import {CATEGORIES} from '@/lib/acquisition/config.mjs';
+import {copy} from '@/lib/acquisition/i18n.mjs';
+import s from './join.module.css';
+export default function TargetProgress({counts=null,language='en'}){const t=copy(language);return <div className={s.targets}>{CATEGORIES.map((c,i)=>{const value=counts?.[c.name];const count=typeof value==='number'&&Number.isInteger(value)&&value>=0?value:null;return <article key={c.name} className={s.target}><span className={s.categoryIcon} aria-hidden="true">{c.icon}</span><div><h3>{t.professions[i]}</h3>{count===null?<div className={s.goalTrack} aria-hidden="true"/>:<progress aria-label={`${t.professions[i]} ${t.onboarded}`} max={c.target} value={Math.min(count,c.target)}/>}</div><p><strong>{c.target}</strong><span>{count===null?t.goal:`${count} ${t.onboarded}`}</span></p></article>;})}</div>;}
