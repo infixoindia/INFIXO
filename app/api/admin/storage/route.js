@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/guardedSupabase";
 export const runtime = "nodejs";
 const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
 function getSupabaseUrl() {

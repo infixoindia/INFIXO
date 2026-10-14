@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/guardedSupabase";
 import fs from "node:fs";
 import path from "node:path";
 
