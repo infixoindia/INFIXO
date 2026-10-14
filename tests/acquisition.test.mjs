@@ -34,3 +34,16 @@ test('preferred language is validated metadata and backend enums stay unchanged'
  }
  assert.equal(validateLead({...lead,preferred_language:'unsupported'},before).attribution.preferred_language,undefined);
 });
+
+test('optional enquiry messages and exact ten-digit API input in every language', async()=>{
+ const {mobileInput,REASONS,WORK_MODELS}=await import('../lib/acquisition/config.mjs');
+ const now=Date.parse('2026-10-15T00:00:00+05:30');
+ for(const preferred_language of ['en','hinglish','hi'])for(const reason of REASONS.slice(1))for(const question of ['', 'Synthetic question']){
+  const body={name:'Synthetic Worker',phone:'9000000000',profession:'Painter',area:'Synthetic Area',plan:'FREE',working_model:WORK_MODELS[0],reason,question,consent:true,preferred_language};
+  assert.equal(validateLead(body,now).question,question);
+  for(const phone of ['90000000001','900000000','5000000000','+919000000000','abc9000000000'])assert.throws(()=>validateLead({...body,phone},now),e=>e.code==='phone');
+ }
+ assert.equal(mobileInput('ab90-000 00000'),'9000000000');
+ assert.equal(mobileInput('+91 90000 00000'),'9000000000');
+ assert.equal(mobileInput('90000000001234').length,10);
+});

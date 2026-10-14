@@ -38,3 +38,5 @@
 .footer .footerLogo{width:145px}.header>a{min-width:0}.header>a>svg{width:130px}
 
 @media(max-width:700px){.header>a>svg{width:112px}}
+
+.apply{overflow-anchor:none}.success{scroll-margin-block:24px}.formCard [aria-invalid=true]{outline:2px solid #b91c1c;outline-offset:2px}

@@ -7,20 +7,20 @@ import {copy,LANGUAGES,PROFILE_TRANSLATION_KEYS} from '../lib/acquisition/i18n.m
 const deps=process.env.ACQUISITION_TEST_DEPS || '/tmp/infixo-redesign-tests';
 const require=createRequire(`${deps}/package.json`),{build}=require('esbuild'),React=require('react'),{create,act}=require('react-test-renderer');
 globalThis.IS_REACT_ACT_ENVIRONMENT=true;
-const saved=new Map(),session=new Map();globalThis.localStorage={getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v)};globalThis.sessionStorage={getItem:k=>session.get(k),setItem:(k,v)=>session.set(k,v),removeItem:k=>session.delete(k)};
+const saved=new Map(),session=new Map();globalThis.localStorage={getItem:k=>saved.get(k),setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)};globalThis.sessionStorage={getItem:k=>session.get(k),setItem:(k,v)=>session.set(k,v),removeItem:k=>session.delete(k)};
 globalThis.window={location:{href:'https://test.invalid/join?utm_source=instagram&ref=SYNTHETIC',search:'?utm_source=instagram&ref=SYNTHETIC'},matchMedia:()=>({matches:true}),addEventListener(){},removeEventListener(){},history:{replaceState(_,__,u){window.location.href=String(u);window.location.search=new URL(u).search;}}};
 globalThis.document={addEventListener(){},removeEventListener(){},documentElement:{lang:''},body:{style:{}},getElementById:()=>({focus(){},scrollIntoView(){}})};
-globalThis.__sent=[];
+globalThis.__sent=[];globalThis.__focus=[];globalThis.__scroll=[];
 const plugin={name:'component-test',setup(b){
  b.onLoad({filter:/\.module\.css$/},async a=>({contents:`export default ${JSON.stringify(Object.fromEntries([...new Set((await readFile(a.path,'utf8')).match(/\.[a-zA-Z][\w-]*/g))].map(s=>[s.slice(1),s.slice(1)])))}`,loader:'js'}));
  b.onResolve({filter:/^next\/(link|dynamic)$/},a=>({path:a.path,namespace:'next-test'}));
  b.onLoad({filter:/.*/,namespace:'next-test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='next/link'?`export default function Link(p){return <a {...p}/>}`:`import {lazy,Suspense} from 'react';export default function dynamic(load){const C=lazy(load);return p=><Suspense fallback={null}><C {...p}/></Suspense>}`}));
- b.onLoad({filter:/\/acquisition\/client\.mjs$/},()=>({contents:"export async function getJoinSession(){return {token:'synthetic',serverNow:Date.now()}};export async function sendLead(p){globalThis.__sent.push(p);return {preview:true}}",loader:'js'}));
+ b.onLoad({filter:/\/acquisition\/client\.mjs$/},()=>({contents:"export async function getJoinSession(){return {token:'synthetic',serverNow:Date.now()}};export async function sendLead(p){globalThis.__sent.push(p);return {preview:globalThis.__liveReceipt!==true}}",loader:'js'}));
 }};
-for(const [name,entry] of [['join','app/join/JoinPage.js'],['demo','app/demo/worker/DemoProfile.js'],['privacy','app/join/privacy/page.js'],['terms','app/join/terms/page.js']])await build({entryPoints:[entry],outfile:`${deps}/${name}-ui.cjs`,bundle:true,platform:'node',format:'cjs',jsx:'automatic',loader:{'.js':'jsx'},external:['react','react/jsx-runtime'],plugins:[plugin],logLevel:'silent'});
+for(const [name,entry] of [['leads','app/admin/leads/page.js'],['join','app/join/JoinPage.js'],['demo','app/demo/worker/DemoProfile.js'],['privacy','app/join/privacy/page.js'],['terms','app/join/terms/page.js']])await build({entryPoints:[entry],outfile:`${deps}/${name}-ui.cjs`,bundle:true,platform:'node',format:'cjs',jsx:'automatic',loader:{'.js':'jsx'},external:['react','react/jsx-runtime'],plugins:[plugin],logLevel:'silent'});
 const Join=require(`${deps}/join-ui.cjs`).default,Demo=require(`${deps}/demo-ui.cjs`).default;
 const flatten=n=>typeof n==='string'?n:Array.isArray(n)?n.map(flatten).join(' '):n?.children?flatten(n.children):'';
-let ui;const mount=async(C,p={})=>act(async()=>{ui=create(React.createElement(C,p),{createNodeMock:e=>e.type==='video'?{play:()=>Promise.resolve(),pause(){},duration:6,currentTime:0}:null});});
+let ui;const mount=async(C,p={})=>act(async()=>{ui=create(React.createElement(C,p),{createNodeMock:e=>e.props.id==='join-success'?{focus:()=>__focus.push('success'),scrollIntoView:()=>__scroll.push('success')}:e.props.id==='apply'?{querySelector:selector=>({focus:()=>__focus.push(selector),scrollIntoView:()=>__scroll.push(selector)})}:e.type==='video'?{play:()=>Promise.resolve(),pause(){},duration:6,currentTime:0}:null});});
 const unmount=async()=>act(async()=>ui.unmount());
 await mount(Join,{serverNow:Date.now(),preview:true});
 assert.equal(ui.root.findAllByType('form').length,1);assert.equal(ui.root.findAllByProps({name:'plan'}).length,2);assert.ok(ui.root.findAllByProps({name:'plan'}).every(n=>!n.props.checked));
@@ -104,3 +104,45 @@ for(const lang of LANGUAGES){window.location.search='?lang='+lang;for(const sect
 }}
 await mount(Join,{serverNow:Date.now(),preview:true});assert.equal(ui.root.findAllByType('image').filter(n=>n.props.href==='/images/infixo-complete-logo.png').length,2);await unmount();
 console.log('PASS fixed English UI, translated sample information in 3 languages, Your identity values, complete logo in all 3 locations');
+
+// New registration flow: isolated component tests, no hosted submissions.
+globalThis.__liveReceipt=true;
+for(const lang of LANGUAGES){
+ session.clear();saved.delete('infixo-join-receipt');saved.set('infixo-language',lang);window.location.search='?lang='+lang;
+ await mount(Join,{serverNow:Date.now()});
+ const all={...values,question:'',phone:'9000000000'};
+ for(const [k,v] of Object.entries(all))await set(k,v);
+ await set('consent',true,'checkbox');
+ await act(async()=>ui.root.findByType('form').props.onSubmit({preventDefault(){}}));
+ assert.equal(flatten(ui.root.findByProps({role:'alert'})),copy(lang).errors.plan);
+ await act(async()=>ui.root.findByProps({name:'plan',value:'FREE'}).props.onChange());
+ for(const field of ['name','phone','profession','area','working_model','reason']){
+  await set(field,'');await act(async()=>ui.root.findByType('form').props.onSubmit({preventDefault(){}}));
+  assert.equal(flatten(ui.root.findByProps({role:'alert'})),copy(lang).errors[field]);
+  await new Promise(r=>setTimeout(r,5));assert.equal(__focus.at(-1),`[name="${field}"]`);
+  await set(field,all[field]);
+ }
+ await set('phone','abc9000000000123');assert.equal(ui.root.findByProps({name:'phone'}).props.value,'9000000000');
+ await act(async()=>ui.root.findByProps({name:'phone'}).props.onPaste({preventDefault(){},clipboardData:{getData:()=>'+91 90000 00000'}}));assert.equal(ui.root.findByProps({name:'phone'}).props.value,'9000000000');
+ const before=__sent.length;
+ await act(async()=>{const submit=ui.root.findByType('form').props.onSubmit;await Promise.all([submit({preventDefault(){}}),submit({preventDefault(){}})]);});
+ assert.equal(__sent.length,before+1);assert.equal(__sent.at(-1).question,'');
+ await new Promise(r=>setTimeout(r,5));assert.equal(__scroll.at(-1),'success');assert.equal(__focus.at(-1),'success');
+ await act(async()=>ui.root.findAllByType('button').find(b=>flatten(b)===copy(lang).back).props.onClick());
+ assert.ok(flatten(ui.toJSON()).includes(copy(lang).alreadyBody));assert.equal(ui.root.findAllByType('form').length,0);
+ await unmount();await mount(Join,{serverNow:Date.now()});assert.equal(ui.root.findAllByType('form').length,0);assert.ok(flatten(ui.toJSON()).includes(copy(lang).alreadyBody));
+ await act(async()=>ui.root.findAllByType('button').find(b=>flatten(b)===copy(lang).followup).props.onClick());assert.equal(ui.root.findAllByType('form').length,1);assert.equal(ui.root.findByProps({name:'consent'}).props.checked,false);
+ await unmount();
+}
+console.log('PASS 3-language required-field errors/focus, digit paste/length, single-submit lock, success scroll, receipt reload, Wapas confirmation and explicit follow-up');
+
+const Leads=require(`${deps}/leads-ui.cjs`).default;
+let requests=[];
+globalThis.fetch=async url=>{requests.push(String(url));return {ok:true,status:200,json:async()=>({leads:[],count:0,progress:[]})};};
+await mount(Leads);
+assert.ok(requests.at(-1).includes('view=pending'));
+await act(async()=>ui.root.findAllByType('button').find(b=>flatten(b)==='Completed Onboarding').props.onClick());
+assert.ok(requests.at(-1).includes('view=completed'));
+await act(async()=>ui.root.findAllByType('button').find(b=>flatten(b)==='Pending Leads').props.onClick());
+assert.ok(requests.at(-1).includes('view=pending'));await unmount();
+console.log('PASS Admin view buttons request Pending by default and switch Completed/Pending');

@@ -5,8 +5,9 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const require=createRequire(`${process.env.ACQUISITION_TEST_DEPS || '/tmp/infixo-acquisition-tests'}/package.json`);
 const {build}=require('esbuild');
 const temp='/tmp/infixo-api-tests';await mkdir(temp,{recursive:true});
+let worker=null, original={id:'11111111-1111-4111-8111-111111111111',phone:'9000000000',profession:'Painter'}, queries=[];
 let response={data:[],error:null,count:0}, inserts=[], allowed=true, insertError=null;
-const client={rpc:async name=>name==='acquisition_rate_limit'?{data:allowed,error:null}:{data:[],error:null},from(table){let op='select';const chain={select(){return chain},order(){return chain},range(){return chain},eq(){return chain},neq(){return chain},ilike(){return chain},gte(){return chain},lte(){return chain},insert(row){op='insert';inserts.push({table,row});return chain},update(){op='update';return chain},single(){return chain},then(resolve,reject){return Promise.resolve(op==='insert'?{error:insertError}:response).then(resolve,reject)}};return chain;}};
+const client={rpc:async name=>name==='acquisition_rate_limit'?{data:allowed,error:null}:{data:[],error:null},from(table){let op='select',one=false;const chain={select(){return chain},order(){return chain},range(){return chain},eq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},neq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},ilike(){return chain},gte(){return chain},lte(){return chain},insert(row){op='insert';inserts.push({table,row});return chain},update(){op='update';return chain},single(){one=true;return chain},then(resolve,reject){return Promise.resolve(op==='insert'?{error:insertError}:one?{data:table==='workers'?worker:original,error:null}:response).then(resolve,reject)}};return chain;}};
 globalThis.__acquisitionClient=client;
 const plugin={name:'isolated-test-transport',setup(b){b.onResolve({filter:/^server-only$/},()=>({path:'server-only',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export {}'}));b.onResolve({filter:/^@supabase\/supabase-js$/},()=>({path:'supabase',namespace:'mock-db'}));b.onLoad({filter:/.*/,namespace:'mock-db'},()=>({contents:'export const createClient = () => globalThis.__acquisitionClient;'}));}};
 for(const [name,entry] of [['join','app/api/join/route.js'],['admin','app/api/admin/leads/route.js'],['server','lib/acquisition/server.js']])await build({entryPoints:[entry],outfile:`${temp}/${name}.mjs`,bundle:true,platform:'node',format:'esm',plugins:[plugin],logLevel:'silent'});
@@ -47,3 +48,24 @@ Date.now=realNow;
 assert.equal((await join.POST(req('POST',{...body,plan:'Not Decided'}))).status,400);
 assert.equal((await join.POST(req('POST',{...body,plan:''}))).status,400);
 console.log('PASS new requests require FREE/PRO');
+
+// Actual route handler: view filters and safe completion, all using mocked fictional profiles.
+queries=[];await admin.GET(req('GET',null,'https://infixo.test',true));assert.ok(queries.some(q=>q[0]==='or'&&q[1].includes('linked_worker.is.null')));
+const completed=req('GET',null,'https://infixo.test',true);Object.defineProperty(completed,'url',{value:'https://infixo.test/api/admin/leads?view=completed'});
+queries=[];await admin.GET(completed);assert.ok(queries.some(q=>q[0]==='not'&&q[1]==='linked_worker'));
+const approve={...update,status:'Approved / Onboarded',confirmed:true,worker_id:'22222222-2222-4222-8222-222222222222'};
+response={data:[{id:update.id}],error:null};
+assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,400);
+worker={id:approve.worker_id,phone:original.phone,profession:'Painter',is_active:true,hero_slides:[],photos:[],videos:[]};
+assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,400); // Minimal staging row
+worker={...worker,slug:'synthetic-profile',full_name:'Synthetic Test'};
+assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,200);
+for(const change of [{is_active:false},{phone:'9000000001'},{profession:'Plumber'},{videos:[{}]}]){const prior=worker;worker={...worker,...change};assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,400);worker=prior;}
+assert.equal((await admin.PATCH(req('PATCH',{...approve,profession:'Plumber'},'https://infixo.test',true))).status,400);
+assert.equal((await admin.PATCH(req('PATCH',{...approve,status:'Contacted',worker_id:''},'https://infixo.test',true))).status,200);
+console.log('PASS Pending/Completed query filters; missing/minimal/inactive/mismatched/over-limit profiles rejected; completion and correction mocked safely');
+for(const reason of ['Mujhe Profile Ke Baare Mein Jaanna Hai','Mera Koi Sawal Hai'])for(const question of ['', 'Synthetic follow-up']){
+ now=Date.parse('2026-10-15T00:00:00+05:30');Date.now=()=>now;const tok=server.issueToken();now+=2000;
+ const result=await join.POST(req('POST',{...body,reason,question,token:tok}));assert.equal(result.status,200);assert.equal(inserts.at(-1).row.reason,reason);assert.equal(inserts.at(-1).row.question,question);
+}Date.now=realNow;
+console.log('PASS both enquiry reasons with empty and nonempty optional message saved accurately');
