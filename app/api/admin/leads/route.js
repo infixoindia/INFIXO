@@ -1,6 +1,6 @@
 import { admin, db, json, readBody, sameOrigin } from '@/lib/acquisition/server';
 import { CATEGORIES, PLANS, STATUSES } from '@/lib/acquisition/config.mjs';
-import {onboardingError,profileUrl} from '@/lib/acquisition/onboarding.mjs';
+import {linkingError,onboardingError,profileUrl} from '@/lib/acquisition/onboarding.mjs';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,12 +35,20 @@ export async function PATCH(request) {
     if(b.profession!==original.profession)return json({error:'Original registration category cannot be overwritten here.'},400);
     const workerId = b.worker_id || null;
     if (workerId && !uuid.test(workerId)) return json({ error: 'Sahi worker UUID bharein.' }, 400);
-    if (b.status === 'Approved / Onboarded') {
-      if (b.confirmed !== true || !workerId) return json({ error: 'Profile review aur applicable payment confirm karein.' }, 400);
-      const { data: worker, error } = await client.from('workers').select('*').eq('id', workerId).single();
+    if (b.status === 'Approved / Onboarded' && (b.confirmed !== true || !workerId))
+      return json({ error: 'Profile review aur applicable payment confirm karein.' }, 400);
+    // Enforce exact worker identity/category even while a lead is only Contacted
+    // or still in Profile Creation. A draft profile may be linked for editing,
+    // but cannot be approved until it becomes active and meets plan limits.
+    if (workerId) {
+      const { data: worker, error } = await client.from('workers').select('*').eq('id', workerId).maybeSingle();
       if (error || !worker) return json({ error: 'Worker profile nahi mili.' }, 400);
-      const issue = onboardingError(worker, original, b.selected_plan, b.profession);
-      if (issue) return json({ error: issue }, 400);
+      const linkIssue = linkingError(worker, original, b.profession);
+      if (linkIssue) return json({ error: linkIssue }, 400);
+      if (b.status === 'Approved / Onboarded') {
+        const issue = onboardingError(worker, original, b.selected_plan, b.profession);
+        if (issue) return json({ error: issue }, 400);
+      }
     }
     const { data, error } = await client.from('acquisition_leads').update({ status: b.status, selected_plan: b.selected_plan, profession: b.profession, worker_id: workerId, approved_at: b.status === 'Approved / Onboarded' ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq('id', b.id).eq('updated_at', b.updated_at).select('id');
     if (error?.code === '23505') return json({ error: 'Yeh worker kisi aur lead se linked hai.' }, 409);
