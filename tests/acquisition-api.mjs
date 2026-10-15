@@ -91,3 +91,25 @@ allowed=false;assert.equal((await login.POST(req('POST',{password:'synthetic-pas
 allowed=true;assert.equal((await login.POST(req('POST',{password:'wrong'}))).status,401);
 assert.equal((await login.POST(req('POST',{password:'synthetic-password',minutes:10}))).status,200);
 console.log('PASS login origin protection, throttling, wrong password and signed-cookie success');
+
+// Regression: admin login must continue to work even when acquisition form
+// signing is unavailable. Its rate limit is keyed by the separate Admin secret.
+const leadSigning = process.env.INFIXO_LEAD_SIGNING_SECRET;
+delete process.env.INFIXO_LEAD_SIGNING_SECRET;
+const adminRateKey = server.rateKey(req('POST',{password:'synthetic-password'}),'admin-login');
+assert.match(adminRateKey,/^[a-f0-9]{64}$/);
+assert.equal((await login.POST(req('POST',{password:'synthetic-password',minutes:10}))).status,200);
+assert.equal((await login.POST(req('POST',{password:'incorrect'}))).status,401);
+assert.throws(()=>server.issueToken(),/signing unavailable/);
+process.env.INFIXO_LEAD_SIGNING_SECRET=leadSigning;
+console.log('PASS admin login independent of acquisition signing key, rate limiting still active');
+
+// Fail closed with a 503 rather than misreporting a correct password as
+// "Invalid request" if the Admin signing key is unavailable.
+const adminSecretBackup=process.env.INFIXO_ADMIN_SECRET;
+delete process.env.INFIXO_ADMIN_SECRET;
+const unavailable=await login.POST(req('POST',{password:'synthetic-password'}));
+assert.equal(unavailable.status,503);
+assert.match((await unavailable.json()).error,/temporarily unavailable/i);
+process.env.INFIXO_ADMIN_SECRET=adminSecretBackup;
+console.log('PASS missing Admin signing key surfaces safe service unavailable status');
