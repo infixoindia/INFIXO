@@ -26,9 +26,9 @@ Isolated preview: Supabase INFIXO-STAGING (`vemezdbssynachculphi`).
   + inactive-worker exclusion + service-role paths tested within ROLLBACK
   transactions, leaving the database clean.
 - The acquisition migration
-  `supabase/migrations/20261011183634_worker_acquisition.sql` was executed
+  `supabase/migrations/20261015133808_worker_acquisition.sql` was executed
   against SIGMA as a **BEGIN/ROLLBACK dry run** and completed successfully.
-  **The acquisition migration has NOT been applied to SIGMA permanently.**
+  **Update (go-live approval): The migration has NOW been applied to SIGMA permanently at version `20261015133808`, with empty leads tables and existing worker data preserved.**
 - `supabase/schema.sql` and `supabase/SAFE_SETUP.sql` were retired so they
   cannot accidentally restore older insecure policies.
 
