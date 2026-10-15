@@ -42,11 +42,6 @@ export default function WorkerProfilePicker({ lead }) {
         );
         if (!live) return;
         setWorkers(matching);
-        setWorkerId((current) => {
-          if (current) return current;
-          const active = matching.filter((w) => w.is_active !== false);
-          return active.length === 1 ? active[0].id : "";
-        });
       } catch (e) {
         if (live && e.name !== "AbortError") {
           setError(e.message || "Could not load matching profiles.");
@@ -70,8 +65,8 @@ export default function WorkerProfilePicker({ lead }) {
     <>
       <label>
         Matching Worker Profile
+        <input type="hidden" name="worker_id" value={workerId} />
         <select
-          name="worker_id"
           value={workerId}
           onChange={(e) => setWorkerId(e.target.value)}
           disabled={loading || !!error}
