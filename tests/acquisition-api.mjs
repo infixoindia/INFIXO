@@ -9,7 +9,7 @@ let worker=null, original={id:'11111111-1111-4111-8111-111111111111',phone:'9000
 let response={data:[],error:null,count:0}, inserts=[], allowed=true, insertError=null;
 const client={rpc:async name=>name==='acquisition_rate_limit'?{data:allowed,error:null}:{data:[],error:null},from(table){let op='select',one=false;const chain={select(){return chain},order(){return chain},range(){return chain},eq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},neq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},ilike(){return chain},gte(){return chain},lte(){return chain},insert(row){op='insert';inserts.push({table,row});return chain},update(){op='update';return chain},single(){one=true;return chain},maybeSingle(){one=true;return chain},then(resolve,reject){return Promise.resolve(op==='insert'?{error:insertError}:one?{data:table==='workers'?worker:original,error:null}:response).then(resolve,reject)}};return chain;}};
 globalThis.__acquisitionClient=client;
-const plugin={name:'isolated-test-transport',setup(b){b.onResolve({filter:/^next\/server$/},()=>({path:'next-server',namespace:'mock-next'}));b.onLoad({filter:/.*/,namespace:'mock-next'},()=>({contents:`export const NextResponse={json(data,init){const r=Response.json(data,init);r.cookies={set(){}};return r;}};`}));b.onResolve({filter:/^server-only$/},()=>({path:'server-only',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export {}'}));b.onResolve({filter:/^@supabase\/supabase-js$/},()=>({path:'supabase',namespace:'mock-db'}));b.onLoad({filter:/.*/,namespace:'mock-db'},()=>({contents:'export const createClient = () => globalThis.__acquisitionClient;'}));}};
+const plugin={name:'isolated-test-transport',setup(b){b.onResolve({filter:/^next\/server$/},()=>({path:'next-server',namespace:'mock-next'}));b.onLoad({filter:/.*/,namespace:'mock-next'},()=>({contents:`export const NextResponse={json(data,init){const r=Response.json(data,init);r.cookies={set(){}};return r;}};`}));b.onResolve({filter:/^server-only$/},()=>({path:'server-only',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export {}'}));b.onResolve({filter:/^@supabase\/supabase-js$/},()=>({path:'supabase',namespace:'mock-db'}));b.onLoad({filter:/.*/,namespace:'mock-db'},()=>({contents:'export const createClient = (url) => {globalThis.__testDbUrl=url;return globalThis.__acquisitionClient;};'}));}};
 for(const [name,entry] of [['join','app/api/join/route.js'],['admin','app/api/admin/leads/route.js'],['server','lib/acquisition/server.js'],['session','lib/adminSession.js'],['login','app/api/admin/login/route.js']])await build({entryPoints:[entry],outfile:`${temp}/${name}.mjs`,bundle:true,platform:'node',format:'esm',plugins:[plugin],logLevel:'silent'});
 process.env.NEXT_PUBLIC_SUPABASE_URL='https://synthetic.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';process.env.INFIXO_ADMIN_SECRET='synthetic-admin-only';process.env.INFIXO_LEAD_SIGNING_SECRET='synthetic-test-only-'.repeat(3);
 const join=await import(`${temp}/join.mjs`),admin=await import(`${temp}/admin.mjs`),server=await import(`${temp}/server.mjs`);
@@ -91,6 +91,22 @@ allowed=false;assert.equal((await login.POST(req('POST',{password:'synthetic-pas
 allowed=true;assert.equal((await login.POST(req('POST',{password:'wrong'}))).status,401);
 assert.equal((await login.POST(req('POST',{password:'synthetic-password',minutes:10}))).status,200);
 console.log('PASS login origin protection, throttling, wrong password and signed-cookie success');
+
+// Regression: Production Admin login uses only SIGMA when a legacy Vercel
+// URL is absent or malformed. A valid foreign project URL must fail closed.
+const oldRuntimeEnv = process.env.VERCEL_ENV;
+const oldConfiguredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+process.env.VERCEL_ENV = 'production';
+process.env.NEXT_PUBLIC_SUPABASE_URL = '"not-a-url"';
+server.db();
+assert.equal(globalThis.__testDbUrl, 'https://xyplrbzyqershqngrjwo.supabase.co');
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://vemezdbssynachculphi.supabase.co';
+assert.throws(() => server.db(), /project mismatch/);
+process.env.NEXT_PUBLIC_SUPABASE_URL = oldConfiguredUrl;
+if (oldRuntimeEnv === undefined) delete process.env.VERCEL_ENV;
+else process.env.VERCEL_ENV = oldRuntimeEnv;
+console.log('PASS L01 production SIGMA URL recovery and cross-project refusal');
+
 
 // Regression: admin login must continue to work even when acquisition form
 // signing is unavailable. Its rate limit is keyed by the separate Admin secret.
