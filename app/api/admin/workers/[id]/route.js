@@ -1,6 +1,7 @@
 import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
+import { activationError } from "@/lib/workerPublication.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -115,6 +116,16 @@ export async function PATCH(request, { params }) {
     if (typeof payload.is_active !== "undefined" && typeof payload.is_active !== "boolean") return NextResponse.json({ error: "is_active must be true or false" }, { status: 400 });
     const supabase = getAdminClient();
     const workerId = (await params).id;
+    // Activation is distinct from draft creation and from lead approval.
+    // Never allow an incomplete draft to become public through direct PATCH.
+    if (payload.is_active === true) {
+      const { data: existing, error: lookupError } = await supabase
+        .from("workers").select("*").eq("id", workerId).maybeSingle();
+      if (lookupError) throw lookupError;
+      if (!existing) return NextResponse.json({ error: "Worker not found" }, { status: 404 });
+      const issue = activationError({ ...existing, ...payload });
+      if (issue) return NextResponse.json({ error: issue }, { status: 400 });
+    }
     let data = null;
     if (Object.keys(payload).length > 0) {
       const { data: updated, error } = await supabase.from("workers").update(payload).eq("id", workerId).select().maybeSingle();
