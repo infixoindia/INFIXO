@@ -5,8 +5,8 @@ import { normalizePhone } from "@/lib/acquisition/config.mjs";
 
 /**
  * Admin-only worker selector for linking a lead to an existing worker profile.
- * Uses the already-protected /api/admin/workers endpoint, never a public worker
- * list. Only exact normalized phone + profession matches are suggested.
+ * Uses an admin-protected, lead-ID-scoped worker lookup. The lead phone stays
+ * server-side and no bulk worker/media records reach the mobile browser.
  * Server-side /api/admin/leads validation remains the source of truth.
  */
 export default function WorkerProfilePicker({ lead }) {
@@ -20,7 +20,7 @@ export default function WorkerProfilePicker({ lead }) {
     let live = true;
     async function load() {
       try {
-        const response = await fetch("/api/admin/workers", {
+        const response = await fetch(`/api/admin/workers?matchLeadId=${encodeURIComponent(lead.id)}`, {
           cache: "no-store",
           signal: controller.signal,
           credentials: "same-origin",
@@ -83,19 +83,23 @@ export default function WorkerProfilePicker({ lead }) {
         </select>
       </label>
       {error && <p role="alert">{error} Please refresh and try again.</p>}
-      {!loading && !error && validMatches.length === 0 && (
+      {!loading && !error && workers.length === 0 && (
         <p>
-          No active worker profile with the same phone and profession.
+          No Worker Profile matches the registered phone and profession.
           {" "}<a href="/admin/workers/new" target="_blank" rel="noopener noreferrer">Create Worker Profile ↗</a>
-          {" "}and reopen this lead to link it.
+          {" "}and return to this lead to link it.
         </p>
       )}
-      {!loading && !error && validMatches.length > 0 && (
+      {!loading && !error && workers.length > 0 && (
         <p>
-          Matching profiles are filtered by the registered phone and category.
-          Review the selected profile before approving onboarding.
-          {chosen?.slug && (
-            <>{" "}<a href={`/w/${encodeURIComponent(chosen.slug)}`} target="_blank" rel="noopener noreferrer">Open selected profile ↗</a></>
+          {validMatches.length === 0
+            ? "Matching Draft/Inactive profile found. You can link it while editing, but must activate a genuine complete profile before approving onboarding."
+            : "Matching profiles use the registered phone and category. Review the selected real profile before approving onboarding."}
+          {chosen?.slug && chosen.is_active !== false && (
+            <>{" "}<a href={`/w/${encodeURIComponent(chosen.slug)}`} target="_blank" rel="noopener noreferrer">Open selected public profile ↗</a></>
+          )}
+          {chosen?.id && chosen.is_active === false && (
+            <>{" "}<a href={`/admin/workers/${encodeURIComponent(chosen.id)}`} target="_blank" rel="noopener noreferrer">Review Draft in Worker Admin ↗</a></>
           )}
         </p>
       )}
