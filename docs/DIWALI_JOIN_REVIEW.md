@@ -58,7 +58,7 @@ Start with a clean worktree. If the branch already exists, use another new name.
 The ZIP itself is not source code: remove it from the repository after successful extraction/apply and before committing. Use `git add` with the paths below; never stage `.env.local`.
 
 ```bash
-git add app/join app/admin/leads app/admin/workers/page.js app/api/join app/api/admin/leads lib/acquisition supabase/migrations/20261011183634_worker_acquisition.sql tests/acquisition.test.mjs tests/acquisition-db.mjs tests/acquisition-api.mjs docs/DIWALI_JOIN_REVIEW.md
+git add app/join app/admin/leads app/admin/workers/page.js app/api/join app/api/admin/leads lib/acquisition supabase/migrations/20261015133808_worker_acquisition.sql tests/acquisition.test.mjs tests/acquisition-db.mjs tests/acquisition-api.mjs docs/DIWALI_JOIN_REVIEW.md
 git commit -m "Add isolated Diwali worker acquisition flow"
 ```
 
@@ -69,7 +69,7 @@ Review repository deployment settings before pushing a branch: Vercel may build 
 Do not run all historical migrations blindly: the live schema differs from the old SQL snapshots.
 
 1. Use an existing isolated Supabase test project/database with the inspected base schema. A new paid branch is not required or activated by this delivery.
-2. Review and apply **only** `supabase/migrations/20261011183634_worker_acquisition.sql` there.
+2. Review and apply **only** `supabase/migrations/20261015133808_worker_acquisition.sql` there.
 3. Set these **server** environment variables for preview:
    - `NEXT_PUBLIC_SUPABASE_URL`: preview database URL (the existing public client also uses it).
    - `SUPABASE_SERVICE_ROLE_KEY`: preview service-role key; never a NEXT_PUBLIC variable.
