@@ -47,3 +47,18 @@ test('optional enquiry messages and exact ten-digit API input in every language'
  assert.equal(mobileInput('+91 90000 00000'),'9000000000');
  assert.equal(mobileInput('90000000001234').length,10);
 });
+
+
+test('linked workers require the same original phone and profession at EVERY status', async () => {
+ const { linkingError, onboardingError } = await import('../lib/acquisition/onboarding.mjs');
+ const lead = { phone: '9000000000', profession: 'Painter' };
+ const worker = { phone: '+91 90000 00000', profession: 'Painter', slug: 'synthetic-painter', full_name: 'Synthetic Painter', is_active: false, hero_slides: [], photos: [], videos: [] };
+ assert.equal(linkingError(worker, lead, 'Painter'), null);
+ assert.equal(linkingError({...worker,is_active:true}, lead, 'Painter'), null);
+ assert.match(linkingError({...worker, phone:'9000000001'}, lead, 'Painter'), /phone/i);
+ assert.match(linkingError({...worker, profession:'Plumber'}, lead, 'Painter'), /category/i);
+ assert.match(linkingError(worker, lead, 'Plumber'), /category/i);
+ assert.match(linkingError(null, lead, 'Painter'), /profile/i);
+ assert.match(onboardingError(worker, lead, 'FREE', 'Painter'), /active/i);
+ assert.equal(onboardingError({...worker,is_active:true},lead,'FREE','Painter'), null);
+});
