@@ -61,8 +61,10 @@ Date: 2026-10-15
 - Confirm Vercel Production environment variables target SIGMA; Preview
   must remain pinned exclusively to INFIXO-STAGING.
 - Production SIGMA `acquisition_leads` schema has **not** been installed;
-  migration `20261011183634_worker_acquisition.sql` only passed a
-  BEGIN/ROLLBACK dry-run against SIGMA.
+  migration `20261015133808_worker_acquisition.sql` passed a
+  BEGIN/ROLLBACK dry-run against SIGMA and was subsequently **applied to SIGMA**
+  under migration version `20261015133808` following explicit go-live approval.
+  The acquisition tables were empty after installation; production Worker Profiles and media were preserved.
 - Need explicit go-live approval, safe rollback plan, schema migration,
   promotion/merge, production smoke tests. Keep Draft PR #1 unmerged.
 
