@@ -10,6 +10,8 @@ export default function WorkersListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
+  const activeWorkers = workers.filter(w => w.isActive !== false);
+  const inactiveWorkers = workers.filter(w => w.isActive === false);
 
   useEffect(() => {
     let active = true;
@@ -77,34 +79,44 @@ export default function WorkersListPage() {
       )}
 
       {!loading && !error && (
-        <p className={styles.hint} aria-live="polite">
-          {workers.length} saved worker {workers.length === 1 ? "profile" : "profiles"}
-        </p>
-      )}
+        <>
+          <p className={styles.hint} aria-live="polite">
+            {workers.length} saved worker {workers.length === 1 ? "profile" : "profiles"}
+          </p>
 
-      {!loading && !error && workers.length === 0 && (
-        <p className={styles.hint}>
-          No worker profiles yet. Tap "Add New Worker" to create one.
-        </p>
-      )}
+          <h2 className={styles.cardTitle}>Active Worker Profiles ({activeWorkers.length})</h2>
+          {activeWorkers.length === 0 && (
+            <p className={styles.hint}>No active profiles yet. Complete and activate a real worker profile first.</p>
+          )}
+          {activeWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)}
 
-      {!loading && !error && workers.map((w) => (
-        <Link
-          key={w.id}
-          href={`/admin/workers/${w.id}/share`}
-          className={styles.workerListItem}
-        >
-          <div>
-            <div className={styles.workerListName}>
-              {w.fullName || "Untitled Worker"}
-            </div>
-            <div className={styles.workerListMeta}>
-              {w.profession || "—"} · {w.isActive ? "Active profile" : "Inactive profile"}
-            </div>
-          </div>
-          <span aria-hidden="true">›</span>
-        </Link>
-      ))}
+          <h2 className={styles.cardTitle} style={{ marginTop: "1.5rem" }}>
+            Draft / Inactive Profiles ({inactiveWorkers.length})
+          </h2>
+          <p className={styles.hint}>
+            New profiles stay private until you review and manually activate them.
+            These are not publicly listed or counted as Completed Onboarding.
+          </p>
+          {inactiveWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)}
+        </>
+      )}
     </div>
+  );
+}
+
+function WorkerListRow({ worker: w }) {
+  return (
+    <Link
+      href={`/admin/workers/${w.id}/share`}
+      className={styles.workerListItem}
+    >
+      <div>
+        <div className={styles.workerListName}>{w.fullName || "Untitled Worker"}</div>
+        <div className={styles.workerListMeta}>
+          {w.profession || "—"} · {w.isActive === false ? "Draft / Inactive" : "Active profile"}
+        </div>
+      </div>
+      <span aria-hidden="true">›</span>
+    </Link>
   );
 }
