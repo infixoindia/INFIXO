@@ -53,7 +53,13 @@ export async function POST(request) {
   try {
     const payload = await request.json();
     const supabase = getAdminClient();
-    const { data, error } = await supabase.from("workers").insert({ ...payload, id: randomUUID() }).select().single();
+    // A new profile must remain private until the administrator has completed
+    // and reviewed the identity, work details and media. Force Draft/Inactive
+    // even if a client submits is_active:true. Existing profiles are unchanged.
+    const { data, error } = await supabase.from("workers")
+      .insert({ ...payload, id: randomUUID(), is_active: false })
+      .select()
+      .single();
     if (error) throw error;
     return NextResponse.json({ worker: data }, { status: 201 });
   } catch (e) {
