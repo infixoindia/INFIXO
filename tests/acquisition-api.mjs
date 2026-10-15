@@ -61,6 +61,20 @@ worker={id:approve.worker_id,phone:original.phone,profession:'Painter',is_active
 assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,400); // Minimal staging row
 worker={...worker,slug:'synthetic-profile',full_name:'Synthetic Test'};
 assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,200);
+// A draft may be linked before approval, but only if phone/category match.
+// Protect against direct API requests bypassing the UI's matching selector.
+const linkedPending={...update,worker_id:approve.worker_id};
+const valid=worker;
+worker={...valid,is_active:false};
+assert.equal((await admin.PATCH(req('PATCH',linkedPending,'https://infixo.test',true))).status,200);
+worker={...valid,phone:'9000000001'};
+assert.equal((await admin.PATCH(req('PATCH',linkedPending,'https://infixo.test',true))).status,400);
+worker={...valid,profession:'Plumber'};
+assert.equal((await admin.PATCH(req('PATCH',linkedPending,'https://infixo.test',true))).status,400);
+worker=null;
+assert.equal((await admin.PATCH(req('PATCH',linkedPending,'https://infixo.test',true))).status,400);
+worker=valid;
+console.log('PASS pending lead cannot link mismatched or missing worker; exact draft matching permitted');
 for(const change of [{is_active:false},{phone:'9000000001'},{profession:'Plumber'},{videos:[{}]}]){const prior=worker;worker={...worker,...change};assert.equal((await admin.PATCH(req('PATCH',approve,'https://infixo.test',true))).status,400);worker=prior;}
 assert.equal((await admin.PATCH(req('PATCH',{...approve,profession:'Plumber'},'https://infixo.test',true))).status,400);
 assert.equal((await admin.PATCH(req('PATCH',{...approve,status:'Contacted',worker_id:''},'https://infixo.test',true))).status,200);
