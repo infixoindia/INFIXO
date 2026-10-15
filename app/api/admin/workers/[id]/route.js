@@ -1,3 +1,4 @@
+import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
 import fs from "node:fs";
@@ -16,10 +17,7 @@ function getAdminClient() {
   return createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 function unauthorized() { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
-function isAdmin(request) {
-  const expected = process.env.INFIXO_ADMIN_SECRET;
-  return !!expected && request.cookies.get("infixo_admin")?.value === expected;
-}
+const isAdmin = requestIsAdmin;
 
 function pointOnSegment(px, py, ax, ay, bx, by) {
   const cross = (px - ax) * (by - ay) - (py - ay) * (bx - ax);
@@ -95,7 +93,7 @@ async function saveInternalLocation(supabase, workerId, location) {
 }
 
 export async function GET(request, { params }) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const supabase = getAdminClient();
     const id = (await params).id;
@@ -108,7 +106,7 @@ export async function GET(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const payload = await request.json();
     const internal_location = payload.internal_location;
@@ -149,7 +147,7 @@ async function deleteWorkerChildren(supabase, workerId) {
   for (const table of tables) { const { error } = await supabase.from(table).delete().eq("worker_id", workerId); if (error && !/does not exist/i.test(error.message || "")) throw error; }
 }
 export async function DELETE(request, { params }) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const supabase = getAdminClient(); const id = (await params).id;
     await removeWorkerMedia(supabase, id); await deleteWorkerChildren(supabase, id);

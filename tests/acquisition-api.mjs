@@ -9,15 +9,16 @@ let worker=null, original={id:'11111111-1111-4111-8111-111111111111',phone:'9000
 let response={data:[],error:null,count:0}, inserts=[], allowed=true, insertError=null;
 const client={rpc:async name=>name==='acquisition_rate_limit'?{data:allowed,error:null}:{data:[],error:null},from(table){let op='select',one=false;const chain={select(){return chain},order(){return chain},range(){return chain},eq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},neq(...args){queries.push(['eq',...args]);return chain},not(...args){queries.push(['not',...args]);return chain},or(...args){queries.push(['or',...args]);return chain},ilike(){return chain},gte(){return chain},lte(){return chain},insert(row){op='insert';inserts.push({table,row});return chain},update(){op='update';return chain},single(){one=true;return chain},then(resolve,reject){return Promise.resolve(op==='insert'?{error:insertError}:one?{data:table==='workers'?worker:original,error:null}:response).then(resolve,reject)}};return chain;}};
 globalThis.__acquisitionClient=client;
-const plugin={name:'isolated-test-transport',setup(b){b.onResolve({filter:/^server-only$/},()=>({path:'server-only',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export {}'}));b.onResolve({filter:/^@supabase\/supabase-js$/},()=>({path:'supabase',namespace:'mock-db'}));b.onLoad({filter:/.*/,namespace:'mock-db'},()=>({contents:'export const createClient = () => globalThis.__acquisitionClient;'}));}};
-for(const [name,entry] of [['join','app/api/join/route.js'],['admin','app/api/admin/leads/route.js'],['server','lib/acquisition/server.js']])await build({entryPoints:[entry],outfile:`${temp}/${name}.mjs`,bundle:true,platform:'node',format:'esm',plugins:[plugin],logLevel:'silent'});
+const plugin={name:'isolated-test-transport',setup(b){b.onResolve({filter:/^next\/server$/},()=>({path:'next-server',namespace:'mock-next'}));b.onLoad({filter:/.*/,namespace:'mock-next'},()=>({contents:`export const NextResponse={json(data,init){const r=Response.json(data,init);r.cookies={set(){}};return r;}};`}));b.onResolve({filter:/^server-only$/},()=>({path:'server-only',namespace:'test'}));b.onLoad({filter:/.*/,namespace:'test'},()=>({contents:'export {}'}));b.onResolve({filter:/^@supabase\/supabase-js$/},()=>({path:'supabase',namespace:'mock-db'}));b.onLoad({filter:/.*/,namespace:'mock-db'},()=>({contents:'export const createClient = () => globalThis.__acquisitionClient;'}));}};
+for(const [name,entry] of [['join','app/api/join/route.js'],['admin','app/api/admin/leads/route.js'],['server','lib/acquisition/server.js'],['session','lib/adminSession.js'],['login','app/api/admin/login/route.js']])await build({entryPoints:[entry],outfile:`${temp}/${name}.mjs`,bundle:true,platform:'node',format:'esm',plugins:[plugin],logLevel:'silent'});
 process.env.NEXT_PUBLIC_SUPABASE_URL='https://synthetic.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='synthetic-only';process.env.INFIXO_ADMIN_SECRET='synthetic-admin-only';process.env.INFIXO_LEAD_SIGNING_SECRET='synthetic-test-only-'.repeat(3);
 const join=await import(`${temp}/join.mjs`),admin=await import(`${temp}/admin.mjs`),server=await import(`${temp}/server.mjs`);
 const realNow=Date.now;let now=Date.parse('2026-10-12T00:00:00+05:30');Date.now=()=>now;
+const session=await import(`${temp}/session.mjs`); let adminToken=await session.issueSession(process.env.INFIXO_ADMIN_SECRET,10);
 const token=server.issueToken();assert.equal(server.validToken(token),false);now+=2000;assert.equal(server.validToken(token),true);assert.equal(server.validToken(token.slice(0,-1)+'z'),false);assert.equal(server.validToken(null),false);
 console.log('PASS signed token, minimum form age and tampering rejection');
 const body={name:'Synthetic Worker',phone:'9000000000',profession:'Painter',area:'Synthetic Area',plan:'FREE',working_model:'Main Khud Kaam Karta Hoon',reason:'Mujhe INFIXO Profile Banwani Hai',question:'',consent:true,token,attribution:{utm_source:'facebook',ref:'SYNTHETIC'}};
-function req(method,payload,origin='https://infixo.test',authed=false){const r=new Request('https://infixo.test/api/join',{method,headers:{'Content-Type':'application/json',origin},...(payload?{body:JSON.stringify(payload)}:{})});r.cookies={get:key=>authed?{value:key==='infixo_admin'?'synthetic-admin-only':'10'}:undefined};return r;}
+function req(method,payload,origin='https://infixo.test',authed=false){const r=new Request('https://infixo.test/api/join',{method,headers:{'Content-Type':'application/json',origin},...(payload?{body:JSON.stringify(payload)}:{})});r.cookies={get:key=>authed?{value:key==='infixo_admin'?adminToken:'10'}:undefined};return r;}
 assert.equal((await join.GET()).status,200);
 assert.equal((await join.POST(req('POST',body,'https://evil.invalid'))).status,403);
 assert.equal((await join.POST(req('POST',{...body,website:'bot'}))).status,400);
@@ -43,7 +44,7 @@ now=Date.parse('2026-11-09T00:00:00+05:30');const lateToken=server.issueToken();
 assert.equal((await join.POST(req('POST',{...body,token:lateToken,plan:'PRO'}))).status,400);
 now+=7200000;assert.equal(server.validToken(lateToken),false);
 console.log('PASS server-side expired offer and expired form token');
-Date.now=realNow;
+Date.now=realNow; adminToken=await session.issueSession(process.env.INFIXO_ADMIN_SECRET,10);
 
 assert.equal((await join.POST(req('POST',{...body,plan:'Not Decided'}))).status,400);
 assert.equal((await join.POST(req('POST',{...body,plan:''}))).status,400);
@@ -67,5 +68,12 @@ console.log('PASS Pending/Completed query filters; missing/minimal/inactive/mism
 for(const reason of ['Mujhe Profile Ke Baare Mein Jaanna Hai','Mera Koi Sawal Hai'])for(const question of ['', 'Synthetic follow-up']){
  now=Date.parse('2026-10-15T00:00:00+05:30');Date.now=()=>now;const tok=server.issueToken();now+=2000;
  const result=await join.POST(req('POST',{...body,reason,question,token:tok}));assert.equal(result.status,200);assert.equal(inserts.at(-1).row.reason,reason);assert.equal(inserts.at(-1).row.question,question);
-}Date.now=realNow;
+}Date.now=realNow; adminToken=await session.issueSession(process.env.INFIXO_ADMIN_SECRET,10);
 console.log('PASS both enquiry reasons with empty and nonempty optional message saved accurately');
+
+const login=await import(`${temp}/login.mjs`);process.env.INFIXO_ADMIN_PASSWORD='synthetic-password';
+assert.equal((await login.POST(req('POST',{},'https://evil.invalid'))).status,403);
+allowed=false;assert.equal((await login.POST(req('POST',{password:'synthetic-password'}))).status,429);
+allowed=true;assert.equal((await login.POST(req('POST',{password:'wrong'}))).status,401);
+assert.equal((await login.POST(req('POST',{password:'synthetic-password',minutes:10}))).status,200);
+console.log('PASS login origin protection, throttling, wrong password and signed-cookie success');

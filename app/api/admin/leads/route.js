@@ -5,7 +5,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export async function GET(request) {
-  if (!admin(request)) return json({ error: 'Unauthorized' }, 401);
+  if (!await admin(request)) return json({ error: 'Unauthorized' }, 401);
   try {
     const p = new URL(request.url).searchParams, client = db();
     const page = Math.max(0, Math.min(10000, Number(p.get('page')) || 0));
@@ -24,7 +24,7 @@ export async function GET(request) {
   } catch { return json({ error: 'Leads load nahi hue. Database setup aur server configuration check karein.' }, 503); }
 }
 export async function PATCH(request) {
-  if (!admin(request)) return json({ error: 'Unauthorized' }, 401);
+  if (!await admin(request)) return json({ error: 'Unauthorized' }, 401);
   if (!sameOrigin(request)) return json({ error: 'Invalid origin' }, 403);
   try {
     const b = await readBody(request);

@@ -1,3 +1,4 @@
+import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
 export const runtime = "nodejs";
@@ -15,11 +16,11 @@ function getSupabaseUrl() {
 const url = getSupabaseUrl();
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BUCKET = "worker-media";
-function isAdmin(request) { const expected = process.env.INFIXO_ADMIN_SECRET; return !!expected && request.cookies.get("infixo_admin")?.value === expected; }
+const isAdmin = requestIsAdmin;
 function client() { if (!serviceKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not configured"); return createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } }); }
 function unauthorized() { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
 export async function POST(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const form = await request.formData(); const file = form.get("file"); const path = form.get("path"); const contentType = form.get("contentType") || "application/octet-stream";
     if (!file || !path) return NextResponse.json({ error: "File and path are required" }, { status: 400 });
@@ -31,7 +32,7 @@ export async function POST(request) {
   } catch (e) { return NextResponse.json({ error: e.message || "Upload failed" }, { status: 500 }); }
 }
 export async function DELETE(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const { path } = await request.json();
     if (!path || path.includes("..") || path.startsWith("/")) return NextResponse.json({ error: "Invalid path" }, { status: 400 });

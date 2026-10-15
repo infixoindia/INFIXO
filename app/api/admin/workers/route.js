@@ -1,3 +1,4 @@
+import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
 import { randomUUID } from "node:crypto";
@@ -21,13 +22,10 @@ function getAdminClient() {
 
 function unauthorized() { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
 
-function isAdmin(request) {
-  const expected = process.env.INFIXO_ADMIN_SECRET;
-  return !!expected && request.cookies.get("infixo_admin")?.value === expected;
-}
+const isAdmin = requestIsAdmin;
 
 export async function GET(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const { searchParams } = new URL(request.url);
     const checkSlug = searchParams.get("checkSlug");
@@ -51,7 +49,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const payload = await request.json();
     const supabase = getAdminClient();

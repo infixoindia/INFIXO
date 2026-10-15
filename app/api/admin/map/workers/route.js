@@ -1,3 +1,4 @@
+import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
 import fs from "node:fs";
@@ -25,17 +26,14 @@ function getSupabaseServerClient() {
 }
 // Same admin check as the other /api/admin/* routes. This route returns worker
 // coordinates (internal location), so it must not be publicly readable.
-function isAdmin(request) {
-  const expected = process.env.INFIXO_ADMIN_SECRET;
-  return !!expected && request.cookies.get("infixo_admin")?.value === expected;
-}
+const isAdmin = requestIsAdmin;
 function loadWorkerHexes() {
   const file = path.join(process.cwd(), "public", "gis", "worker_hex_final.geojson");
   return JSON.parse(fs.readFileSync(file, "utf8")).features || [];
 }
 
 export async function GET(request) {
-  if (!isAdmin(request)) return NextResponse.json({ workers: [], error: "Unauthorized" }, { status: 401, headers: NO_STORE });
+  if (!await isAdmin(request)) return NextResponse.json({ workers: [], error: "Unauthorized" }, { status: 401, headers: NO_STORE });
   const errors = {};
   try {
     const supabase = getSupabaseServerClient();
