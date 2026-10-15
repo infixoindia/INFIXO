@@ -11,7 +11,7 @@ await pg.exec(`create role anon; create role authenticated; create role service_
  alter table public.workers enable row level security;
  grant all on public.workers to service_role;
  create table public.infixo_worker_hexes(worker_hex_id text primary key);`);
-await pg.exec(readFileSync(new URL('../supabase/migrations/20261011183634_worker_acquisition.sql',import.meta.url),'utf8'));
+await pg.exec(readFileSync(new URL('../supabase/migrations/20261015133808_worker_acquisition.sql',import.meta.url),'utf8'));
 console.log('PASS migration executes against representative inspected schema');
 for(const role of ['anon','authenticated']) {
  await pg.exec(`set role ${role}`);
