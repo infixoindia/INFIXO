@@ -65,3 +65,25 @@ Date: 2026-10-15
   BEGIN/ROLLBACK dry-run against SIGMA.
 - Need explicit go-live approval, safe rollback plan, schema migration,
   promotion/merge, production smoke tests. Keep Draft PR #1 unmerged.
+
+## Additional worker publication safeguard (same staging branch)
+
+- New `POST /api/admin/workers` now forces `is_active=false`,
+  even if a browser attempts to supply true.
+- Worker Admin shows **Active Worker Profiles** separately from
+  **Draft / Inactive Profiles**, preserving draft editability.
+  Neither registration leads nor unapproved acquisition totals are counted
+  as completed onboarding merely because a profile exists.
+- Draft's Customer/Worker share actions and QR remain unavailable until
+  deliberate activation from the Worker Share page.
+- The edit page routes draft profiles to a manual Review/Activate step,
+  not to an unavailable public profile.
+- Existing SIGMA worker profile rows have **not been altered**.
+- On INFIXO-STAGING, verified the complete draft → active → approved
+  counting → deactivated lifecycle inside `BEGIN/ROLLBACK`:
+  draft hidden from public view, active visible, unapproved still not counted,
+  approved+active counted, inactive hidden and excluded again.
+  No synthetic records were retained.
+
+**The newest Preview deployment must still receive final mobile verification
+before any production migration, PR merge or promotion.**
