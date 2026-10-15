@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const s=await import('data:text/javascript;base64,'+Buffer.from(readFileSync('lib/adminSession.js')).toString('base64'));
+const secret='synthetic-only-secret-'.repeat(3),realNow=Date.now;let now=1000000;Date.now=()=>now;
+const token=await s.issueSession(secret,1);
+assert.equal(await s.isValidSession(secret,token,'1'),true);
+assert.equal(await s.isValidSession(secret,secret,'1'),false);
+assert.equal(await s.isValidSession('other',token,'1'),false);
+assert.equal(await s.isValidSession(secret,token,'30'),false);
+assert.equal(await s.isValidSession(secret,token.slice(0,-1)+'z','1'),false);
+now+=60000;assert.equal(await s.isValidSession(secret,token,'1'),false);
+now=999999;assert.equal(await s.isValidSession(secret,token,'1'),false);
+Date.now=realNow;console.log('PASS session signature, legacy rejection, tampering, TTL binding, server expiry and future timestamp');

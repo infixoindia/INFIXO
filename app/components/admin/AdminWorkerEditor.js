@@ -272,14 +272,24 @@ export default function AdminWorkerEditor({ workerId = null }) {
           )}
 
           {worker.slug && (
-            <Link
-              href={`/w/${worker.slug}?admin=${worker.id}`}
-              target="_blank"
-              className={`${styles.btn} ${styles.btnSecondary}`}
-              style={{ display: "block", textAlign: "center", marginTop: "1rem", textDecoration: "none" }}
-            >
-              🔗 Open Live Public Profile
-            </Link>
+            worker.isActive === false ? (
+              <Link
+                href={`/admin/workers/${worker.id}/share`}
+                className={`${styles.btn} ${styles.btnSecondary}`}
+                style={{ display: "block", textAlign: "center", marginTop: "1rem", textDecoration: "none" }}
+              >
+                Review Draft &amp; Activate Profile
+              </Link>
+            ) : (
+              <Link
+                href={`/w/${worker.slug}?admin=${worker.id}`}
+                target="_blank"
+                className={`${styles.btn} ${styles.btnSecondary}`}
+                style={{ display: "block", textAlign: "center", marginTop: "1rem", textDecoration: "none" }}
+              >
+                🔗 Open Live Public Profile
+              </Link>
+            )
           )}
         </>
       )}

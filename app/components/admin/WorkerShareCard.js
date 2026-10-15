@@ -54,10 +54,10 @@ export default function WorkerShareCard({ worker }) {
 
   const handleBlockToggle = async () => {
     const nextActive = worker.isActive === false;
-    const action = nextActive ? "unblock" : "block";
+    const action = nextActive ? "activate" : "deactivate";
     if (!window.confirm(nextActive
-      ? `Unblock ${worker.fullName || "this worker"}? Their two profile links will work again.`
-      : `Block ${worker.fullName || "this worker"}? Both the customer link and worker link will stop opening, but the worker data will remain saved.`)) return;
+      ? `Activate ${worker.fullName || "this worker"}? Confirm their profile is complete, genuine, and approved. Their public links will become accessible.`
+      : `Deactivate ${worker.fullName || "this worker"}? Both public links will stop opening; all saved worker data remains.`)) return;
     setBusy(true);
     try {
       const updated = await setWorkerActive(worker.id, nextActive);
@@ -82,6 +82,7 @@ export default function WorkerShareCard({ worker }) {
   };
 
   const handleShare = async () => {
+    if (worker.isActive === false) return;
     const shareText = [
       `Hello ${worker.fullName || "there"} 👋`,
       "",
@@ -134,18 +135,18 @@ export default function WorkerShareCard({ worker }) {
       </p>
       <div className={styles.workerLinkRow}>
         <span className={styles.workerLinkText}>{customerUrl || "Loading link…"}</span>
-        <button type="button" className={styles.workerCopyBtn} onClick={() => copyText(customerUrl, setCopiedCustomer)}>
+        <button type="button" className={styles.workerCopyBtn} disabled={worker.isActive === false} onClick={() => copyText(customerUrl, setCopiedCustomer)}>
           {copiedCustomer ? "Copied!" : "Copy"}
         </button>
       </div>
 
-      {qrDataUrl && (
+      {worker.isActive !== false && qrDataUrl && (
         <div className={styles.workerQrBox}>
           <img src={qrDataUrl} alt={`QR code for ${worker.fullName}'s profile`} />
         </div>
       )}
 
-      <button type="button" className={styles.workerShareBtn} onClick={handleShare}>
+      <button type="button" className={styles.workerShareBtn} disabled={worker.isActive === false} onClick={handleShare}>
         📤 Share Profile
       </button>
 
@@ -157,7 +158,7 @@ export default function WorkerShareCard({ worker }) {
         </p>
         <div className={styles.workerLinkRow}>
           <span className={styles.workerLinkText}>{workerOwnUrl || "Loading link…"}</span>
-          <button type="button" className={styles.workerCopyBtn} onClick={() => copyText(workerOwnUrl, setCopiedWorker)}>
+          <button type="button" className={styles.workerCopyBtn} disabled={worker.isActive === false} onClick={() => copyText(workerOwnUrl, setCopiedWorker)}>
             {copiedWorker ? "Copied!" : "Copy"}
           </button>
         </div>
@@ -167,12 +168,12 @@ export default function WorkerShareCard({ worker }) {
         <p className={styles.label} style={{ marginBottom: "0.35rem" }}>Profile Status</p>
         <p className={styles.hint} style={{ marginTop: 0, marginBottom: "0.7rem" }}>
           {worker.isActive === false
-            ? "Blocked — customer and worker links are currently off."
+            ? "Draft / Inactive — links are off. Complete and manually review this real worker profile before activation."
             : "Active — both customer and worker links are live."}
         </p>
         <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
           <button type="button" className={`${styles.btn} ${styles.btnSecondary} ${styles.btnSmall}`} onClick={handleBlockToggle} disabled={busy}>
-            {worker.isActive === false ? "Unblock Profile" : "Block Profile"}
+            {worker.isActive === false ? "Activate Profile" : "Deactivate Profile"}
           </button>
           <button type="button" className={`${styles.btn} ${styles.btnDanger} ${styles.btnSmall}`} onClick={handlePermanentDelete} disabled={busy}>
             Permanently Delete

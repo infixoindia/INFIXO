@@ -1,6 +1,8 @@
+import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/guardedSupabase";
 import { randomUUID } from "node:crypto";
+import { normalizePhone } from "@/lib/acquisition/config.mjs";
 
 const DEFAULT_SUPABASE_URL = "https://xyplrbzyqershqngrjwo.supabase.co";
 function getSupabaseUrl() {
@@ -21,18 +23,42 @@ function getAdminClient() {
 
 function unauthorized() { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }
 
-function isAdmin(request) {
-  const expected = process.env.INFIXO_ADMIN_SECRET;
-  return !!expected && request.cookies.get("infixo_admin")?.value === expected;
-}
+const isAdmin = requestIsAdmin;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function GET(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const { searchParams } = new URL(request.url);
     const checkSlug = searchParams.get("checkSlug");
     const excludeId = searchParams.get("excludeId");
     const supabase = getAdminClient();
+    const matchLeadId = searchParams.get("matchLeadId");
+
+    if (matchLeadId !== null) {
+      if (!UUID.test(matchLeadId)) {
+        return NextResponse.json({ error: "Invalid lead ID" }, { status: 400 });
+      }
+      // Admin only. The phone remains server-side: lead ID, not phone, is sent
+      // in the URL. Return only small safe-to-display profile metadata.
+      const { data: lead, error: leadError } = await supabase
+        .from("acquisition_leads")
+        .select("phone,profession")
+        .eq("id", matchLeadId)
+        .maybeSingle();
+      if (leadError) throw leadError;
+      if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+      const phone = normalizePhone(lead.phone);
+      if (!phone) return NextResponse.json({ workers: [] }, { headers: { "Cache-Control": "no-store" } });
+      const { data: possibleWorkers, error: matchError } = await supabase
+        .from("workers")
+        .select("id,slug,full_name,profession,phone,is_active")
+        .eq("profession", lead.profession)
+        .limit(1000);
+      if (matchError) throw matchError;
+      const matched = (possibleWorkers || []).filter(w => normalizePhone(w.phone) === phone);
+      return NextResponse.json({ workers: matched }, { headers: { "Cache-Control": "no-store" } });
+    }
 
     if (checkSlug) {
       let q = supabase.from("workers").select("id").eq("slug", checkSlug).limit(1);
@@ -51,11 +77,17 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  if (!isAdmin(request)) return unauthorized();
+  if (!await isAdmin(request)) return unauthorized();
   try {
     const payload = await request.json();
     const supabase = getAdminClient();
-    const { data, error } = await supabase.from("workers").insert({ ...payload, id: randomUUID() }).select().single();
+    // A new profile must remain private until the administrator has completed
+    // and reviewed the identity, work details and media. Force Draft/Inactive
+    // even if a client submits is_active:true. Existing profiles are unchanged.
+    const { data, error } = await supabase.from("workers")
+      .insert({ ...payload, id: randomUUID(), is_active: false })
+      .select()
+      .single();
     if (error) throw error;
     return NextResponse.json({ worker: data }, { status: 201 });
   } catch (e) {

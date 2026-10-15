@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "feat/diwali-worker-acquisition": false,
+      "feat/diwali-integration-staging": false
+    }
+  }
+}
