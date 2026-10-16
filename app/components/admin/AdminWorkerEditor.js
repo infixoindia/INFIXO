@@ -39,6 +39,8 @@ export default function AdminWorkerEditor({ workerId = null }) {
   const [loading, setLoading] = useState(!isNew);
   const [activeTab, setActiveTab] = useState("work");
   const [showPreview, setShowPreview] = useState(true);
+  const [photoDraftDirty, setPhotoDraftDirty] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   const [savingSection, setSavingSection] = useState(null);
   const [saveMsg, setSaveMsg] = useState({});
@@ -147,7 +149,22 @@ export default function AdminWorkerEditor({ workerId = null }) {
   const saveWorkerDetails = () =>
     saveSection("worker", ["fullName", "gender", "age", "address", "languages", "about", "verifications"]);
 
-  const savePhotos = () => saveSection("photos", ["photos"]);
+  // Photo editor stages and uploads originals first. Commit the entire
+  // array in ONE DB write; preserve the previous record if that write fails.
+  const savePhotos = async (nextPhotos) => {
+    setSavingSection("photos");
+    try {
+      const updated = await updateWorker(worker.id, { photos: nextPhotos });
+      setWorker(updated);
+      flashMessage("photos", "Saved!");
+      return updated.photos;
+    } catch (err) {
+      flashMessage("photos", err?.message || "Save failed. Try again.", true);
+      throw err;
+    } finally {
+      setSavingSection(null);
+    }
+  };
   const saveVideos = () => saveSection("videos", ["videos"]);
 
   if (loading) {
@@ -193,7 +210,11 @@ export default function AdminWorkerEditor({ workerId = null }) {
               <button
                 key={tab.key}
                 className={`${styles.tabButton} ${activeTab === tab.key ? styles.tabButtonActive : ""}`}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  if (activeTab === "photos" && tab.key !== "photos" && photoDraftDirty &&
+                      !window.confirm("Unsaved Work Photos changes will be discarded. Continue?")) return;
+                  setActiveTab(tab.key);
+                }}
               >
                 {tab.label}
               </button>
@@ -225,6 +246,8 @@ export default function AdminWorkerEditor({ workerId = null }) {
           {activeTab === "photos" && (
             <WorkPhotosEditor
               worker={worker}
+              onDirtyChange={setPhotoDraftDirty}
+              onPreviewChange={setPhotoPreview}
               updateField={updateField}
               onSave={savePhotos}
               saving={savingSection === "photos"}
@@ -264,7 +287,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
                 <div style={{ padding: "0.5rem 0" }}>
                   {activeTab === "work" && <WorkDetails worker={worker} backHref="#" />}
                   {activeTab === "worker" && <WorkerDetails worker={worker} backHref="#" />}
-                  {activeTab === "photos" && <WorkPhotos worker={worker} backHref="#" />}
+                  {activeTab === "photos" && <WorkPhotos worker={{ ...worker, photos: photoPreview ?? worker.photos }} backHref="#" />}
                   {activeTab === "videos" && <WorkVideos worker={worker} backHref="#" />}
                 </div>
               </div>

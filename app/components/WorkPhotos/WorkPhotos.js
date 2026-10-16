@@ -3,9 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./WorkPhotos.module.css";
+import CroppedImage from "../CroppedImage/CroppedImage";
+import { workPhotoDisplay } from "@/lib/workPhoto.mjs";
 
 export default function WorkPhotos({ worker, backHref = "/" }) {
-  const images = worker?.photos || [];
+  // Supports old URL strings and new { image: originalUrl, crop } entries.
+  const images = (worker?.photos || []).map(workPhotoDisplay).filter(image => image.src);
 
   const [viewerOpen, setViewerOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -275,7 +278,9 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
             className={styles.photoItem}
             onClick={() => openViewer(index)}
           >
-            <img src={image} alt={`Work ${index + 1}`} />
+            {image.crop
+              ? <CroppedImage src={image.src} crop={image.crop} alt={`Work ${index + 1}`} />
+              : <img src={image.src} alt={`Work ${index + 1}`} />}
           </div>
         ))}
       </div>
@@ -333,7 +338,7 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
                   <div key={index} className={styles.slide}>
                     <img
                       ref={isCurrent ? imageRef : null}
-                      src={image}
+                      src={image.src}
                       alt={`Work ${index + 1}`}
                       className={styles.viewerImage}
                       draggable={false}

@@ -6,26 +6,38 @@ import { FRAME_RATIO, clampCrop, coverSize, defaultCrop, layoutCrop, sanitizeCro
 const MARGIN = 26;
 const MAX_ZOOM = 5;
 
-// Crop & Adjust popup. It only produces crop metadata; the uploaded original is never touched.
-export default function PhotoCropper({ src, initialCrop, onApply, onCancel }) {
-  const [stageW, setStageW] = useState(340);
+// Identity retains its established 16:10 wave crop; Work Photos may request 3:4.
+// ONLY positioning metadata is saved: original image bytes remain unchanged.
+export default function PhotoCropper({ src, initialCrop, onApply, onCancel, frameRatio = FRAME_RATIO, context = 'Identity Profile' }) {
+  const [stageW, setStageW] = useState(300);
   const [ar, setAr] = useState(validCrop(initialCrop) ? initialCrop.ar : null);
-  const [view, setView] = useState(validCrop(initialCrop) ? { x: initialCrop.x, y: initialCrop.y, zoom: initialCrop.zoom } : null);
+  const [view, setView] = useState(validCrop(initialCrop)
+    ? { x: initialCrop.x, y: initialCrop.y, zoom: initialCrop.zoom } : null);
   const viewRef = useRef(view);
   const pointers = useRef(new Map());
   const pinch = useRef(0);
 
   const fw = stageW - MARGIN * 2;
-  const fh = fw / FRAME_RATIO;
+  const fh = fw / frameRatio;
 
   useEffect(() => {
-    const fit = () => setStageW(Math.max(260, Math.min(window.innerWidth - 40, 460)));
+    const fit = () => {
+      const availableW = window.innerWidth - 56;
+      const availableH = window.innerHeight - 225;
+      setStageW(Math.max(210, Math.min(availableW, availableH * frameRatio + MARGIN * 2, 460)));
+    };
     fit();
     window.addEventListener('resize', fit);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('resize', fit); document.body.style.overflow = prev; };
-  }, []);
+  }, [frameRatio]);
+
+  useEffect(() => {
+    const escape = event => { if (event.key === 'Escape') onCancel(); };
+    window.addEventListener('keydown', escape);
+    return () => window.removeEventListener('keydown', escape);
+  }, [onCancel]);
 
   const update = next => {
     if (!ar) return;
@@ -39,16 +51,28 @@ export default function PhotoCropper({ src, initialCrop, onApply, onCancel }) {
     const a = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight;
     if (!a) return;
     setAr(a);
-    if (!view) { const d = defaultCrop(fw, fh, a); const v = { x: d.x, y: d.y, zoom: 1 }; viewRef.current = v; setView(v); }
+    if (!viewRef.current) {
+      const d = defaultCrop(fw, fh, a);
+      const v = { x: d.x, y: d.y, zoom: 1 };
+      viewRef.current = v;
+      setView(v);
+    }
   };
 
-  const size = () => { const { w, h } = coverSize(fw, fh, ar); const z = viewRef.current.zoom; return { W: w * z, H: h * z }; };
+  const size = () => {
+    const { w, h } = coverSize(fw, fh, ar);
+    const z = viewRef.current.zoom;
+    return { W: w * z, H: h * z };
+  };
 
   const down = e => {
     if (!ar || !viewRef.current) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (pointers.current.size === 2) { const [a, b] = [...pointers.current.values()]; pinch.current = Math.hypot(a.x - b.x, a.y - b.y); }
+    if (pointers.current.size === 2) {
+      const [a, b] = [...pointers.current.values()];
+      pinch.current = Math.hypot(a.x - b.x, a.y - b.y);
+    }
   };
   const move = e => {
     const p = pointers.current.get(e.pointerId);
@@ -68,28 +92,34 @@ export default function PhotoCropper({ src, initialCrop, onApply, onCancel }) {
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
   };
   const up = e => { pointers.current.delete(e.pointerId); pinch.current = 0; };
-  const wheel = e => { const v = viewRef.current; if (v) update({ ...v, zoom: Math.min(MAX_ZOOM, Math.max(1, v.zoom * Math.exp(-e.deltaY * 0.0015))) }); };
+  const wheel = e => {
+    e.preventDefault();
+    const v = viewRef.current;
+    if (v) update({ ...v, zoom: Math.min(MAX_ZOOM, Math.max(1, v.zoom * Math.exp(-e.deltaY * 0.0015))) });
+  };
 
   const ready = !!(ar && view);
   const l = ready ? layoutCrop(fw, fh, { ...view, ar }) : null;
-  const imgStyle = (dx, dy) => ({ position: 'absolute', left: l.left + dx, top: l.top + dy, width: l.width, height: l.height, maxWidth: 'none', maxHeight: 'none', display: 'block', userSelect: 'none', pointerEvents: 'none' });
-
+  const imgStyle = (dx, dy) => ({
+    position: 'absolute', left: l.left + dx, top: l.top + dy,
+    width: l.width, height: l.height, maxWidth: 'none', maxHeight: 'none',
+    display: 'block', userSelect: 'none', pointerEvents: 'none',
+  });
   const apply = () => { if (ready) onApply(sanitizeCrop({ ...view, ar })); };
   const reset = () => { if (ar) { const d = defaultCrop(fw, fh, ar); update({ x: d.x, y: d.y, zoom: 1 }); } };
-
   const btn = { border: 'none', borderRadius: 9, padding: '10px 16px', fontWeight: 700, fontSize: 14, cursor: 'pointer' };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 12 }}>
-      <div style={{ background: '#fff', borderRadius: 14, padding: 14, width: stageW + 28, maxWidth: '100%' }}>
+    <div role="dialog" aria-modal="true" aria-label={`Crop & Adjust ${context}`}
+      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,.78)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 12 }}>
+      <div style={{ background: '#fff', borderRadius: 14, padding: 14, width: stageW + 28, boxSizing: 'border-box', maxWidth: '100%', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto' }}>
         <div style={{ fontWeight: 800, fontSize: 16, color: '#0f172a' }}>Crop &amp; Adjust</div>
-        <div style={{ fontSize: 12, color: '#64748b', margin: '2px 0 10px' }}>Drag to move • Pinch / slider to zoom. Bright box = visible in Identity Profile. Original photo is not changed.</div>
-
-        <div
-          onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onWheel={wheel}
-          style={{ position: 'relative', width: stageW, height: fh + MARGIN * 2, background: '#0b1220', borderRadius: 10, overflow: 'hidden', touchAction: 'none', cursor: 'grab' }}
-        >
-          {!ready && <img src={src} alt="" onLoad={onImgLoad} style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }} />}
+        <div style={{ fontSize: 12, color: '#64748b', margin: '2px 0 10px' }}>
+          Drag to move • Pinch / slider to zoom. Bright box = visible in {context}. Original photo is not changed.
+        </div>
+        <div onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onWheel={wheel}
+          style={{ position: 'relative', width: stageW, maxWidth: '100%', height: fh + MARGIN * 2, background: '#0b1220', borderRadius: 10, overflow: 'hidden', touchAction: 'none', cursor: 'grab' }}>
+          {!ready && <img src={src} alt="" onLoad={onImgLoad} onError={() => {}} style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }} />}
           {ready && (
             <>
               <img src={src} alt="" draggable={false} style={{ ...imgStyle(MARGIN, MARGIN), opacity: 0.35 }} />
@@ -101,12 +131,11 @@ export default function PhotoCropper({ src, initialCrop, onApply, onCancel }) {
           )}
           {!ready && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 13 }}>Loading photo…</div>}
         </div>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '12px 0' }}>
           <span style={{ fontSize: 12, color: '#475569' }}>Zoom</span>
-          <input type="range" min="1" max={MAX_ZOOM} step="0.01" value={view?.zoom ?? 1} disabled={!ready} onChange={e => view && update({ ...view, zoom: Number(e.target.value) })} style={{ flex: 1 }} />
+          <input type="range" min="1" max={MAX_ZOOM} step="0.01" value={view?.zoom ?? 1} disabled={!ready}
+            onChange={e => view && update({ ...view, zoom: Number(e.target.value) })} style={{ flex: 1 }} />
         </div>
-
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
           <button type="button" onClick={onCancel} style={{ ...btn, background: '#f1f5f9', color: '#334155' }}>Cancel</button>
           <button type="button" onClick={reset} disabled={!ready} style={{ ...btn, background: '#f1f5f9', color: '#334155' }}>Reset</button>

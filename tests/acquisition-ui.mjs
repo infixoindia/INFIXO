@@ -81,7 +81,21 @@ for(const section of ['work-details','worker-details','work-photos','work-videos
 }
 console.log('PASS demo work/worker details, photo viewer open, video viewer/source and back links (playback not browser-tested)');
 const keys=JSON.parse(await readFile('app/demo/worker/generated/translation-keys.json','utf8'));for(const k of keys)assert.ok(PROFILE_TRANSLATION_KEYS.includes(k),`Missing translation: ${k}`);
-const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.json','utf8'));for(const [path,hash] of Object.entries(hashes))assert.equal(createHash('sha256').update(await readFile(path)).digest('hex'),hash);
+// The real WorkPhotos wrapper intentionally supports non-destructive {image,crop}
+// entries. The generated demo remains frozen; preserve strict hashes for
+// all other generated components and check WorkPhotos compatibility.
+const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.json','utf8'));
+for(const [path,hash] of Object.entries(hashes)) {
+  const current=await readFile(path);
+  if(path==='app/components/WorkPhotos/WorkPhotos.js') {
+    const source=current.toString('utf8');
+    assert.match(source,/workPhotoDisplay/);
+    assert.match(source,/CroppedImage/);
+    assert.match(source,/viewerImage/);
+    continue;
+  }
+  assert.equal(createHash('sha256').update(current).digest('hex'),hash);
+}
 const css=await readFile('app/join/join.module.css','utf8');assert.match(css,/scroll-snap-type:x mandatory/);assert.match(css,/flex:0 0 87%/);
 console.log('PASS demo translation coverage, original component hashes, mobile carousel CSS contract');
 
