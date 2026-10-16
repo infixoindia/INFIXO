@@ -40,6 +40,8 @@ export default function AdminWorkerEditor({ workerId = null }) {
   const [activeTab, setActiveTab] = useState("work");
   const [showPreview, setShowPreview] = useState(true);
   const [photoDraftDirty, setPhotoDraftDirty] = useState(false);
+  const [videoDraftDirty, setVideoDraftDirty] = useState(false);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
 
   const [savingSection, setSavingSection] = useState(null);
@@ -165,7 +167,19 @@ export default function AdminWorkerEditor({ workerId = null }) {
       setSavingSection(null);
     }
   };
-  const saveVideos = () => saveSection("videos", ["videos"]);
+  // Video editor stages originals and thumbnails; one DB write after uploads succeed.
+  const saveVideos = async (nextVideos) => {
+    setSavingSection("videos");
+    try {
+      const updated = await updateWorker(worker.id, { videos: nextVideos });
+      setWorker(updated);
+      flashMessage("videos", "Saved!");
+      return updated.videos;
+    } catch (err) {
+      flashMessage("videos", err?.message || "Video save failed. Previous videos intact.", true);
+      throw err;
+    } finally { setSavingSection(null); }
+  };
 
   if (loading) {
     return (
@@ -213,6 +227,8 @@ export default function AdminWorkerEditor({ workerId = null }) {
                 onClick={() => {
                   if (activeTab === "photos" && tab.key !== "photos" && photoDraftDirty &&
                       !window.confirm("Unsaved Work Photos changes will be discarded. Continue?")) return;
+                  if (activeTab === "videos" && tab.key !== "videos" && videoDraftDirty &&
+                      !window.confirm("Unsaved Work Videos changes will be discarded. Continue?")) return;
                   setActiveTab(tab.key);
                 }}
               >
@@ -259,7 +275,8 @@ export default function AdminWorkerEditor({ workerId = null }) {
           {activeTab === "videos" && (
             <WorkVideosEditor
               worker={worker}
-              updateField={updateField}
+              onDirtyChange={setVideoDraftDirty}
+              onPreviewChange={setVideoPreview}
               onSave={saveVideos}
               saving={savingSection === "videos"}
               saveMessage={saveMsg.videos}
@@ -288,7 +305,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
                   {activeTab === "work" && <WorkDetails worker={worker} backHref="#" />}
                   {activeTab === "worker" && <WorkerDetails worker={worker} backHref="#" />}
                   {activeTab === "photos" && <WorkPhotos worker={{ ...worker, photos: photoPreview ?? worker.photos }} backHref="#" />}
-                  {activeTab === "videos" && <WorkVideos worker={worker} backHref="#" />}
+                  {activeTab === "videos" && <WorkVideos worker={{ ...worker, videos: videoPreview ?? worker.videos }} backHref="#" />}
                 </div>
               </div>
             </div>
