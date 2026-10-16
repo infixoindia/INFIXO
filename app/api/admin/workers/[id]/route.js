@@ -2,6 +2,7 @@ import { requestIsAdmin } from "@/lib/adminSession";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/guardedSupabase";
 import { activationError } from "@/lib/workerPublication.mjs";
+import { validateVideoEntries, videoMediaPath } from "@/lib/workVideo.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -116,6 +117,39 @@ export async function PATCH(request, { params }) {
     if (typeof payload.is_active !== "undefined" && typeof payload.is_active !== "boolean") return NextResponse.json({ error: "is_active must be true or false" }, { status: 400 });
     const supabase = getAdminClient();
     const workerId = (await params).id;
+    // Work Videos: enforce correct owner and existing Storage object before publishing
+    // a new video/thumbnail association. Legacy saved entries remain compatible.
+    if (typeof payload.videos !== "undefined") {
+      const issue = validateVideoEntries(payload.videos);
+      if (issue) return NextResponse.json({ error: issue }, { status: 400 });
+      if (payload.videos.length > 100) return NextResponse.json({ error: "Too many videos for a single profile" }, { status: 400 });
+      const { data: record, error: oldError } = await supabase.from("workers").select("videos").eq("id", workerId).maybeSingle();
+      if (oldError) throw oldError;
+      if (!record) return NextResponse.json({ error: "Worker not found" }, { status: 404 });
+      const saved = record.videos || [];
+      const known = new Set(saved.flatMap(item => [item?.video, item?.thumbnail]).filter(Boolean));
+      const expectedOrigin = new URL(url).origin;
+      const storage = supabase.storage.from("worker-media");
+      for (const entry of payload.videos) {
+        for (const [type, mediaUrl] of [["videos", entry.video], ["video-thumbs", entry.thumbnail]]) {
+          if (known.has(mediaUrl)) continue;
+          const storagePath = videoMediaPath(mediaUrl, workerId);
+          if (!storagePath || !storagePath.startsWith(workerId + "/" + type + "/") ||
+              new URL(mediaUrl).origin !== expectedOrigin) {
+            return NextResponse.json({ error: "Video or thumbnail belongs to another worker or storage project" }, { status: 400 });
+          }
+          const folder = workerId + "/" + type;
+          const fileName = storagePath.slice(folder.length + 1);
+          const { data: listed, error: storageError } = await storage.list(folder, { search: fileName, limit: 100 });
+          if (storageError) throw storageError;
+          const file = (listed || []).find(f => f.name === fileName && f.id);
+          if (!file) return NextResponse.json({ error: "Video or thumbnail upload is not complete" }, { status: 409 });
+          if (type === "videos" && (!Number(file.metadata?.size) || file.metadata.size > 45 * 1024 * 1024)) {
+            return NextResponse.json({ error: "Uploaded video size invalid" }, { status: 400 });
+          }
+        }
+      }
+    }
     // Activation is distinct from draft creation and from lead approval.
     // Never allow an incomplete draft to become public through direct PATCH.
     if (payload.is_active === true) {
