@@ -26,5 +26,13 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - name: Install isolated legacy-test helpers (not production dependencies)
+        run: |
+          npm install --no-save --package-lock=false --no-audit --no-fund esbuild @electric-sql/pglite react-test-renderer
+          mkdir -p /tmp/infixo-acquisition-tests /tmp/infixo-redesign-tests
+          printf '{"private":true}' > /tmp/infixo-acquisition-tests/package.json
+          printf '{"private":true}' > /tmp/infixo-redesign-tests/package.json
+          ln -s "$PWD/node_modules" /tmp/infixo-acquisition-tests/node_modules
+          ln -s "$PWD/node_modules" /tmp/infixo-redesign-tests/node_modules
       - run: node --test tests/*.mjs
       - run: npm run build
