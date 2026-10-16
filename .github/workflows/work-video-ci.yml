@@ -1,0 +1,38 @@
+name: Work Videos Feature CI
+on:
+  push:
+    branches:
+      - feat/admin-work-videos-v2
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/components/admin/WorkVideosEditor.js'
+      - 'app/components/admin/VideoThumbnailEditor.js'
+      - 'app/api/admin/video-upload/**'
+      - 'lib/videoResumableUpload.js'
+      - 'lib/workVideo.mjs'
+      - 'app/components/admin/AdminWorkerEditor.js'
+      - 'tests/work-video.test.mjs'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Install isolated legacy-test helpers (not production dependencies)
+        run: |
+          npm install --no-save --package-lock=false --no-audit --no-fund esbuild @electric-sql/pglite react-test-renderer
+          mkdir -p /tmp/infixo-acquisition-tests /tmp/infixo-redesign-tests
+          printf '{"private":true}' > /tmp/infixo-acquisition-tests/package.json
+          printf '{"private":true}' > /tmp/infixo-redesign-tests/package.json
+          ln -s "$PWD/node_modules" /tmp/infixo-acquisition-tests/node_modules
+          ln -s "$PWD/node_modules" /tmp/infixo-redesign-tests/node_modules
+      - run: node --test tests/*.mjs
+      - run: npm run build
