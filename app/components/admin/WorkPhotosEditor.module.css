@@ -1,0 +1,63 @@
+.counter {
+  margin: 0.65rem 0;
+  color: #002d97;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.photoCard {
+  aspect-ratio: 3 / 4;
+  background: #eef2f8;
+}
+.photoCard > img { object-fit: cover; }
+.photoControls {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 37px;
+  z-index: 3;
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+.photoControls button, .replace, .orderControls button {
+  font: inherit;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: rgba(0, 28, 80, 0.85);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 5px;
+  cursor: pointer;
+}
+.replace input { display: none; }
+.replace { display: inline-flex; align-items: center; }
+.orderControls {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  z-index: 3;
+  display: flex;
+  gap: 4px;
+}
+.orderControls button { min-width: 26px; min-height: 27px; }
+.photoControls button:disabled, .orderControls button:disabled { opacity: .45; cursor: not-allowed; }
+.addPhoto { aspect-ratio: 3 / 4; }
+.uploadBadge {
+  position: absolute;
+  inset: 30px 4px auto auto;
+  z-index: 4;
+  max-width: 75%;
+  padding: 4px 5px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  font-size: .57rem;
+  color: #002d97;
+  display: grid;
+  gap: 2px;
+}
+.uploadBadge progress { width: 75px; max-width: 100%; accent-color: #002d97; }
+.uploadBadge button { font-size: .67rem; border: 0; background: #002d97; color: white; border-radius: 4px; padding: 4px; }
+.itemError { position: absolute; left: 3px; right: 3px; top: 26px; z-index: 3; font-size: 0.62rem; background: white; color: #b91c1c; border-radius: 4px; overflow-wrap: anywhere; }
+.notice { color: #9a3412; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 9px; font-size: .78rem; }

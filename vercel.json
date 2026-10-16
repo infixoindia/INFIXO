@@ -3,7 +3,8 @@
   "git": {
     "deploymentEnabled": {
       "feat/diwali-worker-acquisition": false,
-      "feat/diwali-integration-staging": false
+      "feat/diwali-integration-staging": false,
+      "feat/admin-photo-corrections": false
     }
   }
 }
