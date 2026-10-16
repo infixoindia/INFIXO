@@ -77,7 +77,10 @@ export async function POST(request) {
       token: data.token,
       path,
       publicUrl: published.publicUrl,
-      endpoint: 'https://' + projectRef + '.storage.supabase.co/storage/v1/upload/resumable',
+      // Signed TUS uploads MUST use /resumable/sign. Normal /resumable expects a user JWT.
+      endpoint: 'https://' + projectRef + '.storage.supabase.co/storage/v1/upload/resumable/sign',
+      // Publishable/anon key is safe in browsers; service-role key stays server-only.
+      publicApiKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       bucket: BUCKET,
       maxBytes: MAX_VIDEO_BYTES,
     }, { headers: { 'Cache-Control': 'no-store' } });
