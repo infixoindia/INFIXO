@@ -76,7 +76,7 @@ export default function WorkVideosEditor({
   useEffect(() => { if (onDirtyChange) onDirtyChange(dirty); }, [dirty, onDirtyChange]);
   useEffect(() => {
     if (!onPreviewChange) return;
-    onPreviewChange(dirty ? items.filter(x => x.preview).map(x => ({
+    onPreviewChange(dirty ? items.filter(x => x.preview && (x.thumbPreview || x.thumbnail)).map(x => ({
       video: x.url || x.preview, thumbnail: x.thumbPreview || x.thumbnail || '',
       duration: x.duration,
     })) : null);
@@ -217,7 +217,6 @@ export default function WorkVideosEditor({
     } catch (e) { setNotice(e.message || 'Save failed. Existing saved videos have not changed.'); }
     finally { setBusy(false); }
   };
-  const retry = id => { replaceItem(id, { status: 'pending', error: '', progress: 0 }); void saveAll(); };
   return (
     <section className={css.root}>
       <div className={css.heading}>
