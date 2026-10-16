@@ -7,6 +7,7 @@ import { uploadWorkerFile, deleteWorkerFile } from '@/lib/storageService';
 import { WORK_PHOTO_FRAME_RATIO, toWorkPhotoEntry, workPhotoCrop, workPhotoUrl } from '@/lib/workPhoto.mjs';
 import PhotoCropper from './PhotoCropper';
 import CroppedImage from '../CroppedImage/CroppedImage';
+import { moveWorkPhoto } from '@/lib/workPhotoOrder.mjs';
 
 // Work Gallery cards are 3:4. These uploads are ORIGINAL image files;
 // crop metadata only changes how the gallery thumbnail is framed.
@@ -50,6 +51,13 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [notice, setNotice] = useState('');
+  const [viewerId, setViewerId] = useState(null);
+  const [dragVisual, setDragVisual] = useState(null);
+  const dragRef = useRef(null);
+  const suppressClick = useRef(false);
+  const replaceInput = useRef(null);
+  const busyRef = useRef(false);
+  busyRef.current = busy || saving;
   const tempUrls = useRef(new Set());
 
   // Worker switching is rare, but never display another worker's staged photos.
@@ -58,6 +66,7 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
     setItems(itemsRef.current);
     setDirty(false);
     setCropId(null);
+    setViewerId(null);
     setNotice('');
   }, [worker.id]);
 
@@ -82,6 +91,95 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
     tempUrls.current.clear();
   }, []);
 
+
+  // Touch long-press + drag (Android) and press/drag (mouse).
+  // Leave browser scrolling untouched until the long-press timer fires.
+  useEffect(() => {
+    const finish = () => {
+      const d = dragRef.current;
+      if (!d) return;
+      clearTimeout(d.timer);
+      if (d.active) {
+        suppressClick.current = true;
+        setTimeout(() => { suppressClick.current = false; }, 450);
+      }
+      dragRef.current = null;
+      setDragVisual(null);
+    };
+    const move = (x, y) => {
+      const d = dragRef.current;
+      if (!d?.active) return;
+      setDragVisual({ id:d.id, src:d.src, x, y });
+      const target = document.elementFromPoint(x, y)?.closest('[data-photo-id]')?.getAttribute('data-photo-id');
+      if (!target || target === d.id || busyRef.current) return;
+      const next = moveWorkPhoto(itemsRef.current, d.id, target);
+      if (next === itemsRef.current) return;
+      itemsRef.current = next; setItems(next); setDirty(true); setNotice('');
+    };
+    const touchMove = e => {
+      const d=dragRef.current;
+      if (!d || d.kind!=='touch') return;
+      const t=[...e.touches].find(t=>t.identifier===d.pointer);
+      if (!t) return;
+      if (!d.active) {
+        if (Math.hypot(t.clientX-d.startX,t.clientY-d.startY)>10) finish();
+        return;
+      }
+      if(e.cancelable)e.preventDefault();
+      move(t.clientX,t.clientY);
+    };
+    const touchEnd = e => {
+      const d=dragRef.current;
+      if(d?.kind==='touch' && [...e.changedTouches].some(t=>t.identifier===d.pointer))finish();
+    };
+    const pointerMove = e => {
+      const d=dragRef.current;
+      if(!d || d.kind!=='mouse')return;
+      if(!(e.buttons & 1)){finish();return;}
+      if(!d.active && Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>7)d.active=true;
+      if(d.active)move(e.clientX,e.clientY);
+    };
+    const pointerUp = () => {if(dragRef.current?.kind==='mouse')finish();};
+    document.addEventListener('touchmove',touchMove,{passive:false});
+    document.addEventListener('touchend',touchEnd);
+    document.addEventListener('touchcancel',touchEnd);
+    document.addEventListener('pointermove',pointerMove);
+    document.addEventListener('pointerup',pointerUp);
+    document.addEventListener('pointercancel',pointerUp);
+    window.addEventListener('blur',finish);
+    return () => {
+      finish();
+      document.removeEventListener('touchmove',touchMove);
+      document.removeEventListener('touchend',touchEnd);
+      document.removeEventListener('touchcancel',touchEnd);
+      document.removeEventListener('pointermove',pointerMove);
+      document.removeEventListener('pointerup',pointerUp);
+      document.removeEventListener('pointercancel',pointerUp);
+      window.removeEventListener('blur',finish);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!viewerId) return undefined;
+    const previous=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    const esc=e=>{if(e.key==='Escape' && !cropId)setViewerId(null);};
+    document.addEventListener('keydown',esc);
+    return ()=>{document.body.style.overflow=previous;document.removeEventListener('keydown',esc);};
+  },[viewerId,cropId]);
+
+  const startDrag = (id,x,y,kind,pointer=null) => {
+    if(busyRef.current || cropId || viewerId)return;
+    const item=itemsRef.current.find(x=>x.id===id);
+    if(!item)return;
+    if(dragRef.current?.timer)clearTimeout(dragRef.current.timer);
+    const d={id,src:item.preview,startX:x,startY:y,kind,pointer,active:false,timer:null};
+    dragRef.current=d;
+    if(kind==='touch')d.timer=window.setTimeout(()=>{
+      if(dragRef.current!==d || busyRef.current)return;
+      d.active=true;setDragVisual({id,src:item.preview,x,y});
+    },320);
+  };
   const setCurrent = next => { itemsRef.current = next; setItems(next); };
   const change = updater => { setCurrent(updater(itemsRef.current)); setDirty(true); setNotice(''); };
   const changeRow = (id, updater) => {
@@ -119,11 +217,11 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
   const replacePhoto = (id, e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
-    if (!file || busy) return;
+    if (!file || busy) return false;
     const error = validateFile(file);
-    if (error) { setNotice(error); return; }
+    if (error) { setNotice(error); return false; }
     const old = itemsRef.current.find(item => item.id === id);
-    if (!old) return;
+    if (!old) return false;
     // A previous unsaved upload can be safely removed. Saved originals are
     // retained until the replacement's DB save is confirmed.
     discardUnsavedUpload(old);
@@ -131,6 +229,7 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
     const preview = URL.createObjectURL(file);
     tempUrls.current.add(preview);
     change(prev => prev.map(item => item.id === id ? makeTemporaryItem(file, preview) : item));
+    return true;
   };
 
   const removePhoto = id => {
@@ -141,18 +240,7 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
     discardTemp(old);
     change(prev => prev.filter(item => item.id !== id));
     if (cropId === id) setCropId(null);
-  };
-
-  const movePhoto = (id, direction) => {
-    if (busy) return;
-    const index = itemsRef.current.findIndex(item => item.id === id);
-    const target = index + direction;
-    if (index < 0 || target < 0 || target >= itemsRef.current.length) return;
-    change(prev => {
-      const next = [...prev];
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
+    if (viewerId === id) setViewerId(null);
   };
 
   const uploadItem = async id => {
@@ -214,78 +302,119 @@ export default function WorkPhotosEditor({ worker, onSave, onDirtyChange, onPrev
   };
 
   const cropped = cropId ? items.find(item => item.id === cropId) : null;
+  const viewed = viewerId ? items.find(item => item.id === viewerId) : null;
   const locked = busy || saving;
 
   return (
     <div className={styles.card}>
       <h3 className={styles.cardTitle}>Work Photos</h3>
-      <p className={styles.hint}>
-        Multiple photos ek saath choose karein. Har photo ka 3:4 gallery crop alag set karein.
-        Original image fullscreen viewer mein safe rehti hai.
-      </p>
-      <p className={styles.hint}>
-        PRO: maximum 6 photos · FREE: maximum 2 photos. File limit: 4 MB/photo (current upload server).
-      </p>
+      <p className={styles.hint}>Photo par tap karke original dekhein. Long-press karke drag se order badlein. 3:4 Frame se sirf gallery thumbnail adjust hota hai.</p>
+      <p className={styles.hint}>PRO: max 6 · FREE: max 2 · 4 MB/photo. Original image hamesha safe.</p>
       <p className={photoStyles.counter}>{items.length} / {MAX_WORK_PHOTOS} photos {dirty ? '· Unsaved changes' : '· Saved'}</p>
-
-      <div className={styles.mediaGrid}>
-        {items.map((item, idx) => (
-          <div key={item.id} className={`${styles.mediaItem} ${photoStyles.photoCard}`}>
+      <div className={styles.mediaGrid} aria-label="Long-press a work photo to reorder">
+        {items.map((item,idx)=>(
+          <div key={item.id} data-photo-id={item.id}
+            className={styles.mediaItem+' '+photoStyles.photoCard+(dragVisual?.id===item.id?' '+photoStyles.dragSource:'')}
+            role="button" tabIndex={0}
+            aria-label={'View original work photo '+(idx+1)+'. Long-press to reorder.'}
+            onClick={()=>{if(!locked && !suppressClick.current)setViewerId(item.id);}}
+            onKeyDown={e=>{
+              if((e.key==='Enter'||e.key===' ')&&!locked){e.preventDefault();setViewerId(item.id);}
+              if(e.altKey && (e.key==='ArrowLeft'||e.key==='ArrowRight')&&!locked){
+                e.preventDefault();const neighbour=items[idx+(e.key==='ArrowLeft'?-1:1)];
+                if(neighbour)change(prev=>moveWorkPhoto(prev,item.id,neighbour.id));
+              }
+            }}
+            onTouchStart={e=>{
+              if(e.target.closest('button,input,label')||e.touches.length!==1)return;
+              const t=e.touches[0];startDrag(item.id,t.clientX,t.clientY,'touch',t.identifier);
+            }}
+            onPointerDown={e=>{
+              if(e.pointerType==='touch'||e.button!==0||e.target.closest('button,input,label'))return;
+              startDrag(item.id,e.clientX,e.clientY,'mouse');
+            }}
+            onContextMenu={e=>{if(dragRef.current)e.preventDefault();}}
+          >
             {item.crop
-              ? <CroppedImage src={item.preview} crop={item.crop} alt={`Work photo ${idx + 1}`} />
-              : <img src={item.preview} alt={`Work photo ${idx + 1}`} />}
-            <div className={photoStyles.photoControls}>
-              <button type="button" onClick={() => setCropId(item.id)} disabled={locked} aria-label={`Crop photo ${idx + 1}`}>Crop</button>
-              <label className={photoStyles.replace} aria-label={`Replace photo ${idx + 1}`}>
-                Replace<input type="file" accept="image/*" disabled={locked} onChange={e => replacePhoto(item.id, e)} />
-              </label>
-            </div>
-            <button type="button" className={styles.mediaRemoveBtn} onClick={() => removePhoto(item.id)}
-              disabled={locked} aria-label={`Remove photo ${idx + 1}`} style={{ zIndex: 4 }}>✕</button>
-            <div className={photoStyles.orderControls}>
-              <button type="button" onClick={() => movePhoto(item.id, -1)} disabled={locked || idx === 0} aria-label={`Move photo ${idx + 1} left`}>↑</button>
-              <button type="button" onClick={() => movePhoto(item.id, 1)} disabled={locked || idx === items.length - 1} aria-label={`Move photo ${idx + 1} right`}>↓</button>
-            </div>
-            {item.file && (
-              <div className={photoStyles.uploadBadge} aria-live="polite">
-                {item.status === 'uploading' ? `Uploading ${item.progress}%`
-                  : item.status === 'failed' ? <><span>Upload failed</span><button type="button" disabled={locked} onClick={() => retry(item.id)}>Retry</button></>
-                  : item.status === 'uploaded' ? 'Uploaded · Not saved' : 'Ready to upload'}
-                {item.status === 'uploading' && <progress max="100" value={item.progress} />}
+              ? <CroppedImage src={item.preview} crop={item.crop} alt={'Work photo '+(idx+1)} />
+              : <img src={item.preview} alt={'Work photo '+(idx+1)} draggable={false} />}
+
+            {/* Thumbnail X is REMOVE, always visible. Viewer has its own CLOSE X. */}
+            <button type="button" className={styles.mediaRemoveBtn}
+              onClick={e=>{e.stopPropagation();removePhoto(item.id);}}
+              onTouchStart={e=>e.stopPropagation()} onPointerDown={e=>e.stopPropagation()}
+              disabled={locked} aria-label={'Remove photo '+(idx+1)} style={{zIndex:4}}>✕</button>
+
+            {item.status==='uploading'&&(
+              <div className={photoStyles.progressOverlay} role="status">
+                <span className={photoStyles.progressPercent}>{item.progress}%</span>
+                <div className={photoStyles.progressTrack}>
+                  <div className={photoStyles.progressFill} style={{width:String(item.progress)+'%'}} />
+                </div>
+                <span className={photoStyles.progressCaption}>Uploading</span>
               </div>
             )}
-            {item.error && <p className={photoStyles.itemError}>{item.error}</p>}
+            {item.status==='failed'&&(
+              <div className={photoStyles.failedOverlay} role="status" onClick={e=>e.stopPropagation()}>
+                <span>Upload failed</span>
+                <button type="button" disabled={locked} onClick={e=>{e.stopPropagation();retry(item.id);}}>Retry</button>
+              </div>
+            )}
           </div>
         ))}
-        {items.length < MAX_WORK_PHOTOS && (
-          <label className={`${styles.uploadBox} ${photoStyles.addPhoto}`} aria-label="Select multiple work photos">
-            {locked ? 'Please wait…' : '+ Add Photos'}
+        {items.length<MAX_WORK_PHOTOS&&(
+          <label className={styles.uploadBox+' '+photoStyles.addPhoto} aria-label="Select multiple work photos">
+            {locked?'Please wait…':'+ Add Photos'}
             <input type="file" accept="image/*" multiple disabled={locked} onChange={addFiles} />
           </label>
         )}
       </div>
-      <p className={styles.hint}>Drag / zoom har photo ke Crop popup mein. ↑ ↓ se order change hota hai. Save All ke bina worker profile update nahi hogi.</p>
-      {notice && <p className={photoStyles.notice} role="status">{notice}</p>}
+      <p className={styles.hint}>Android Files picker agar multiple select nahi kare, toh Add Photos dobara use karein. Pehle wali photos nahi hatengi.</p>
+      {notice&&<p className={photoStyles.notice} role="status">{notice}</p>}
       <div className={styles.saveRow}>
-        <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} onClick={saveAll} disabled={locked}>
-          {locked ? 'Uploading / Saving…' : 'Save All Photos'}
+        <button type="button" className={styles.btn+' '+styles.btnPrimary}
+          onClick={saveAll} disabled={locked||!dirty}>
+          {locked?'Uploading / Saving…':'Save All Photos'}
         </button>
-        {saveMessage && <span className={styles.saveMsg}>{saveMessage}</span>}
-        {saveError && <span className={styles.saveMsgError}>{saveError}</span>}
+        {saveMessage&&<span className={styles.saveMsg}>{saveMessage}</span>}
+        {saveError&&<span className={styles.saveMsgError}>{saveError}</span>}
       </div>
-      {cropped && (
-        <PhotoCropper
-          key={cropped.id}
-          src={cropped.preview}
-          initialCrop={cropped.crop}
-          frameRatio={WORK_PHOTO_FRAME_RATIO}
-          context="Work Gallery"
-          onCancel={() => setCropId(null)}
-          onApply={crop => {
-            change(prev => prev.map(item => item.id === cropped.id ? { ...item, crop } : item));
+
+      {dragVisual&&(
+        <div className={photoStyles.dragGhost} aria-hidden="true"
+          style={{left:dragVisual.x,top:dragVisual.y}}>
+          <img src={dragVisual.src} alt="" draggable={false} />
+        </div>
+      )}
+
+      {viewed&&(
+        <div className={photoStyles.viewer} role="dialog" aria-modal="true" aria-label="Original work photo">
+          <header className={photoStyles.viewerHeader}>
+            <span>Original photo · {items.findIndex(x=>x.id===viewed.id)+1} / {items.length}</span>
+            <button type="button" className={photoStyles.viewerClose}
+              onClick={()=>setViewerId(null)} aria-label="Close photo viewer">✕</button>
+          </header>
+          <div className={photoStyles.viewerCanvas}>
+            <img src={viewed.preview} alt="Original work photo" draggable={false} />
+          </div>
+          <div className={photoStyles.viewerActions}>
+            <button type="button" className={photoStyles.frameButton}
+              onClick={()=>setCropId(viewed.id)} disabled={locked}>Frame</button>
+            <button type="button" className={photoStyles.replaceButton}
+              onClick={()=>replaceInput.current?.click()} disabled={locked}>Replace</button>
+            <input ref={replaceInput} className={photoStyles.visuallyHidden} type="file"
+              accept="image/*" onChange={e=>{if(replacePhoto(viewed.id,e))setViewerId(null);}} />
+          </div>
+        </div>
+      )}
+      {cropped&&(
+        <PhotoCropper key={cropped.id} src={cropped.preview} initialCrop={cropped.crop}
+          frameRatio={WORK_PHOTO_FRAME_RATIO} context="Work Gallery"
+          onCancel={()=>setCropId(null)}
+          onApply={crop=>{
+            change(prev=>prev.map(item=>item.id===cropped.id?{...item,crop}:item));
             setCropId(null);
-          }}
-        />
+          }} />
       )}
     </div>
   );
