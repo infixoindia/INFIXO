@@ -14,7 +14,8 @@ function setup({ failFirstPatch = false } = {}) {
     return { ok:true, json:async()=>({
       token:'presigned-temporary',path:'worker-1/videos/uuid.mp4',
       bucket:'worker-media',publicUrl:'https://staging.example/storage/v1/object/public/worker-media/worker-1/videos/uuid.mp4',
-      endpoint:'https://staging.storage.supabase.co/storage/v1/upload/resumable',
+      endpoint:'https://staging.storage.supabase.co/storage/v1/upload/resumable/sign',
+      publicApiKey:'sb_publishable_staging_test_public_only',
     })};
   };
   class FakeXHR {
@@ -28,6 +29,11 @@ function setup({ failFirstPatch = false } = {}) {
           trace.push({method:this.method, endpoint:this.endpoint, headers:this.headers, size:data?.size||0});
           assert.equal(this.headers['x-signature'], 'presigned-temporary');
           assert.equal(this.headers['Tus-Resumable'], '1.0.0');
+          assert.equal(this.headers.apikey, 'sb_publishable_staging_test_public_only');
+          assert.equal(this.headers.authorization, undefined);
+          if (this.method === 'POST') {
+            assert.match(this.endpoint, /\/storage\/v1\/upload\/resumable\/sign$/);
+          }
           this.status = this.method === 'POST' ? 201 : 204;
           if (this.method==='POST') this.resultHeaders={location:'/storage/v1/upload/resumable/SESSION'};
           if (this.method==='HEAD') this.resultHeaders={'upload-offset':String(offset)};
