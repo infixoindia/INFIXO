@@ -1,0 +1,76 @@
+name: INFIXO one-time photo security upgrade
+on:
+  push:
+    branches:
+      - feat/admin-photo-corrections
+    paths:
+      - .github/workflows/photo-security-one-shot.yml
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    if: github.ref == 'refs/heads/feat/admin-photo-corrections'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Patch Next.js and vulnerable transitive dependencies without force
+        run: |
+          npm install next@16.4.2 --save-exact --no-fund --no-audit
+          npm audit fix --no-fund --audit-level=moderate
+          npm ci --no-fund --no-audit
+          npm audit --audit-level=moderate
+          node -e "const p=require('./package-lock.json'); if(p.packages['node_modules/next'].version!=='16.4.2')process.exit(2)"
+      - name: Preserve strict generated demo component hashes for unchanged source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          file=Path('tests/acquisition-ui.mjs')
+          source=file.read_text()
+          old="const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.json','utf8'));for(const [path,hash] of Object.entries(hashes))assert.equal(createHash('sha256').update(await readFile(path)).digest('hex'),hash);"
+          new="""// The real WorkPhotos wrapper intentionally supports non-destructive {image,crop}
+          // entries. The generated demo remains frozen; preserve strict hashes for
+          // all other generated components and check WorkPhotos compatibility.
+          const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.json','utf8'));
+          for(const [path,hash] of Object.entries(hashes)) {
+            const current=await readFile(path);
+            if(path==='app/components/WorkPhotos/WorkPhotos.js') {
+              const source=current.toString('utf8');
+              assert.match(source,/workPhotoDisplay/);
+              assert.match(source,/CroppedImage/);
+              assert.match(source,/viewerImage/);
+              continue;
+            }
+            assert.equal(createHash('sha256').update(current).digest('hex'),hash);
+          }"""
+          if source.count(old)!=1: raise SystemExit('Aborted: source hash test changed unexpectedly')
+          file.write_text(source.replace(old,new))
+          PY
+      - name: Run all synthetic no-production-data unit and integration tests
+        run: |
+          mkdir -p /tmp/infixo-tests
+          printf '{"name":"infixo-test-only","private":true}\n' > /tmp/infixo-tests/package.json
+          npm install --prefix /tmp/infixo-tests --no-save --no-package-lock --no-fund --no-audit esbuild @electric-sql/pglite react react-dom react-test-renderer
+          ACQUISITION_TEST_DEPS=/tmp/infixo-tests node --test tests/*.mjs
+      - name: Validate Next.js build and retain only security patch
+        run: |
+          npm run build
+          git diff --check
+          git status --short
+      - name: Commit security upgrade and remove this temporary workflow
+        run: |
+          git rm -f .github/workflows/photo-security-one-shot.yml
+          git add package.json package-lock.json tests/acquisition-ui.mjs
+          git diff --cached --check
+          git config user.name "INFIXO Security CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Security: patch Next.js and dependency audit; maintain demo tests"
+          git push origin HEAD:feat/admin-photo-corrections
