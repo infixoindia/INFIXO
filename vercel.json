@@ -4,7 +4,8 @@
     "deploymentEnabled": {
       "feat/diwali-worker-acquisition": false,
       "feat/diwali-integration-staging": false,
-      "feat/admin-photo-corrections": false
+      "feat/admin-photo-corrections": false,
+      "feat/admin-work-videos-v2": false
     }
   }
 }
