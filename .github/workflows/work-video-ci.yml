@@ -1,0 +1,30 @@
+name: Work Videos Feature CI
+on:
+  push:
+    branches:
+      - feat/admin-work-videos-v2
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/components/admin/WorkVideosEditor.js'
+      - 'app/components/admin/VideoThumbnailEditor.js'
+      - 'app/api/admin/video-upload/**'
+      - 'lib/videoResumableUpload.js'
+      - 'lib/workVideo.mjs'
+      - 'app/components/admin/AdminWorkerEditor.js'
+      - 'tests/work-video.test.mjs'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: node --test tests/*.mjs
+      - run: npm run build
