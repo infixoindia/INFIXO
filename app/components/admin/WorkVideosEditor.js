@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import css from './WorkVideosEditor.module.css';
+import adminStyles from './Admin.module.css';
 import VideoThumbnailEditor from './VideoThumbnailEditor';
 import { deleteWorkerFile } from '@/lib/storageService';
 import { uploadResumableVideo, uploadVideoThumbnail, videoFileSignature } from '@/lib/videoResumableUpload';
@@ -228,8 +229,8 @@ export default function WorkVideosEditor({
         </label>
       </div>
       <p className={css.hint}>
-        Gallery cards 3:4; tap opens the original video. Choose a frame from each video, then Save All.
-        Select multiple in Gallery/File Manager or add one at a time. No automatic FREE/PRO blocking.
+        Gallery cards 3:4. Long-press a video and drag to change its order. Choose a thumbnail frame, then Save All.
+        Select multiple videos together or add them one at a time.
       </p>
       <div className={css.grid}>
         {items.map((item, i) => (
@@ -238,12 +239,20 @@ export default function WorkVideosEditor({
             onTouchStart={e => startTouch(e, i)} onTouchMove={movingTouch} onTouchEnd={endTouch} onTouchCancel={endTouch}
             draggable={!busy} onDragStart={e => { e.dataTransfer.setData('text/plain', String(i)); }}
             onDragOver={e => e.preventDefault()}
-            onDrop={e => { e.preventDefault(); move(Number(e.dataTransfer.getData('text/plain')), i); }}>
+            onDrop={e => { e.preventDefault(); move(Number(e.dataTransfer.getData('text/plain')), i); }}
+            onContextMenu={e => { if (touchRef.current?.active) e.preventDefault(); }}>
             <div className={css.preview}>
               {(item.thumbPreview || item.thumbnail) ?
                 <img alt={'Video thumbnail ' + (i + 1)} src={item.thumbPreview || item.thumbnail}/> :
                 <video muted playsInline preload="metadata" src={item.preview || item.url}/>}
               <span className={css.badge}>{item.duration}</span>
+              <button type="button" className={adminStyles.mediaRemoveBtn}
+                onClick={e => { e.stopPropagation(); remove(item.id); }}
+                onTouchStart={e => e.stopPropagation()}
+                onPointerDown={e => e.stopPropagation()}
+                disabled={busy || saving}
+                aria-label={'Remove video ' + (i + 1)}
+                style={{ zIndex: 4 }}>✕</button>
             </div>
             <div className={css.cardContent}>
               <p className={css.filename}>{item.file?.name || 'Saved video ' + (i + 1)}</p>
@@ -257,9 +266,6 @@ export default function WorkVideosEditor({
               {item.error && <p className={css.error} role="alert">{item.error}</p>}
               <div className={css.smallButtons}>
                 <button type="button" disabled={busy || saving} onClick={() => setEditing(item.id)}>Choose Thumbnail</button>
-                <button type="button" disabled={busy || saving || i === 0} onClick={() => move(i, i - 1)} aria-label="Move up">↑</button>
-                <button type="button" disabled={busy || saving || i === items.length - 1} onClick={() => move(i, i + 1)} aria-label="Move down">↓</button>
-                <button type="button" disabled={busy || saving} onClick={() => remove(item.id)}>Remove</button>
                 {item.status === 'failed' && <button type="button" disabled={busy || saving} onClick={() => { replaceItem(item.id, { status: 'pending', error: '' }); void saveAll(); }}>Retry</button>}
               </div>
             </div>
