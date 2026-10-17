@@ -3,7 +3,7 @@ import styles from "./WorkDetails.module.css";
 import { resolveSkillCategory } from "@/lib/skillCategories";
 import ServiceChips from "./ServiceChips";
 
-export default function WorkDetails({ worker, backHref = "/" }) {
+export default function WorkDetails({ worker, backHref = "/", backReplace = false }) {
   const skillCategory = resolveSkillCategory(worker?.profession);
   const services = worker?.services || [];
   const whyChooseMe = worker?.whyChooseMe || [];
@@ -17,7 +17,7 @@ export default function WorkDetails({ worker, backHref = "/" }) {
 
       <div className={styles.header}>
 
-    <Link href={backHref} className={styles.backLink}>
+    <Link href={backHref} replace={backReplace} className={styles.backLink}>
   <svg
     className={styles.backArrow}
     viewBox="0 0 24 24"
