@@ -20,5 +20,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function WorkerPwaLayout({ children }) {
-  return children;
+  return <><script src="/worker-pwa-install-early.js" />{children}</>;
 }
