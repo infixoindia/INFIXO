@@ -23,12 +23,17 @@ test("preferred icon comes from existing Identity photo; original photo is uncha
 test("manifest identifies each worker independently and opens by permanent ID", () => {
   const manifest = makeWorkerManifest(worker);
   assert.equal(manifest.id, "/pwa/worker/" + worker.id);
-  assert.equal(manifest.start_url, "/pwa/open/" + worker.id);
+  assert.equal(manifest.start_url, "/pwa/worker/" + worker.id);
+  assert.equal(manifest.scope, "/pwa/worker/" + worker.id);
+  assert.notEqual(manifest.scope, "/");
+  assert.ok(!"/admin".startsWith(manifest.scope));
+  assert.ok(!"/w/rahul-painter".startsWith(manifest.scope));
   assert.equal(manifest.display, "standalone");
   assert.deepEqual(manifest.icons.map(x => x.sizes), ["192x192", "512x512"]);
   assert.equal(manifest.icons[0].purpose, "any");
   assert.ok(manifest.icons[1].src.includes(worker.id));
   assert.notEqual(makeWorkerManifest({ ...worker, id: "other-worker" }).id, manifest.id);
+  assert.notEqual(makeWorkerManifest({ ...worker, id: "other-worker" }).scope, manifest.scope);
 });
 
 test("icon revision changes on photo/framing changes, not profile name changes", () => {

@@ -53,7 +53,7 @@ function WorkerProfilePageInner() {
       <Header />
       <div style={{ padding: "2rem 1rem 0 1rem" }}>
         <WorkerIdentityCard worker={worker} />
-        <WorkerPwaInstall workerName={worker.fullName} />
+        <WorkerPwaInstall workerName={worker.fullName} workerId={worker.id} />
         <NavigationTabs worker={worker} basePath={privateBasePath} queryString={queryString} />
       </div>
       <Footer slug={slug} />

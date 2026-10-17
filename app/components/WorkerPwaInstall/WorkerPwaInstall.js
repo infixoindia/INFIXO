@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 // Visible only on the worker's own handover link, never on customer profiles.
 // Browsers decide whether an install prompt can be shown. Explain manual steps
 // instead of pretending that silent installation is possible.
-export default function WorkerPwaInstall({ workerName = "My" }) {
+export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
   const [deferred, setDeferred] = useState(null);
   const [instructions, setInstructions] = useState(false);
   const [installed, setInstalled] = useState(false);
@@ -25,7 +25,17 @@ export default function WorkerPwaInstall({ workerName = "My" }) {
 
   if (installed) return null;
   const install = async () => {
-    if (!deferred) { setInstructions(true); return; }
+    if (!deferred) {
+      // An out-of-scope handover page may only create a browser shortcut.
+      // Move to this worker\u0027s dedicated installable PWA scope first.
+      const target = workerId ? `/pwa/worker/${encodeURIComponent(workerId)}` : "";
+      if (target && !window.location.pathname.startsWith(target)) {
+        window.location.assign(target);
+        return;
+      }
+      setInstructions(true);
+      return;
+    }
     try {
       await deferred.prompt();
       const choice = await deferred.userChoice;

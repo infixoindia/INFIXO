@@ -1,0 +1,64 @@
+.splash {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse 85% 65% at 50% 43%, #103b89 0%, #081f56 52%, #061945 100%);
+  opacity: 1;
+  transition: opacity 260ms ease;
+  isolation: isolate;
+}
+.leaving { opacity: 0; pointer-events: none; }
+.aura {
+  position: absolute;
+  width: min(100vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(24, 146, 232, .15), transparent 67%);
+  animation: breathe 2.2s ease-in-out infinite alternate;
+}
+.brand { position: relative; width: min(84vw, 410px); text-align: center; }
+.logoWrap {
+  position: relative;
+  overflow: hidden;
+  animation: logoEnter 650ms cubic-bezier(.2,.8,.2,1) both;
+}
+.logo { width: 100%; height: auto; display: block; object-fit: contain; filter: drop-shadow(0 7px 24px rgba(0,0,0,.15)); }
+.sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 36%, rgba(255,255,255,.05) 43%, rgba(160,226,255,.42) 50%, transparent 60%);
+  transform: translateX(-140%);
+  mix-blend-mode: screen;
+  animation: shine 1.2s 330ms ease-in-out both;
+}
+.tagline {
+  margin: 12px 0 0;
+  color: #f6f9ff;
+  font-size: clamp(13px, 3.6vw, 17px);
+  font-weight: 500;
+  letter-spacing: .02em;
+  animation: taglineEnter 550ms 260ms ease-out both;
+}
+.progress {
+  position: absolute; bottom: max(38px, env(safe-area-inset-bottom, 0px) + 24px);
+  width: 30px; height: 3px; border-radius: 20px;
+  background: linear-gradient(90deg, #1789de, #7fe2fc);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+.unavailable { min-height: 100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; color:#14336e; }
+.miniLogo { width: min(65vw, 230px); height: auto; }
+@keyframes logoEnter { from { opacity: 0; transform: translateY(10px) scale(.955); filter: blur(3px); } to { opacity:1; transform:translateY(0) scale(1); filter:blur(0); } }
+@keyframes shine { to { transform: translateX(140%); } }
+@keyframes taglineEnter { from { opacity:0; transform: translateY(9px); } to { opacity:1; transform:translateY(0); } }
+@keyframes breathe { from { transform:scale(.92); opacity:.45; } to { transform:scale(1.07); opacity:1; } }
+@keyframes pulse { from { opacity:.25; transform:scaleX(.45); } to { opacity:1; transform:scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .aura,.logoWrap,.sweep,.tagline,.progress { animation: none; }
+  .sweep { display:none; }
+  .leaving { transition:none; }
+}

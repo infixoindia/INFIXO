@@ -219,7 +219,8 @@ export default function WorkerShareFab({ worker, cleanUrl }) {
     ? `/w/${worker.slug}/${worker.ipuc}`
     : null;
   const normalizedPath = (pathname || "").replace(/\/$/, "");
-  const isAllowedHomePath = normalizedPath === rootPath || normalizedPath === ipucHomePath;
+  const pwaHomePath = worker?.id ? `/pwa/worker/${worker.id}` : null;
+  const isAllowedHomePath = normalizedPath === rootPath || normalizedPath === ipucHomePath || normalizedPath === pwaHomePath;
   if (!isAllowedHomePath) return null;
 
   const vp = getViewport();
