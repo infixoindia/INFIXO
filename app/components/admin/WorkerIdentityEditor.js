@@ -18,7 +18,13 @@ export default function WorkerIdentityEditor({
 }) {
   const [uploading, setUploading] = useState(false);
   const [cropIdx, setCropIdx] = useState(null);
+  const [iconCropIdx, setIconCropIdx] = useState(null);
   const heroSlides = worker.heroSlides || [];
+  const chosenIcon = heroSlides.findIndex(slide => slide?.pwaIcon && slide?.image);
+  const iconIndex = chosenIcon < 0 ? 0 : chosenIcon;
+  const iconSlide = heroSlides[iconIndex];
+  const chooseIconPhoto = index => updateField("heroSlides", heroSlides.map((slide, i) => ({ ...slide, pwaIcon: i === index })));
+
 
   const serviceAreaText = Array.isArray(worker.serviceArea)
     ? worker.serviceArea.join(", ")
@@ -64,7 +70,7 @@ export default function WorkerIdentityEditor({
       });
       const oldUrl = heroSlides[index]?.image;
       const next = [...heroSlides];
-      next[index] = { image: url };
+      next[index] = { image: url, ...(heroSlides[index]?.pwaIcon ? { pwaIcon: true } : {}) };
       updateField("heroSlides", next);
       setCropIdx(index);
       if (oldUrl) deleteWorkerFile(oldUrl);
@@ -212,6 +218,55 @@ export default function WorkerIdentityEditor({
           </label>
         </div>
         <p className={styles.hint}>Tap a photo to replace it. Use ↑ ↓ to reorder. Use Crop to set what shows in the Identity Profile (original photo is kept).</p>
+
+        {iconSlide?.image && (
+          <div style={{ marginTop: 16, padding: 14, border: "1px solid #d9e3f4", borderRadius: 14, background: "#f5f8ff" }}>
+            <strong style={{ display: "block", fontSize: 15, marginBottom: 4 }}>Home Screen App Icon</strong>
+            <p className={styles.hint} style={{ marginTop: 0 }}>
+              Same Identity photo, but separate square framing. Original photo and Identity crop never change.
+            </p>
+            <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", width: 136, height: 136, flexShrink: 0, borderRadius: 26, overflow: "hidden", background: "#002D97" }}>
+                {iconSlide.pwaCrop ? (
+                  <CroppedImage src={iconSlide.image} crop={iconSlide.pwaCrop} alt="PWA icon preview" />
+                ) : (
+                  <img src={iconSlide.image} alt="PWA icon preview" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 35%" }} />
+                )}
+                <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: "37%", background: "linear-gradient(180deg, transparent, rgba(3,19,43,.78))", pointerEvents: "none" }} />
+                <img src="/images/logo.png" alt="INFIXO" style={{ position: "absolute", left: "14%", bottom: "4.5%", width: "72%", height: "22%", objectFit: "contain", pointerEvents: "none" }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 9, minWidth: 170, flex: 1 }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+                  {heroSlides.map((slide, i) => slide?.image && (
+                    <button type="button" key={i} onClick={() => chooseIconPhoto(i)}
+                      style={{ border: i === iconIndex ? "2px solid #002D97" : "1px solid #cbd5e1", background: i === iconIndex ? "#e4eeff" : "#fff", color: "#173264", padding: "7px 10px", borderRadius: 9, cursor: "pointer" }}>
+                      Photo {i + 1}{i === iconIndex ? " ✓" : ""}
+                    </button>
+                  ))}
+                </div>
+                <button type="button" onClick={() => setIconCropIdx(iconIndex)}
+                  style={{ background: "#002D97", border: 0, color: "#fff", fontWeight: 700, borderRadius: 10, padding: "11px 12px", cursor: "pointer", textAlign: "center" }}>
+                  Adjust App Icon (1:1)
+                </button>
+                <small style={{ color: "#64748b" }}>Official INFIXO logo + subtle dark gradient. Save Identity to publish.</small>
+              </div>
+            </div>
+          </div>
+        )}
+        {iconCropIdx !== null && heroSlides[iconCropIdx]?.image && (
+          <PhotoCropper
+            src={heroSlides[iconCropIdx].image}
+            initialCrop={heroSlides[iconCropIdx].pwaCrop}
+            frameRatio={1}
+            context="Home Screen App Icon"
+            onCancel={() => setIconCropIdx(null)}
+            onApply={crop => {
+              updateField("heroSlides", heroSlides.map((slide, i) => i === iconCropIdx ? { ...slide, pwaCrop: crop } : slide));
+              setIconCropIdx(null);
+            }}
+          />
+        )}
+
       </div>
 
       {cropIdx !== null && heroSlides[cropIdx] && (
