@@ -68,6 +68,9 @@ test("worker install prompt is browser-owned and not faked", async () => {
   assert.match(code, /scope: current/);
   assert.match(code, /Install help/);
   assert.match(code, /Open in Chrome/);
+  assert.match(code, /package=com\\.android\\.chrome/);
+  assert.match(code, /S\\.browser_fallback_url/);
+  assert.doesNotMatch(code, /Checking…|Install help|disabled=\\{Boolean\\(inScope/);
   assert.doesNotMatch(code, /window\.navigator\.install\(/);
 });
 
