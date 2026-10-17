@@ -125,3 +125,35 @@ test("early install capture runs only for worker-owned paths and keeps the brows
   assert.equal(simulate("/admin").prevented, false);
   assert.equal(simulate("/").prevented, false);
 });
+
+test("PWA launch splash lives in the persistent layout, never on tab navigation", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const get = path => readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8");
+  const layout = get("../app/pwa/worker/[id]/layout.js");
+  const splash = get("../app/pwa/worker/[id]/PwaLaunchSplash.js");
+  const page = get("../app/pwa/worker/[id]/[[...section]]/page.js");
+  assert.ok(layout.includes("<PwaLaunchSplash />"));
+  assert.ok(splash.includes("infixo:pwa-ready"));
+  assert.ok(page.includes("window.dispatchEvent(new CustomEvent"));
+  assert.ok(!page.includes("styles.splash"));
+  assert.ok(!page.includes("splashLeaving"));
+  assert.ok(!page.includes("splashDone"));
+  assert.ok(page.includes("liveWorkerCache"));
+});
+
+test("PWA Android Back and on-screen Back return directly Home, public UI unchanged", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const get = path => readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8");
+  const page = get("../app/pwa/worker/[id]/[[...section]]/page.js");
+  assert.match(page, /addEventListener\("popstate", onBack\)/);
+  assert.match(page, /router\.replace\(home\)/);
+  const paths = ["WorkDetails", "WorkerDetails", "WorkPhotos", "WorkVideos"];
+  for (const comp of paths) {
+    assert.ok(page.includes("<" + comp + " worker={worker} backHref={basePath} backReplace />"));
+    const component = get("../app/components/" + comp + "/" + comp + ".js");
+    assert.ok(component.includes('backReplace = false'));
+    assert.ok(component.includes("replace={backReplace}"));
+  }
+});
