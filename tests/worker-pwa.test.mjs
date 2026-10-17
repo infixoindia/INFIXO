@@ -63,14 +63,14 @@ test("worker install prompt is browser-owned and not faked", async () => {
   const { fileURLToPath } = await import("node:url");
   const editorPath = fileURLToPath(new URL("../app/components/WorkerPwaInstall/WorkerPwaInstall.js", import.meta.url));
   const code = readFileSync(editorPath, "utf8");
-  assert.match(code, /beforeinstallprompt/);
-  assert.match(code, /await prompt\.prompt\(\)/);
-  assert.match(code, /scope: current/);
-  assert.match(code, /Install help/);
-  assert.match(code, /Open in Chrome/);
-  assert.match(code, /package=com\\.android\\.chrome/);
-  assert.match(code, /S\\.browser_fallback_url/);
-  assert.doesNotMatch(code, /Checking…|Install help|disabled=\\{Boolean\\(inScope/);
+  assert.equal(code.includes("beforeinstallprompt"), true);
+  assert.equal(code.includes("await prompt.prompt()"), true);
+  assert.equal(code.includes("scope: current"), true);
+  assert.equal(code.includes("Open in Chrome"), true);
+  assert.equal(code.includes("package=com.android.chrome"), true);
+  assert.equal(code.includes("S.browser_fallback_url"), true);
+  assert.equal(code.includes("Checking…"), false);
+  assert.equal(code.includes("Install help"), false);
   assert.doesNotMatch(code, /window\.navigator\.install\(/);
 });
 
