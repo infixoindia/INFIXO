@@ -8,6 +8,7 @@ import NavigationTabs from "../../components/NavigationTabs/NavigationTabs";
 import Footer from "../../components/Footer/Footer";
 import AdminEditFab from "../../components/AdminEditFab/AdminEditFab";
 import WorkerShareFab from "../../components/WorkerShareFab/WorkerShareFab";
+import WorkerPwaInstall from "@/app/components/WorkerPwaInstall/WorkerPwaInstall";
 import { getWorkerBySlug } from "@/lib/workerService";
 
 // Client-rendered so route navigation is instant (no server round-trip
@@ -57,6 +58,7 @@ function WorkerProfilePageInner() {
       <Header />
       <div style={{ padding: "2rem 1rem 0 1rem" }}>
         <WorkerIdentityCard worker={worker} />
+        {isWorkerOwnLink && <WorkerPwaInstall workerName={worker.fullName} />}
         <NavigationTabs worker={worker} basePath={`/w/${slug}`} queryString={queryString} />
       </div>
       <Footer slug={slug} />
