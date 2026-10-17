@@ -8,7 +8,7 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 const ABOUT_POINTS = 3;   // points shown before "Show more"
 const ABOUT_LINES = 10;   // ...and never more than ~10 lines in the collapsed view
 
-export default function WorkerDetails({ worker, backHref = "/" }) {
+export default function WorkerDetails({ worker, backHref = "/", backReplace = false }) {
   const [workerOpen, setWorkerOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
@@ -55,7 +55,7 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
-        <Link href={backHref} className={styles.backLink}>
+        <Link href={backHref} replace={backReplace} className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
             <path d="M15 5L8 12L15 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
