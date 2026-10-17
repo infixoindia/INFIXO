@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import styles from "./WorkVideos.module.css";
 
-export default function WorkVideos({ worker, backHref = "/" }) {
+export default function WorkVideos({ worker, backHref = "/", backReplace = false }) {
   const videos = worker?.videos || [];
 
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -227,7 +227,7 @@ export default function WorkVideos({ worker, backHref = "/" }) {
       )}
 
       <div className={styles.header}>
-        <Link href={backHref} className={styles.backLink}>
+        <Link href={backHref} replace={backReplace} className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
             <path
               d="M15 5L8 12L15 19"
