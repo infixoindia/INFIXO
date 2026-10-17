@@ -8,7 +8,6 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
   const [prompt, setPrompt] = useState(null);
   const [instructions, setInstructions] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [checking, setChecking] = useState(true);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -19,7 +18,6 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
     const onPrompt = (event) => {
       event.preventDefault();
       setPrompt(event);
-      setChecking(false);
       setInstructions(false);
     };
     const onInstalled = () => {
@@ -27,9 +25,6 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
       setPrompt(null);
       setInstructions(false);
     };
-    // A browser may take a few seconds to check eligibility, so do not
-    // immediately show fallback instructions before it has a chance.
-    const checkTimer = window.setTimeout(() => setChecking(false), 12000);
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
 
@@ -44,7 +39,6 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
         });
     }
     return () => {
-      window.clearTimeout(checkTimer);
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
     };
@@ -85,7 +79,16 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
     }
   }
 
-  const buttonText = !inScope ? "Set up" : prompt ? "Install" : checking ? "Checking…" : "Install help";
+  // Explicit user-gesture Chrome handoff: in-app browser/Custom Tabs cannot
+  // be forced to show a native install prompt. The intent is best effort only.
+  // Keep Copy link instructions as a reliable alternative.
+  const workerPath = workerId ? `/pwa/worker/${encodeURIComponent(workerId)}` : "";
+  const fullLink = typeof window !== "undefined" && workerPath
+    ? window.location.origin + workerPath : "";
+  const chromeIntent = fullLink && typeof window !== "undefined"
+    ? `intent://${window.location.host}${workerPath}#Intent;scheme=${window.location.protocol === "https:" ? "https" : "http"};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(fullLink)};end;`
+    : "";
+  const buttonText = !inScope ? "Set up" : "Install";
 
   return (
     <section aria-label="Install my INFIXO worker profile" style={{
@@ -98,14 +101,18 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
           <span>{prompt ? "Install dabayein aur Android se confirm karein." :
             "Home Screen par rakhein. Ek tap mein apni profile kholein."}</span>
         </div>
-        <button type="button" onClick={install} disabled={Boolean(inScope && checking && !prompt)}
+        <button type="button" onClick={install}
           style={{
             border: 0, color: "#fff", background: "#002D97", padding: "10px 12px",
             borderRadius: 10, fontSize: 12, fontWeight: 700, flexShrink: 0,
-            cursor: checking && inScope && !prompt ? "wait" : "pointer",
-            opacity: checking && inScope && !prompt ? .65 : 1
+            cursor: "pointer"
           }}>{buttonText}</button>
       </div>
+      {!prompt && inScope && chromeIntent && (
+        <div style={{ marginTop: 9, fontSize: 12, lineHeight: 1.4, color: "#526684" }}>
+          Android popup nahi aaya? <a href={chromeIntent} style={{ color: "#002D97", fontWeight: 700, textDecoration: "underline" }}>Open in Chrome</a> (browser support zaroori hai).
+        </div>
+      )}
       {instructions && (
         <div style={{ marginTop: 12, borderTop: "1px solid #d4e1f9", paddingTop: 10, lineHeight: 1.6 }}>
           <strong>Install popup abhi available nahi hai.</strong>
@@ -115,9 +122,11 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
             Nahi mile toh Chrome app ke normal tab mein yeh profile link open karein.
           </div>
           <div style={{ marginTop: 6 }}>
-            Phir Chrome ke ⋮ menu mein <strong>Add to Home screen / Install app</strong> check karein.
+            Chrome ke ⋮ menu mein <strong>Add to Home screen / Install app</strong> check karein.
+            Agar Chrome mein bhi direct popup abhi nahi aata, thodi der profile khuli rakhein.
             PWA pehle se installed ho toh popup dobara nahi aayega.
           </div>
+          {chromeIntent && <a href={chromeIntent} style={{ display: "inline-block", margin: "8px 9px 0 0", padding: "8px 12px", borderRadius: 8, background: "#002D97", color: "#fff", fontWeight: 700, textDecoration: "none" }}>Open in Chrome</a>}
           <button type="button" onClick={copyLink} style={{
             marginTop: 8, padding: "6px 10px", background: "#fff", borderRadius: 8,
             border: "1px solid #b9cbe9", color: "#002D97", fontWeight: 700, cursor: "pointer"
