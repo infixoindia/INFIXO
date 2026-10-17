@@ -1,4 +1,5 @@
 import { publishedWorkerById } from "@/lib/workerPwaServer";
+import PwaLaunchSplash from "./PwaLaunchSplash";
 
 export const dynamic = "force-dynamic";
 
@@ -20,5 +21,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function WorkerPwaLayout({ children }) {
-  return <><script src="/worker-pwa-install-early.js" />{children}</>;
+  return <><script src="/worker-pwa-install-early.js" /><PwaLaunchSplash />{children}</>;
 }
