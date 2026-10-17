@@ -14,9 +14,25 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone === true;
     if (isStandalone) setInstalled(true);
+    // The event may fire while the worker profile is still loading.
+    // The small script in the route layout captures and saves it beforehand.
+    const syncEarlyPrompt = () => {
+      const saved = window.__infixoPwaInstall;
+      if (saved?.installed) setInstalled(true);
+      if (saved?.path === window.location.pathname && saved.prompt) {
+        setPrompt(saved.prompt);
+        setInstructions(false);
+      }
+    };
+    syncEarlyPrompt();
+    window.addEventListener("infixo-pwa-install-ready", syncEarlyPrompt);
+    window.addEventListener("infixo-pwa-installed", syncEarlyPrompt);
 
     const onPrompt = (event) => {
       event.preventDefault();
+      // Keep the early capture and late React handler in sync.
+      const saved = window.__infixoPwaInstall;
+      if (saved) { saved.prompt = event; saved.path = window.location.pathname; }
       setPrompt(event);
       setInstructions(false);
     };
@@ -28,7 +44,8 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
 
-    // Chrome versions that still need a fetch-handling worker can now promote
+    // Early script also registers this SW; repeat safely if this link was loaded
+    // through client-side navigation. Chrome can then promote
     // installation. Scope is THIS worker alone; no caching or admin interception.
     const current = "/pwa/worker/" + encodeURIComponent(workerId);
     if (workerId && window.location.pathname.startsWith(current) && "serviceWorker" in navigator) {
@@ -39,6 +56,8 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
         });
     }
     return () => {
+      window.removeEventListener("infixo-pwa-install-ready", syncEarlyPrompt);
+      window.removeEventListener("infixo-pwa-installed", syncEarlyPrompt);
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
     };
@@ -49,25 +68,33 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
     window.location.pathname.startsWith("/pwa/worker/" + encodeURIComponent(workerId));
 
   async function install() {
+    // Prefer a captured event even on the original handover link.
+    // This restores one-tap install when Chrome makes it available.
+    const saved = window.__infixoPwaInstall;
+    const activePrompt = saved?.path === window.location.pathname && saved.prompt
+      ? saved.prompt : prompt;
+    if (activePrompt) {
+      try {
+        // Called synchronously from the actual tap, not after navigation.
+        await activePrompt.prompt();
+        const result = await activePrompt.userChoice;
+        if (result?.outcome !== "accepted") setInstructions(true);
+      } catch {
+        setInstructions(true);
+      } finally {
+        if (saved) saved.prompt = null;
+        setPrompt(null);
+      }
+      return;
+    }
+    // If Chrome did not offer a prompt on the handover URL, move to
+    // the isolated installable PWA page. A popup on that page still needs
+    // a second user gesture; browser installation cannot be forced.
     if (!inScope) {
-      // The handover link is outside this worker's app scope.
       window.location.assign("/pwa/worker/" + encodeURIComponent(workerId));
       return;
     }
-    if (!prompt) {
-      setInstructions(true);
-      return;
-    }
-    try {
-      // Must be called in the user's tap handler, not on page load.
-      await prompt.prompt();
-      const result = await prompt.userChoice;
-      if (result?.outcome !== "accepted") setInstructions(true);
-    } catch {
-      setInstructions(true);
-    } finally {
-      setPrompt(null);
-    }
+    setInstructions(true);
   }
 
   async function copyLink() {
@@ -88,7 +115,7 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
   const chromeIntent = fullLink && typeof window !== "undefined"
     ? `intent://${window.location.host}${workerPath}#Intent;scheme=${window.location.protocol === "https:" ? "https" : "http"};package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(fullLink)};end;`
     : "";
-  const buttonText = !inScope ? "Set up" : "Install";
+  const buttonText = "Install";
 
   return (
     <section aria-label="Install my INFIXO worker profile" style={{
@@ -108,11 +135,6 @@ export default function WorkerPwaInstall({ workerName = "My", workerId = "" }) {
             cursor: "pointer"
           }}>{buttonText}</button>
       </div>
-      {!prompt && inScope && chromeIntent && (
-        <div style={{ marginTop: 9, fontSize: 12, lineHeight: 1.4, color: "#526684" }}>
-          Android popup nahi aaya? <a href={chromeIntent} style={{ color: "#002D97", fontWeight: 700, textDecoration: "underline" }}>Open in Chrome</a> (browser support zaroori hai).
-        </div>
-      )}
       {instructions && (
         <div style={{ marginTop: 12, borderTop: "1px solid #d4e1f9", paddingTop: 10, lineHeight: 1.6 }}>
           <strong>Install popup abhi available nahi hai.</strong>
