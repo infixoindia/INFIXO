@@ -6,7 +6,7 @@ import styles from "./WorkPhotos.module.css";
 import CroppedImage from "../CroppedImage/CroppedImage";
 import { workPhotoDisplay } from "@/lib/workPhoto.mjs";
 
-export default function WorkPhotos({ worker, backHref = "/" }) {
+export default function WorkPhotos({ worker, backHref = "/", backReplace = false }) {
   // Supports old URL strings and new { image: originalUrl, crop } entries.
   const images = (worker?.photos || []).map(workPhotoDisplay).filter(image => image.src);
 
@@ -253,7 +253,7 @@ export default function WorkPhotos({ worker, backHref = "/" }) {
   return (
     <section className={styles.wrapper}>
       <div className={styles.header}>
-        <Link href={backHref} className={styles.backLink}>
+        <Link href={backHref} replace={backReplace} className={styles.backLink}>
           <svg className={styles.backArrow} viewBox="0 0 24 24" fill="none">
             <path
               d="M15 5L8 12L15 19"
