@@ -57,3 +57,27 @@ test("invalid or unpublished worker cannot have install manifest", () => {
   assert.throws(() => makeWorkerManifest(null));
   assert.throws(() => makeWorkerManifest({ slug: "somebody" }));
 });
+
+test("worker install prompt is browser-owned and not faked", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const editorPath = fileURLToPath(new URL("../app/components/WorkerPwaInstall/WorkerPwaInstall.js", import.meta.url));
+  const code = readFileSync(editorPath, "utf8");
+  assert.match(code, /beforeinstallprompt/);
+  assert.match(code, /await prompt\.prompt\(\)/);
+  assert.match(code, /scope: current/);
+  assert.match(code, /Install help/);
+  assert.match(code, /Open in Chrome/);
+  assert.doesNotMatch(code, /window\.navigator\.install\(/);
+});
+
+test("worker service worker uses the network without caching admin or profile data", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const swPath = fileURLToPath(new URL("../public/worker-pwa-sw.js", import.meta.url));
+  const code = readFileSync(swPath, "utf8");
+  assert.match(code, /addEventListener\("fetch"/);
+  assert.match(code, /event\.respondWith\(fetch\(request\)\)/);
+  assert.match(code, /event\.request/);
+  assert.doesNotMatch(code, /caches\.open|CacheStorage|\.put\(/);
+});
