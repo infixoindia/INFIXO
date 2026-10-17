@@ -6,5 +6,5 @@ export async function generateMetadata({ params }) {
 }
 
 export default function WorkerRouteLayout({ children }) {
-  return children;
+  return <><script src="/worker-pwa-install-early.js" />{children}</>;
 }
