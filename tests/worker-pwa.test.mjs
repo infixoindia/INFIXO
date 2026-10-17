@@ -64,7 +64,9 @@ test("worker install prompt is browser-owned and not faked", async () => {
   const editorPath = fileURLToPath(new URL("../app/components/WorkerPwaInstall/WorkerPwaInstall.js", import.meta.url));
   const code = readFileSync(editorPath, "utf8");
   assert.equal(code.includes("beforeinstallprompt"), true);
-  assert.equal(code.includes("await prompt.prompt()"), true);
+  assert.equal(code.includes("await activePrompt.prompt()"), true);
+  assert.equal(code.includes("syncEarlyPrompt"), true);
+  assert.equal(code.includes("saved?.path === window.location.pathname"), true);
   assert.equal(code.includes("scope: current"), true);
   assert.equal(code.includes("Open in Chrome"), true);
   assert.equal(code.includes("package=com.android.chrome"), true);
@@ -83,4 +85,43 @@ test("worker service worker uses the network without caching admin or profile da
   assert.match(code, /event\.respondWith\(fetch\(request\)\)/);
   assert.match(code, /event\.request/);
   assert.doesNotMatch(code, /caches\.open|CacheStorage|\.put\(/);
+});
+
+test("early install capture runs only for worker-owned paths and keeps the browser prompt", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const { runInNewContext } = await import("node:vm");
+  const filename = fileURLToPath(new URL("../public/worker-pwa-install-early.js", import.meta.url));
+  const js = readFileSync(filename, "utf8");
+  const simulate = (pathname, search = "") => {
+    const listeners = new Map();
+    let registeredScope = null;
+    const window = {
+      location: { pathname, search },
+      addEventListener: (name, fn) => listeners.set(name, fn),
+      dispatchEvent: () => {},
+    };
+    const navigator = {
+      serviceWorker: { register: async (_script, opts) => { registeredScope = opts.scope; } },
+    };
+    runInNewContext(js, { window, navigator, URLSearchParams, Event });
+    let prevented = false;
+    const ev = { preventDefault: () => { prevented = true; }, prompt: async () => {}, userChoice: Promise.resolve({ outcome: "accepted" }) };
+    listeners.get("beforeinstallprompt")(ev);
+    return { prevented, saved: window.__infixoPwaInstall?.prompt, savedPath: window.__infixoPwaInstall?.path, scope: registeredScope };
+  };
+  const id = "ff0dd68b-1111-4444-8888-987654321abc";
+  const pwa = simulate("/pwa/worker/" + id);
+  assert.equal(pwa.prevented, true);
+  assert.equal(pwa.savedPath, "/pwa/worker/" + id);
+  assert.equal(pwa.scope, "/pwa/worker/" + id);
+  const handover = simulate("/w/rahul-painter", "?me=" + id);
+  assert.equal(handover.prevented, true);
+  assert.ok(handover.saved);
+  assert.equal(simulate("/w/rahul-painter/IPUC-CCA17B6F").prevented, true);
+  const customer = simulate("/w/rahul-painter");
+  assert.equal(customer.prevented, false);
+  assert.equal(customer.saved, null);
+  assert.equal(simulate("/admin").prevented, false);
+  assert.equal(simulate("/").prevented, false);
 });
