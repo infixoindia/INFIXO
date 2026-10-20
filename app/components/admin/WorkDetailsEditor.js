@@ -52,9 +52,10 @@ function ChipListField({ label, hint, items, onChange, placeholder }) {
   );
 }
 
-export default function WorkDetailsEditor({ worker, updateField, onSave, saving, saveMessage, saveError }) {
+export default function WorkDetailsEditor({ worker, updateField, onSave, saving, saveMessage, saveError, englishUnlocked = false }) {
   const services = worker.services || [];
-  const whyChooseMe = worker.whyChooseMe || [];
+  const [whyEditorLanguage, setWhyEditorLanguage] = useState("hi");
+  const whyChooseMe = whyEditorLanguage === "en" ? (worker.whyChooseMeEn || []) : (worker.whyChooseMe || []);
   const shift = worker.workingShift || { day: false, night: false };
 
   const serviceAreaText = Array.isArray(worker.serviceArea)
@@ -150,12 +151,20 @@ export default function WorkDetailsEditor({ worker, updateField, onSave, saving,
         />
       </div>
 
+      <div className={styles.field}>
+        <label className={styles.label}>Why Choose Me — Hindi / English</label>
+        <p className={styles.hint}>Step 1: हिंदी reasons जोड़कर Save Work Details करें। फिर Step 2: English reasons जोड़कर दोबारा Save करें।</p>
+        <div className={styles.languageEditorSwitch} role="group" aria-label="Why Choose Me editor language">
+          <button type="button" className={`${styles.languageEditorOption} ${whyEditorLanguage === "hi" ? styles.languageEditorActive : ""}`} aria-pressed={whyEditorLanguage === "hi"} onClick={() => setWhyEditorLanguage("hi")}>1. हिंदी</button>
+          <button type="button" className={`${styles.languageEditorOption} ${whyEditorLanguage === "en" ? styles.languageEditorActive : ""}`} aria-pressed={whyEditorLanguage === "en"} disabled={!englishUnlocked} title={!englishUnlocked ? "Save Hindi reasons first" : undefined} onClick={() => setWhyEditorLanguage("en")}>2. English</button>
+        </div>
+      </div>
       <ChipListField
-        label="Why Choose Me"
+        label={whyEditorLanguage === "hi" ? "Why Choose Me — हिंदी" : "Why Choose Me — English"}
         hint="Reasons to choose this worker"
         items={whyChooseMe}
-        onChange={(next) => updateField("whyChooseMe", next)}
-        placeholder="e.g. On Time Work"
+        onChange={(next) => updateField(whyEditorLanguage === "hi" ? "whyChooseMe" : "whyChooseMeEn", next)}
+        placeholder={whyEditorLanguage === "hi" ? "जैसे: समय पर काम पूरा" : "e.g. On Time Work"}
       />
 
       <div className={styles.saveRow}>
