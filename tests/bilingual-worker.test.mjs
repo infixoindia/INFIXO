@@ -26,3 +26,12 @@ test("missing and invalid optional translation data remains safe", () => {
   assert.deepEqual(readBilingualSection(null), { hi: [], en: [] });
   assert.deepEqual(readBilingualSection({ hi: ["सही", 42], en: "wrong" }), { hi: ["सही"], en: [] });
 });
+
+test("serialization does not mutate existing saved points", () => {
+  const hindi = ["मेरा नाम मोहन है"];
+  const english = ["My name is Mohan"];
+  const old = { hi: [...hindi], en: [...english] };
+  const next = writeBilingualSection(old.hi, old.en);
+  assert.deepEqual(old, { hi: hindi, en: english });
+  assert.deepEqual(next, old);
+});
