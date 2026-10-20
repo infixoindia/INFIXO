@@ -455,3 +455,37 @@
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
 }
+
+/* Language editing for the two bilingual worker sections only. */
+.languageEditorSwitch {
+  display: inline-flex;
+  gap: 3px;
+  margin: 8px 0 14px;
+  padding: 3px;
+  border: 1px solid #cfe0ff;
+  border-radius: 999px;
+  background: #f7faff;
+}
+.languageEditorOption {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1f2937;
+  cursor: pointer;
+}
+.languageEditorActive {
+  background: #2563eb;
+  color: #fff;
+}
+.languageEditorOption:disabled {
+  opacity: .42;
+  cursor: not-allowed;
+}
+.languageEditorOption:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
+}
