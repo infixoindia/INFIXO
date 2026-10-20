@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:unit": "node --test tests/acquisition.test.mjs tests/worker-publication.test.mjs tests/shortcut-icon.test.mjs"
+    "test:unit": "node --test tests/acquisition.test.mjs tests/worker-publication.test.mjs tests/shortcut-icon.test.mjs tests/bilingual-worker.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.0",
