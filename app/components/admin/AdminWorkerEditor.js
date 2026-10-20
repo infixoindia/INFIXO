@@ -47,6 +47,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
   const [savingSection, setSavingSection] = useState(null);
   const [saveMsg, setSaveMsg] = useState({});
   const [saveErr, setSaveErr] = useState({});
+  const [savedHindi, setSavedHindi] = useState({ about: false, whyChooseMe: false });
 
   useEffect(() => {
     if (isNew) return;
@@ -54,7 +55,13 @@ export default function AdminWorkerEditor({ workerId = null }) {
     (async () => {
       try {
         const data = await getWorkerById(workerId);
-        if (active && data) setWorker(data);
+        if (active && data) {
+          setWorker(data);
+          setSavedHindi({
+            about: (data.about || []).length > 0,
+            whyChooseMe: (data.whyChooseMe || []).length > 0,
+          });
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -129,6 +136,10 @@ export default function AdminWorkerEditor({ workerId = null }) {
       fields.forEach((f) => (patch[f] = worker[f]));
       const updated = await updateWorker(worker.id, patch);
       setWorker(updated);
+      setSavedHindi({
+        about: (updated.about || []).length > 0,
+        whyChooseMe: (updated.whyChooseMe || []).length > 0,
+      });
       flashMessage(section, "Saved!");
     } catch (err) {
       console.error(err);
@@ -146,10 +157,11 @@ export default function AdminWorkerEditor({ workerId = null }) {
       "workingShift",
       "serviceArea",
       "whyChooseMe",
+      "whyChooseMeEn",
     ]);
 
   const saveWorkerDetails = () =>
-    saveSection("worker", ["fullName", "gender", "age", "address", "languages", "about", "verifications"]);
+    saveSection("worker", ["fullName", "gender", "age", "address", "languages", "about", "aboutEn", "verifications"]);
 
   // Photo editor stages and uploads originals first. Commit the entire
   // array in ONE DB write; preserve the previous record if that write fails.
@@ -241,6 +253,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
             <WorkDetailsEditor
               worker={worker}
               updateField={updateField}
+              englishUnlocked={savedHindi.whyChooseMe}
               onSave={saveWorkDetails}
               saving={savingSection === "work"}
               saveMessage={saveMsg.work}
@@ -252,6 +265,7 @@ export default function AdminWorkerEditor({ workerId = null }) {
             <WorkerDetailsEditor
               worker={worker}
               updateField={updateField}
+              englishUnlocked={savedHindi.about}
               onSave={saveWorkerDetails}
               saving={savingSection === "worker"}
               saveMessage={saveMsg.worker}
