@@ -98,10 +98,10 @@ test('plain-text popup appears ABOVE experience box without an inline arrow or p
   assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],true);
   const popover=ui.root.findByProps({id:'experience-details'});
   assert.equal(popover.props.role,'status');
-  assert.ok(JSON.stringify(popover.toJSON()).includes('35+ Years of Experience'));
-  assert.ok(JSON.stringify(popover.toJSON()).includes('experiencePointer'));
+  assert.equal(popover.findByProps({className:'experiencePopoverText'}).children.join(''),'35+ Years of Experience');
+  assert.equal(popover.findAllByProps({className:'experiencePointer'}).length,1);
   const infoBox=ui.root.findByProps({className:'infoBox'});
-  assert.ok(!JSON.stringify(infoBox.toJSON()).includes('35+ Years of Experience'));
+  assert.equal(infoBox.findAllByProps({className:'experiencePopoverText'}).length,0);
   assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).findAllByType('span').length,1);
   const css=await readFile('app/components/WorkerIdentityCard/WorkerIdentityCard.module.css','utf8');
   const popupRules=css.match(/\.experiencePopover \{[^}]+\}/)?.[0]||'';
