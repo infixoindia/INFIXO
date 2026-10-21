@@ -257,3 +257,53 @@
   text-orientation: mixed;
   transform: rotate(180deg);
 }
+
+/* Compact, never-ellipsized years. Expand on tap for the full wording. */
+.experienceButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-text-primary);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.experienceShort {
+  font-size: .98rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.experienceArrow {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-primary);
+  transition: transform .2s ease;
+}
+.experienceArrowOpen {
+  transform: rotate(180deg);
+}
+.experienceButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.experienceDetails {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #cddcf8;
+  border-radius: 12px;
+  background: #f4f8ff;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
