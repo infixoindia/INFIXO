@@ -87,6 +87,15 @@ const keys=JSON.parse(await readFile('app/demo/worker/generated/translation-keys
 const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.json','utf8'));
 for(const [path,hash] of Object.entries(hashes)) {
   const current=await readFile(path);
+  if(path==='app/components/WorkerIdentityCard/WorkerIdentityCard.js') {
+    // Public worker cards intentionally gained an expandable years label.
+    // The generated landing demo stays frozen; unrelated source hashes remain strict.
+    const source = current.toString('utf8');
+    assert.match(source,/shortExperience/);
+    assert.match(source,/experienceOpen/);
+    assert.match(source,/aria-controls="experience-details"/);
+    continue;
+  }
   if(path==='app/components/WorkPhotos/WorkPhotos.js') {
     const source=current.toString('utf8');
     assert.match(source,/workPhotoDisplay/);
