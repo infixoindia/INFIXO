@@ -10,6 +10,7 @@ export default function WorkersListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
+  const [profileTab, setProfileTab] = useState("active");
   const activeWorkers = workers.filter(w => w.isActive !== false);
   const inactiveWorkers = workers.filter(w => w.isActive === false);
 
@@ -54,12 +55,22 @@ export default function WorkersListPage() {
         Worker Acquisition Leads
       </Link>
 
-      <p className={styles.hint}>
-        This list contains created Worker Profiles, not registration leads.
-        Pending registrations stay in Worker Acquisition Leads.
-        A profile counts as Completed Onboarding only after approval
-        and linking to an active real worker.
-      </p>
+      <div className={styles.profileTabs} role="tablist" aria-label="Worker profile status">
+        <button type="button" role="tab" id="active-profiles-tab" aria-controls="worker-profiles-list"
+          aria-selected={profileTab === "active"}
+          className={`${styles.profileTab} ${profileTab === "active" ? styles.profileTabActive : ""}`}
+          onClick={() => setProfileTab("active")}
+        >
+          Active Profiles ({activeWorkers.length})
+        </button>
+        <button type="button" role="tab" id="inactive-profiles-tab" aria-controls="worker-profiles-list"
+          aria-selected={profileTab === "inactive"}
+          className={`${styles.profileTab} ${profileTab === "inactive" ? styles.profileTabActive : ""}`}
+          onClick={() => setProfileTab("inactive")}
+        >
+          Inactive Profiles ({inactiveWorkers.length})
+        </button>
+      </div>
 
       {loading && <p role="status">Loading worker profiles…</p>}
 
@@ -79,26 +90,22 @@ export default function WorkersListPage() {
       )}
 
       {!loading && !error && (
-        <>
-          <p className={styles.hint} aria-live="polite">
-            {workers.length} saved worker {workers.length === 1 ? "profile" : "profiles"}
-          </p>
-
-          <h2 className={styles.cardTitle}>Active Worker Profiles ({activeWorkers.length})</h2>
-          {activeWorkers.length === 0 && (
-            <p className={styles.hint}>No active profiles yet. Complete and activate a real worker profile first.</p>
+        <section
+          id="worker-profiles-list"
+          role="tabpanel"
+          aria-labelledby={profileTab === "active" ? "active-profiles-tab" : "inactive-profiles-tab"}
+          className={styles.profileResults}
+        >
+          {profileTab === "active" ? (
+            activeWorkers.length > 0
+              ? activeWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)
+              : <p className={styles.emptyProfileList}>No active profiles yet.</p>
+          ) : (
+            inactiveWorkers.length > 0
+              ? inactiveWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)
+              : <p className={styles.emptyProfileList}>No inactive profiles yet.</p>
           )}
-          {activeWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)}
-
-          <h2 className={styles.cardTitle} style={{ marginTop: "1.5rem" }}>
-            Draft / Inactive Profiles ({inactiveWorkers.length})
-          </h2>
-          <p className={styles.hint}>
-            New profiles stay private until you review and manually activate them.
-            These are not publicly listed or counted as Completed Onboarding.
-          </p>
-          {inactiveWorkers.map(w => <WorkerListRow key={w.id} worker={w} />)}
-        </>
+        </section>
       )}
     </div>
   );

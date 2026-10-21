@@ -35,6 +35,15 @@ export default function WorkerIdentityCard({ worker }) {
   } = worker;
 
   const [isWorkerIdOpen, setIsWorkerIdOpen] = useState(false);
+  const [experienceOpen, setExperienceOpen] = useState(false);
+  // Admin stores the years as a number, but handle historical "35+ Years" too.
+  const years = String(experience ?? "")
+    .trim()
+    .replace(/\s*\+?\s*(?:years?|yrs?|y)\s*$/i, "")
+    .replace(/\+\s*$/, "")
+    .trim();
+  const shortExperience = years ? `${years}+ Y` : "—";
+  const fullExperience = years ? `${years}+ Years of Experience` : "Experience not available";
 
   const toggleWorkerId = (e) => {
     e.stopPropagation();
@@ -148,7 +157,17 @@ Z"
               </span>
 
               <span className={styles.infoText}>
-                <span className={styles.infoValue}>{experience}+ Years</span>
+                <button
+                  type="button"
+                  className={styles.experienceButton}
+                  aria-label="Show full experience"
+                  aria-expanded={experienceOpen}
+                  aria-controls="experience-details"
+                  onClick={() => setExperienceOpen((open) => !open)}
+                >
+                  <span className={styles.experienceShort}>{shortExperience}</span>
+                  <span className={`${styles.experienceArrow} ${experienceOpen ? styles.experienceArrowOpen : ""}`} aria-hidden="true">▼</span>
+                </button>
                 <span className={styles.infoLabel}>Experience</span>
               </span>
             </div>
@@ -176,6 +195,12 @@ Z"
               </span>
             </div>
           </div>
+
+          {experienceOpen && (
+            <div id="experience-details" role="status" className={styles.experienceDetails}>
+              {fullExperience}
+            </div>
+          )}
 
           {isVerified && (
             <div className={styles.badgeWrap}>
