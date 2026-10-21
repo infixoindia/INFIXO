@@ -489,3 +489,44 @@
   outline: 2px solid #1d4ed8;
   outline-offset: 2px;
 }
+
+/* Worker listing: two selectable status tabs, never stacked worker lists. */
+.profileTabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin: 2px 0 18px;
+}
+.profileTab {
+  min-width: 0;
+  min-height: 56px;
+  padding: 12px 8px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #e9eef8;
+  color: #1e3a63;
+  font: inherit;
+  font-weight: 700;
+  font-size: clamp(12px, 3.5vw, 15px);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+}
+.profileTabActive {
+  background: #2563eb;
+  color: white;
+  border-color: #1d4ed8;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, .16);
+}
+.profileTab:focus-visible {
+  outline: 3px solid #fd7901;
+  outline-offset: 3px;
+}
+.profileResults {
+  min-height: 70px;
+}
+.emptyProfileList {
+  margin: 12px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
