@@ -18,6 +18,14 @@ const dummyWorker = {
   workingHours: "9:00 AM – 7:00 PM",
   workingShift: { day: true, night: true },
   whyChooseMe: [
+    "साफ-सुथरा और प्रोफेशनल काम",
+    "प्रीमियम पेंट फिनिश",
+    "समय पर काम पूरा",
+    "सही और किफायती रेट",
+    "8+ साल का भरोसेमंद अनुभव",
+    "कस्टमर की संतुष्टि",
+  ],
+  whyChooseMeEn: [
     "Clean & Professional Work",
     "Premium Paint Finish",
     "On Time Work",
@@ -31,6 +39,11 @@ const dummyWorker = {
   address: "Indore, Madhya Pradesh",
   languages: ["Hindi", "English"],
   about: [
+    "राहुल शर्मा एक मेहनती और भरोसेमंद प्रोफेशनल हैं, जो साफ-सुथरे और अच्छी क्वालिटी वाले पेंटिंग वर्क के लिए जाने जाते हैं।",
+    "वह अपने काम की हर छोटी-बड़ी डिटेल पर ध्यान देते हैं और हर प्रोजेक्ट को पूरी जिम्मेदारी के साथ एक प्रीमियम फिनिश देते हैं।",
+    "उनका मकसद है कि कस्टमर को सही जानकारी, समय पर सर्विस और अच्छे काम के साथ एक बेहतरीन अनुभव मिले।",
+  ],
+  aboutEn: [
     "Rahul Sharma is a dedicated and reliable professional known for delivering clean and high-quality painting work.",
     "He pays close attention to every detail and ensures every project is completed with care and a premium finish.",
     "His goal is to provide a smooth experience through honest communication, timely service, and customer satisfaction.",
