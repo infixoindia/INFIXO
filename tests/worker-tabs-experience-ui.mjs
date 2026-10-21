@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
+import { readFile } from 'node:fs/promises';
 
 const deps = process.env.ACQUISITION_TEST_DEPS || '/tmp/infixo-redesign-tests';
 const require = createRequire(`${deps}/package.json`);
@@ -9,6 +10,11 @@ const React = require('react');
 const { create, act } = require('react-test-renderer');
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 globalThis.__qaWorkers = [];
+const documentHandlers = new Map();
+globalThis.document = {
+  addEventListener: (name, handler) => documentHandlers.set(name, handler),
+  removeEventListener: (name, handler) => { if (documentHandlers.get(name) === handler) documentHandlers.delete(name); },
+};
 
 const plugin = { name: 'worker-status-identity-tests', setup(b) {
   b.onLoad({ filter: /\.module\.css$/ }, () => ({
@@ -78,21 +84,50 @@ test('empty inactive tab displays only its own empty state',async()=>{
   await unmount();
 });
 
-test('worker identity years remain short, and tap reveals full years then hides them',async()=>{
+test('plain-text popup appears ABOVE experience box without an inline arrow or pill',async()=>{
   const worker={fullName:'Mohan Test',profession:'Painter',experience:35,serviceArea:['Indore'],heroSlides:[],isVerified:false};
   await mount(WorkerIdentityCard,{worker});
+  const collapsedButton=ui.root.findByProps({'aria-label':'Show full experience'});
+  assert.equal(collapsedButton.props['aria-expanded'],false);
   assert.ok(getText().includes('35+ Y'));
   assert.ok(!getText().includes('35+ Years of Experience'));
-  let control=ui.root.findByProps({'aria-label':'Show full experience'});
-  assert.equal(control.props['aria-expanded'],false);
-  await act(async()=>control.props.onClick());
+  // The short value has no arrow next to it, only the text span.
+  assert.equal(collapsedButton.findAllByType('span').length,1);
+  assert.equal(collapsedButton.findAllByType('span')[0].children.join(''),'35+ Y');
+  await act(async()=>collapsedButton.props.onClick());
   assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],true);
-  assert.ok(getText().includes('35+ Years of Experience'));
+  const popover=ui.root.findByProps({id:'experience-details'});
+  assert.equal(popover.props.role,'status');
+  assert.equal(popover.findByProps({className:'experiencePopoverText'}).children.join(''),'35+ Years of Experience');
+  assert.equal(popover.findAllByProps({className:'experiencePointer'}).length,1);
+  const infoBox=ui.root.findByProps({className:'infoBox'});
+  assert.equal(infoBox.findAllByProps({className:'experiencePopoverText'}).length,0);
+  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).findAllByType('span').length,1);
+  const css=await readFile('app/components/WorkerIdentityCard/WorkerIdentityCard.module.css','utf8');
+  const popupRules=css.match(/\.experiencePopover \{[^}]+\}/)?.[0]||'';
+  assert.ok(popupRules.includes('position: absolute'));
+  assert.ok(!/background:|border:|border-radius:|box-shadow:/.test(popupRules),'popover must be plain text, not a pill');
   await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
   assert.ok(!getText().includes('35+ Years of Experience'));
   await unmount();
-  await mount(WorkerIdentityCard,{worker:{...worker,experience:'35+ Years'}});
+});
+
+test('experience popup closes on any outside tap and after two seconds',async()=>{
+  const worker={fullName:'Mohan Test',profession:'Painter',experience:'35+ Years',serviceArea:['Indore'],heroSlides:[],isVerified:false};
+  await mount(WorkerIdentityCard,{worker});
   assert.ok(getText().includes('35+ Y'));
   assert.ok(!getText().includes('35++ Y'));
+  await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
+  assert.equal(typeof documentHandlers.get('pointerdown'),'function');
+  await act(async()=>documentHandlers.get('pointerdown')({target:{}}));
+  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],false);
+  assert.equal(documentHandlers.has('pointerdown'),false);
+  await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
+  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],true);
+  // Real timer verifies the actual 2000ms behavior without replacing React's scheduler.
+  await act(async()=>{await new Promise(resolve=>setTimeout(resolve,2150));});
+  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],false);
+  assert.ok(!getText().includes('35+ Years of Experience'));
+  assert.equal(documentHandlers.has('pointerdown'),false);
   await unmount();
 });
