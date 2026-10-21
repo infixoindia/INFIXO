@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
+import SectionLanguageToggle from "../SectionLanguageToggle/SectionLanguageToggle";
 
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const ABOUT_POINTS = 3;   // points shown before "Show more"
@@ -12,12 +13,14 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
   const [workerOpen, setWorkerOpen] = useState(false);
   const [workOpen, setWorkOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
+  const [aboutLanguage, setAboutLanguage] = useState("hi");
 
   const languages = Array.isArray(worker?.languages)
     ? worker.languages.join(", ")
     : worker?.languages || "";
 
-  const aboutParagraphs = worker?.about || [];
+  const aboutEn = worker?.aboutEn || [];
+  const aboutParagraphs = aboutLanguage === "en" && aboutEn.length > 0 ? aboutEn : (worker?.about || []);
 
   const aboutRef = useRef(null);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -44,7 +47,7 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
-  }, [aboutParagraphs.length, aboutOpen]);
+  }, [aboutParagraphs.length, aboutLanguage, aboutOpen]);
 
   const verifications = worker?.verifications || {
     identityVerified: false,
@@ -95,7 +98,15 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
 
       <div className={styles.card}>
         <div className={styles.cardHeader}>
-          <h3>About Me</h3>
+          <div className={styles.aboutHeaderRow}>
+            <h3>About Me</h3>
+            <SectionLanguageToggle
+              label="About Me"
+              language={aboutLanguage}
+              onChange={setAboutLanguage}
+              englishAvailable={aboutEn.length > 0}
+            />
+          </div>
           <p>A short introduction about the worker.</p>
         </div>
         <div className={styles.aboutBody}>

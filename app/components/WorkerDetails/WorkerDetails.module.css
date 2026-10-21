@@ -486,3 +486,14 @@
 .moreInfoOrange .morePlus{
   color:#FD7901;
                                                                       }
+
+/* Only About Me card header uses this independent compact control. */
+.aboutHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.aboutHeaderRow h3 {
+  min-width: 0;
+}

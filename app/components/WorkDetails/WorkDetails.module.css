@@ -512,3 +512,15 @@ color:#002D97;
   color:#F97316;
   transform:translateX(-2px);
   }
+
+/* Keep Why Choose Me text left and its language toggle at header right. */
+.whyTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.whyTitleRow .whyTitle {
+  min-width: 0;
+  margin-bottom: 0;
+}

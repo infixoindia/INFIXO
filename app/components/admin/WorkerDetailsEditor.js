@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import styles from "./Admin.module.css";
 
-export default function WorkerDetailsEditor({ worker, updateField, onSave, saving, saveMessage, saveError }) {
+export default function WorkerDetailsEditor({ worker, updateField, onSave, saving, saveMessage, saveError, englishUnlocked = false }) {
   const languagesText = Array.isArray(worker.languages) ? worker.languages.join(", ") : worker.languages || "";
-  const aboutText = (worker.about || []).join("\n");
+  const [aboutEditorLanguage, setAboutEditorLanguage] = useState("hi");
+  const aboutItems = aboutEditorLanguage === "en" ? (worker.aboutEn || []) : (worker.about || []);
+  const aboutText = aboutItems.join("\n");
   const verifications = worker.verifications || {
     identityVerified: false,
     workVerified: false,
@@ -124,11 +126,16 @@ export default function WorkerDetailsEditor({ worker, updateField, onSave, savin
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}>About Me</h3>
+        <p className={styles.hint}>Step 1: हिंदी लिखें और Save Worker Details करें। उसके बाद Step 2: English लिखकर फिर Save करें।</p>
+        <div className={styles.languageEditorSwitch} role="group" aria-label="About Me editor language">
+          <button type="button" className={`${styles.languageEditorOption} ${aboutEditorLanguage === "hi" ? styles.languageEditorActive : ""}`} aria-pressed={aboutEditorLanguage === "hi"} onClick={() => setAboutEditorLanguage("hi")}>1. हिंदी</button>
+          <button type="button" className={`${styles.languageEditorOption} ${aboutEditorLanguage === "en" ? styles.languageEditorActive : ""}`} aria-pressed={aboutEditorLanguage === "en"} disabled={!englishUnlocked} title={!englishUnlocked ? "Save Hindi content first" : undefined} onClick={() => setAboutEditorLanguage("en")}>2. English</button>
+        </div>
         <div className={styles.field}>
-          <label className={styles.label}>Content (one paragraph per line)</label>
-          <textarea className={styles.textarea} value={aboutText} onChange={(e) => updateField("about", e.target.value.split("\n").filter((p) => p.trim().length > 0))} rows={5} />
+          <label className={styles.label}>{aboutEditorLanguage === "hi" ? "Hindi content" : "English content"} (one paragraph per line)</label>
+          <textarea className={styles.textarea} lang={aboutEditorLanguage} value={aboutText} onChange={(e) => updateField(aboutEditorLanguage === "hi" ? "about" : "aboutEn", e.target.value.split("\n").filter((p) => p.trim().length > 0))} rows={5} />
           <p className={styles.hint}>One point per line. Keep each point to about 3 lines (~110 characters). The first 3 points show on the profile; more points appear under "Show more".</p>
-          {(worker.about || []).map((p, i) => p.length > 110 ? (
+          {aboutItems.map((p, i) => p.length > 110 ? (
             <p key={i} className={styles.hint} style={{ color: "#b42318" }}>Point {i + 1} is long ({p.length}/110 characters) and may take more than 3 lines.</p>
           ) : null)}
         </div>

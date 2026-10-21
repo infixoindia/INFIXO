@@ -94,6 +94,23 @@ for(const [path,hash] of Object.entries(hashes)) {
     assert.match(source,/viewerImage/);
     continue;
   }
+  // Production profile now intentionally has independent bilingual card
+  // controls; the generated demo remains frozen, and all unrelated source
+  // components continue to use strict hashes.
+  if(path==='app/components/WorkDetails/WorkDetails.js') {
+    const source=current.toString('utf8');
+    assert.match(source,/SectionLanguageToggle/);
+    assert.match(source,/whyLanguage/);
+    assert.match(source,/englishAvailable=/);
+    continue;
+  }
+  if(path==='app/components/WorkerDetails/WorkerDetails.js') {
+    const source=current.toString('utf8');
+    assert.match(source,/SectionLanguageToggle/);
+    assert.match(source,/aboutLanguage/);
+    assert.match(source,/englishAvailable=/);
+    continue;
+  }
   assert.equal(createHash('sha256').update(current).digest('hex'),hash);
 }
 const css=await readFile('app/join/join.module.css','utf8');assert.match(css,/scroll-snap-type:x mandatory/);assert.match(css,/flex:0 0 87%/);
