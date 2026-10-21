@@ -39,7 +39,7 @@ export default function WorkersListPage() {
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.pageTitle}>Workers</h1>
-          <p className={styles.pageSubtitle}>Manage saved worker profiles</p>
+
         </div>
       </div>
 
