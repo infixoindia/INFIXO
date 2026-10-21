@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
 import HeroSlider from '../HeroSlider/HeroSlider';
@@ -35,8 +35,6 @@ export default function WorkerIdentityCard({ worker }) {
   } = worker;
 
   const [isWorkerIdOpen, setIsWorkerIdOpen] = useState(false);
-  const [experienceOpen, setExperienceOpen] = useState(false);
-  const experienceButtonRef = useRef(null);
   // Admin stores the years as a number, but handle historical "35+ Years" too.
   const years = String(experience ?? "")
     .trim()
@@ -44,7 +42,6 @@ export default function WorkerIdentityCard({ worker }) {
     .replace(/\+\s*$/, "")
     .trim();
   const shortExperience = years ? `${years}+ Y` : "—";
-  const fullExperience = years ? `${years}+ Years of Experience` : "Experience not available";
 
   const toggleWorkerId = (e) => {
     e.stopPropagation();
@@ -63,25 +60,6 @@ export default function WorkerIdentityCard({ worker }) {
   }, [isWorkerIdOpen]);
 
   const closeWorkerId = () => setIsWorkerIdOpen(false);
-
-  // Experience details are temporary, not a second expanded card section.
-  // Close after 2 seconds, or immediately on any tap outside the experience text.
-  useEffect(() => {
-    if (!experienceOpen) return undefined;
-
-    const timeout = setTimeout(() => setExperienceOpen(false), 2000);
-    const onOutsideTap = (event) => {
-      if (!experienceButtonRef.current?.contains(event.target)) {
-        setExperienceOpen(false);
-      }
-    };
-
-    document.addEventListener("pointerdown", onOutsideTap);
-    return () => {
-      clearTimeout(timeout);
-      document.removeEventListener("pointerdown", onOutsideTap);
-    };
-  }, [experienceOpen]);
 
   return (
     <section className={styles.card} onClick={closeWorkerId}>
@@ -159,13 +137,6 @@ Z"
             <span aria-hidden="true">&#9660;</span>
           </div>
 
-          <div className={`${styles.experienceAnchor} ${experienceOpen ? styles.experienceAnchorOpen : ""}`}>
-            {experienceOpen && (
-              <div className={styles.experiencePopover} id="experience-details" role="status">
-                <span className={styles.experiencePopoverText}>{fullExperience}</span>
-                <span className={styles.experiencePointer} aria-hidden="true">&#9660;</span>
-              </div>
-            )}
           <div className={styles.infoBox}>
             <div className={styles.infoItem}>
               <span className={styles.infoIconWrap}>
@@ -184,17 +155,7 @@ Z"
               </span>
 
               <span className={styles.infoText}>
-                <button
-                  type="button"
-                  className={styles.experienceButton}
-                  ref={experienceButtonRef}
-                  aria-label="Show full experience"
-                  aria-expanded={experienceOpen}
-                  aria-controls="experience-details"
-                  onClick={() => setExperienceOpen((open) => !open)}
-                >
-                  <span className={styles.experienceShort}>{shortExperience}</span>
-                </button>
+                <span className={styles.experienceShort}>{shortExperience}</span>
                 <span className={styles.infoLabel}>Experience</span>
               </span>
             </div>
@@ -221,7 +182,6 @@ Z"
                 <span className={styles.infoLabel}>Service Area</span>
               </span>
             </div>
-          </div>
           </div>
 
           {isVerified && (
