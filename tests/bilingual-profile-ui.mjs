@@ -100,7 +100,7 @@ test('admin Why Choose Me English chips update only English reasons', async () =
   await mount(WorkDetailsEditor, { worker: sample, updateField: (key, value) => updates.push([key, value]),
     englishUnlocked: true, onSave: () => {} });
   await act(async () => ui.root.findByProps({ 'aria-label': 'Why Choose Me editor language' }).findAllByType('button')[1].props.onClick());
-  const input = ui.root.findByProps({ placeholder: 'e.g. On Time Work' });
+  const input = ui.root.findAllByType('input').find(i => i.props.placeholder === 'e.g. On Time Work');
   await act(async () => input.props.onChange({ target: { value: 'Accurate work' } }));
   const add = input.parent.findAllByType('button').find(b => b.children.join('').includes('Add'));
   await act(async () => add.props.onClick());
