@@ -84,50 +84,31 @@ test('empty inactive tab displays only its own empty state',async()=>{
   await unmount();
 });
 
-test('plain-text popup appears ABOVE experience box without an inline arrow or pill',async()=>{
+test('experience displays only static 35+ Y over Experience label',async()=>{
   const worker={fullName:'Mohan Test',profession:'Painter',experience:35,serviceArea:['Indore'],heroSlides:[],isVerified:false};
   await mount(WorkerIdentityCard,{worker});
-  const collapsedButton=ui.root.findByProps({'aria-label':'Show full experience'});
-  assert.equal(collapsedButton.props['aria-expanded'],false);
-  assert.ok(getText().includes('35+ Y'));
-  assert.ok(!getText().includes('35+ Years of Experience'));
-  // The short value has no arrow next to it, only the text span.
-  assert.equal(collapsedButton.findAllByType('span').length,1);
-  assert.equal(collapsedButton.findAllByType('span')[0].children.join(''),'35+ Y');
-  await act(async()=>collapsedButton.props.onClick());
-  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],true);
-  const popover=ui.root.findByProps({id:'experience-details'});
-  assert.equal(popover.props.role,'status');
-  assert.equal(popover.findByProps({className:'experiencePopoverText'}).children.join(''),'35+ Years of Experience');
-  assert.equal(popover.findAllByProps({className:'experiencePointer'}).length,1);
-  const infoBox=ui.root.findByProps({className:'infoBox'});
-  assert.equal(infoBox.findAllByProps({className:'experiencePopoverText'}).length,0);
-  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).findAllByType('span').length,1);
-  const css=await readFile('app/components/WorkerIdentityCard/WorkerIdentityCard.module.css','utf8');
-  const popupRules=css.match(/\.experiencePopover \{[^}]+\}/)?.[0]||'';
-  assert.ok(popupRules.includes('position: absolute'));
-  assert.ok(!/background:|border:|border-radius:|box-shadow:/.test(popupRules),'popover must be plain text, not a pill');
-  await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
-  assert.ok(!getText().includes('35+ Years of Experience'));
+  const compact=ui.root.findByProps({className:'experienceShort'});
+  assert.equal(compact.type,'span');
+  assert.equal(compact.children.join(''),'35+ Y');
+  assert.ok(getText().includes('Experience'));
+  assert.equal(ui.root.findAllByProps({'aria-label':'Show full experience'}).length,0);
+  assert.equal(ui.root.findAllByProps({id:'experience-details'}).length,0);
+  assert.equal(ui.root.findAllByProps({className:'experiencePopover'}).length,0);
   await unmount();
 });
 
-test('experience popup closes on any outside tap and after two seconds',async()=>{
+test('static compact years handle old text and missing values without interaction',async()=>{
   const worker={fullName:'Mohan Test',profession:'Painter',experience:'35+ Years',serviceArea:['Indore'],heroSlides:[],isVerified:false};
   await mount(WorkerIdentityCard,{worker});
-  assert.ok(getText().includes('35+ Y'));
+  assert.equal(ui.root.findByProps({className:'experienceShort'}).children.join(''),'35+ Y');
   assert.ok(!getText().includes('35++ Y'));
-  await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
-  assert.equal(typeof documentHandlers.get('pointerdown'),'function');
-  await act(async()=>documentHandlers.get('pointerdown')({target:{}}));
-  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],false);
-  assert.equal(documentHandlers.has('pointerdown'),false);
-  await act(async()=>ui.root.findByProps({'aria-label':'Show full experience'}).props.onClick());
-  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],true);
-  // Real timer verifies the actual 2000ms behavior without replacing React's scheduler.
-  await act(async()=>{await new Promise(resolve=>setTimeout(resolve,2150));});
-  assert.equal(ui.root.findByProps({'aria-label':'Show full experience'}).props['aria-expanded'],false);
   assert.ok(!getText().includes('35+ Years of Experience'));
-  assert.equal(documentHandlers.has('pointerdown'),false);
   await unmount();
+  await mount(WorkerIdentityCard,{worker:{...worker,experience:''}});
+  assert.equal(ui.root.findByProps({className:'experienceShort'}).children.join(''),'—');
+  await unmount();
+  const css=await readFile('app/components/WorkerIdentityCard/WorkerIdentityCard.module.css','utf8');
+  assert.ok(!/experiencePopup|experiencePopover|experienceButton|experiencePointer|experienceAnchor/.test(css));
+  const component=await readFile('app/components/WorkerIdentityCard/WorkerIdentityCard.js','utf8');
+  assert.ok(!/experienceOpen|experience-details|setExperienceOpen|experienceButtonRef|pointerdown/.test(component));
 });

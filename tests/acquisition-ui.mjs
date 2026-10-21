@@ -88,12 +88,12 @@ const hashes=JSON.parse(await readFile('app/demo/worker/generated/source-hashes.
 for(const [path,hash] of Object.entries(hashes)) {
   const current=await readFile(path);
   if(path==='app/components/WorkerIdentityCard/WorkerIdentityCard.js') {
-    // Public worker cards intentionally gained an expandable years label.
+    // Public worker cards intentionally use compact static experience years.
     // The generated landing demo stays frozen; unrelated source hashes remain strict.
     const source = current.toString('utf8');
     assert.match(source,/shortExperience/);
-    assert.match(source,/experienceOpen/);
-    assert.match(source,/aria-controls="experience-details"/);
+    assert.match(source,/styles.experienceShort/);
+    assert.doesNotMatch(source,/experienceOpen|experiencePopover|experience-details|experienceButtonRef/);
     continue;
   }
   if(path==='app/components/WorkPhotos/WorkPhotos.js') {
