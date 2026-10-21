@@ -278,32 +278,42 @@
   font-weight: 700;
   white-space: nowrap;
 }
-.experienceArrow {
-  display: inline-block;
-  flex-shrink: 0;
-  font-size: 10px;
-  line-height: 1;
-  color: var(--color-primary);
-  transition: transform .2s ease;
-}
-.experienceArrowOpen {
-  transform: rotate(180deg);
-}
 .experienceButton:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
   border-radius: 3px;
 }
-.experienceDetails {
+/* Temporary plain-text experience popover: never a pill or boxed callout. */
+.experienceAnchor {
+  position: relative;
   width: 100%;
-  margin-top: 10px;
-  padding: 10px 12px;
-  box-sizing: border-box;
-  border: 1px solid #cddcf8;
-  border-radius: 12px;
-  background: #f4f8ff;
-  color: var(--color-primary);
+}
+.experienceAnchorOpen {
+  /* Reserve just enough room above the row for the floating text and arrow. */
+  margin-top: 62px;
+}
+.experiencePopover {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: -7px;
+  width: min(192px, calc(100% + 7px));
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  pointer-events: none;
+  /* Intentionally no border, padding, background, radius, or pill styling. */
+}
+.experiencePopoverText {
+  color: var(--color-text-primary);
   font-size: 13px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
+}
+.experiencePointer {
+  font-size: 15px;
+  color: var(--color-primary);
+  line-height: 1;
 }
