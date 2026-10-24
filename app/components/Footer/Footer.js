@@ -11,7 +11,7 @@ export default function Footer({ slug }) {
       {/* 1. Tagline */}
       <div className={styles.taglineSection}>
         <h2 className={styles.taglineText}>
-          Verified Workers.<br />
+          Beyond Profiles.<br />
           Trusted Connections.
         </h2>
       </div>
