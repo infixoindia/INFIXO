@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './Footer.module.css';
+import { SHOW_PROFILE_LEGAL } from '@/lib/profileVisibility';
 
 export default function Footer({ slug }) {
   const withFrom = (href) => (slug ? `${href}?from=${slug}` : href);
@@ -10,39 +11,44 @@ export default function Footer({ slug }) {
       {/* 1. Tagline */}
       <div className={styles.taglineSection}>
         <h2 className={styles.taglineText}>
-          Verified Workers.<br />
+          Beyond Profiles.<br />
           Trusted Connections.
         </h2>
       </div>
 
-      {/* 2. Thin Divider Line */}
+      {/* 2. Thin Divider Line stays visible below the tagline. */}
       <div className={styles.divider} />
 
-      {/* 3. Legal Links (Stacked Layout) & Copyright */}
-      <div className={styles.legalSection}>
-        {/* Row 1: Privacy Policy & Terms */}
-        <div className={styles.legalRow}>
-          <Link href={withFrom("/privacy-policy")} className={styles.link}>
-            Privacy Policy
-          </Link>
-          <span className={styles.dot}>•</span>
-          <Link href={withFrom("/terms-and-conditions")} className={styles.link}>
-            Terms & Conditions
-          </Link>
-        </div>
+      {/* Legal links and copyright are temporarily hidden. */}
+      {SHOW_PROFILE_LEGAL && (
+        <>
+          {/* 3. Legal Links (Stacked Layout) & Copyright */}
+          <div className={styles.legalSection}>
+            {/* Row 1: Privacy Policy & Terms */}
+            <div className={styles.legalRow}>
+              <Link href={withFrom("/privacy-policy")} className={styles.link}>
+                Privacy Policy
+              </Link>
+              <span className={styles.dot}>•</span>
+              <Link href={withFrom("/terms-and-conditions")} className={styles.link}>
+                Terms & Conditions
+              </Link>
+            </div>
 
-        {/* Row 2: Verification Policy (Indono ke niche) */}
-        <div className={styles.legalRow}>
-          <Link href={withFrom("/verification-policy")} className={styles.link}>
-            Verification Policy
-          </Link>
-        </div>
+            {/* Row 2: Verification Policy (Indono ke niche) */}
+            <div className={styles.legalRow}>
+              <Link href={withFrom("/verification-policy")} className={styles.link}>
+                Verification Policy
+              </Link>
+            </div>
 
-        {/* Row 3: Copyright Text */}
-        <p className={styles.copyrightText}>
-          © 2026 Infixo. All rights reserved.
-        </p>
-      </div>
+            {/* Row 3: Copyright Text */}
+            <p className={styles.copyrightText}>
+              © 2026 Infixo. All rights reserved.
+            </p>
+          </div>
+        </>
+      )}
 
       {/* 4. Bottom Illustration Banner */}
       <div className={styles.imageWrapper}>

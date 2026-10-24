@@ -4,6 +4,7 @@ import {useDemoText} from '../DemoLocale';
 import { useEffect, useState } from 'react';
 import styles from '../../../components/WorkerIdentityCard/WorkerIdentityCard.module.css';
 import VerifiedBadge from '../../../components/VerifiedBadge/VerifiedBadge';
+import { SHOW_PROFILE_VERIFICATION } from '@/lib/profileVisibility';
 import HeroSlider from './HeroSlider.js';
 
 function WorkerIdIcon() {
@@ -179,7 +180,7 @@ Z"
             </div>
           </div>
 
-          {isVerified && (
+          {SHOW_PROFILE_VERIFICATION && isVerified && (
             <div className={styles.badgeWrap}>
               <VerifiedBadge />
             </div>

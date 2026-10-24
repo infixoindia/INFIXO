@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import styles from './WorkerIdentityCard.module.css';
 import VerifiedBadge from '../VerifiedBadge/VerifiedBadge';
+import { SHOW_PROFILE_VERIFICATION } from '@/lib/profileVisibility';
 import HeroSlider from '../HeroSlider/HeroSlider';
 
 function WorkerIdIcon() {
@@ -184,7 +185,7 @@ Z"
             </div>
           </div>
 
-          {isVerified && (
+          {SHOW_PROFILE_VERIFICATION && isVerified && (
             <div className={styles.badgeWrap}>
               <VerifiedBadge />
             </div>

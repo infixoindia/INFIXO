@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import styles from "./WorkerDetails.module.css";
 import SectionLanguageToggle from "../SectionLanguageToggle/SectionLanguageToggle";
+import { SHOW_PROFILE_VERIFICATION } from "@/lib/profileVisibility";
 
 const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 const ABOUT_POINTS = 3;   // points shown before "Show more"
@@ -123,6 +124,8 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
         </div>
       </div>
 
+      {/* The complete verification card is hidden without retaining its spacing. */}
+      {SHOW_PROFILE_VERIFICATION && (
       <div className={styles.card}>
         <div className={styles.verificationHeader}>
           <h3>Infixo Verification</h3>
@@ -240,6 +243,7 @@ export default function WorkerDetails({ worker, backHref = "/" }) {
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 }
