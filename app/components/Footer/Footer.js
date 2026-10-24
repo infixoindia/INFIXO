@@ -16,12 +16,12 @@ export default function Footer({ slug }) {
         </h2>
       </div>
 
-      {/* All legal links, copyright and their divider are temporarily hidden. */}
+      {/* 2. Thin Divider Line stays visible below the tagline. */}
+      <div className={styles.divider} />
+
+      {/* Legal links and copyright are temporarily hidden. */}
       {SHOW_PROFILE_LEGAL && (
         <>
-          {/* 2. Thin Divider Line */}
-          <div className={styles.divider} />
-
           {/* 3. Legal Links (Stacked Layout) & Copyright */}
           <div className={styles.legalSection}>
             {/* Row 1: Privacy Policy & Terms */}
